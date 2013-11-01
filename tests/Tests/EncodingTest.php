@@ -39,9 +39,23 @@ class EncodingTest extends \PHPUnit_Framework_TestCase
         $this->assertEncode(1.1, '1.1', $encoder);
         $this->assertEncode(1.0e+32, '1.0E+32', $encoder);
 
+        $this->assertEncode(INF, 'INF', $encoder);
+        $this->assertEncode(-INF, '-INF', $encoder);
+        $this->assertEncode(NAN, 'NAN', $encoder);
+
         $encoder->setIndent(false);
         $this->assertEncode((float) 1, '(float)1', $encoder);
         $this->assertEncode((float) -42, '(float)-42', $encoder);
+
+        $float = $encoder->encode(999999999999999);
+        $this->assertSame('1.0E+15', $float);
+        $this->assertNotEquals(999999999999999, eval("return $float;"));
+
+        $encoder->setBigIntegers(true);
+        $this->assertEncode(199999999999999, '199999999999999', $encoder);
+        $this->assertEncode(999999999999999, '999999999999999', $encoder);
+        $this->assertEncode(1.0e-32, '1.0E-32', $encoder);
+
     }
 
     public function testString()
@@ -138,6 +152,11 @@ class EncodingTest extends \PHPUnit_Framework_TestCase
     {
         $output = $encoder->encode($value);
         $this->assertSame($string, $output);
-        $this->assertSame($value, eval("return $output;"));
+
+        if (is_double($value) && is_nan($value)) {
+            $this->assertTrue(is_nan(eval("return $output;")));
+        } else {
+            $this->assertSame($value, eval("return $output;"));
+        }
     }
 }

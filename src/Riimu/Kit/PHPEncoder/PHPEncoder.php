@@ -29,6 +29,12 @@ class PHPEncoder
     private $maxDepth;
 
     /**
+     * Whether to output bigger integers as integers.
+     * @var boolean
+     */
+    private $bigIntegers;
+
+    /**
      * Combination of flags for handling objects.
      * @var integer
      */
@@ -100,6 +106,7 @@ class PHPEncoder
     public function __construct()
     {
         $this->maxDepth = 20;
+        $this->bigIntegers = false;
         $this->objectFlags = self::OBJECT_PROPERTIES | self::OBJECT_CAST;
         $this->alignKeys = false;
         $this->baseIndent = 0;
@@ -157,6 +164,15 @@ class PHPEncoder
     public function setObjectFlags($flags)
     {
         $this->objectFlags = $flags;
+    }
+
+    /**
+     * Setss whether to output big float integers as integers.
+     * @param boolean $state True to output big integers, false to not
+     */
+    public function setBigIntegers($state)
+    {
+        $this->bigIntegers = (boolean) $state;
     }
 
     /**
@@ -242,6 +258,12 @@ class PHPEncoder
      */
     private function encodeFloat($float)
     {
+        if (is_infinite($float) || is_nan($float)) {
+            return (string) $float;
+        } elseif ($this->bigIntegers && round($float) == $float) {
+            return number_format($float, 0, '.', '');
+        }
+
         $number = (string) $float;
         return preg_match('/^[-+]?\d+$/', $number)
             ? '(float)' . $this->space . $number : $number;
