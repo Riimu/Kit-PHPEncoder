@@ -64,6 +64,8 @@ echo $encoder->encode(['foo' => 'bar', [1, true, false, null, 1.1]]);
   * The library uses PHP_EOL as the end of line character (depends on system)
   * Precision may be lost when using float values. This is simply due to the
     fact that binary to decimal conversion may not be accurate with fractions.
+  * Some accuracy may be gained by setting `setBigIntegers($state)` to true,
+    which attempts to encode floats as integers if they do not have fractions.
   * Float type is maintained using `(float)` cast when the number would
     otherwise be parsed as an integer.
   * Due to being PHP 5.4 library, the outputted arrays will use short array
