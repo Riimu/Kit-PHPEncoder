@@ -1,0 +1,23 @@
+{
+    "name": "riimu/kit-phpencoder",
+    "type": "library",
+    "description": "Library for generating PHP code for variables.",
+    "keywords": ["variables", "encoding"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Riikka Kalliomäki",
+            "email": "riikka.kalliomaki@gmail.com",
+            "homepage": "http://riimu.net",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "Riimu\\Kit\\PHPEncoder": "src"
+        }
+    }
+}
