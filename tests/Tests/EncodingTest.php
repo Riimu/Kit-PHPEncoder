@@ -54,6 +54,13 @@ class EncodingTest extends \PHPUnit_Framework_TestCase
         $this->assertEncode(-1.0e-32, '-1.0E-32', $encoder);
     }
 
+    public function testPHPDefaultPrecision()
+    {
+        $encoder = new PHPEncoder();
+        $encoder->setFloatPrecision(false);
+        $this->assertEncode(1.0, '1.0', $encoder);
+    }
+
     public function testFloat()
     {
         $encoder = new PHPEncoder();
@@ -77,7 +84,6 @@ class EncodingTest extends \PHPUnit_Framework_TestCase
         $this->assertEncode(199999999999999, '199999999999999', $encoder);
         $this->assertEncode(999999999999999, '999999999999999', $encoder);
         $this->assertEncode(1.0e-32, '1.0E-32', $encoder);
-
     }
 
     public function testString()
