@@ -5,10 +5,10 @@ namespace Riimu\Kit\PHPEncoder;
 /**
  * PHPEncoder provides a way to convert variables into PHP code.
  *
- * Goal of PHPEncoder is to provide function similar to json_encode(), but
- * instead if outputting JSON, it outputs PHP. This makes it easier to
- * dynamically generate PHP files such as configuration files when you don't
- * have to worry about producing PHP code from dynamical variables.
+ * PHPEncoder provides functionality similar to json_encode(), but instead if
+ * outputting JSON, it outputs PHP code. This makes it easier to dynamically
+ * generate PHP files such as configuration files when you don't have to worry
+ * about producing PHP code from dynamic variables.
  *
  * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>
  * @copyright Copyright (c) 2013, Riikka Kalliomäki
@@ -33,6 +33,12 @@ class PHPEncoder
      * @var boolean
      */
     private $bigIntegers;
+
+    /**
+     * Determines the maximum number of digits in floats.
+     * @var integer|false
+     */
+    private $floatPrecision;
 
     /**
      * Combination of flags for handling objects.
@@ -71,32 +77,32 @@ class PHPEncoder
     private $eol;
 
     /**
-     * Flag for converting objects into strings.
+     * @var integer Flag for converting objects into strings.
      */
     const OBJECT_STRING = 1;
 
     /**
-     * Flag for serializing encountered objects.
+     * @var integer Flag for serializing encountered objects.
      */
     const OBJECT_SERIALIZE = 2;
 
     /**
-     * Flag for casting objects into arrays.
+     * @var integer Flag for casting objects into arrays.
      */
     const OBJECT_ARRAY = 4;
 
     /**
-     * Flag for iterating over object to generate an array.
+     * @var integer Flag for iterating over object to generate an array.
      */
     const OBJECT_ITERATE = 8;
 
     /**
-     * Flag to get object's public properties as an array.
+     * @var integer Flag to get object's public properties as an array.
      */
     const OBJECT_PROPERTIES = 16;
 
     /**
-     * Flag to cast any generated object array into object.
+     * @var integer Flag to cast any generated object array into object.
      */
     const OBJECT_CAST = 32;
 
@@ -107,6 +113,7 @@ class PHPEncoder
     {
         $this->maxDepth = 20;
         $this->bigIntegers = false;
+        $this->floatPrecision = 17;
         $this->objectFlags = self::OBJECT_PROPERTIES | self::OBJECT_CAST;
         $this->alignKeys = false;
         $this->baseIndent = 0;
@@ -167,12 +174,36 @@ class PHPEncoder
     }
 
     /**
-     * Setss whether to output big float integers as integers.
+     * Sets whether to output franctionless floats as integers.
+     *
+     * When enabled, any float that has no fractions, i.e. if
+     * round($float) == $float, will be outputted as integer. The ".0" postfix
+     * will not be added to floats (which is used to preserve the type) and the
+     * number will be written without the use of scientific notation. The
+     * default value is false.
+     *
      * @param boolean $state True to output big integers, false to not
      */
     public function setBigIntegers($state)
     {
         $this->bigIntegers = (boolean) $state;
+    }
+
+    /**
+     * Sets the number of significant digits used in floats.
+     *
+     * This method can be used to change the number of digits in outputted
+     * floats. You may also set it to false to use PHP's default value. Most
+     * PHP installations default to 14, but this may cause loss of precision in
+     * some cases. Because of this, the library defaults to 17, which may
+     * generate unexpected output in some cases like "0.1", but will provide
+     * more accurate result in general.
+     *
+     * @param integer|false $precision Number of significant digits in floats
+     */
+    public function setFloatPrecision($precision)
+    {
+        $this->floatPrecision = $precision === false ? false : max(1, (int) $precision);
     }
 
     /**
@@ -264,9 +295,17 @@ class PHPEncoder
             return number_format($float, 0, '.', '');
         }
 
-        $number = (string) $float;
+        if ($this->floatPrecision === false) {
+            $number = (string) $float;
+        } else {
+            $previous = ini_get('precision');
+            ini_set('precision', $this->floatPrecision);
+            $number = (string) $float;
+            ini_set('precision', $previous);
+        }
+
         return preg_match('/^[-+]?\d+$/', $number)
-            ? '(float)' . $this->space . $number : $number;
+            ? "$number.0" : $number;
     }
 
     /**
@@ -362,6 +401,11 @@ class PHPEncoder
         return $output;
     }
 
+    /**
+     * Returns the indentation string at given level.
+     * @param integer $depth Level of indentation, 0 being the base
+     * @return string The indentation string
+     */
     private function getIndent($depth)
     {
         if ($this->indent === false) {
@@ -373,6 +417,12 @@ class PHPEncoder
         return $base . str_repeat($indent, $depth);
     }
 
+    /**
+     * Gets the properties of an object as an array.
+     * @param object $object Object to conver to an array
+     * @return array Array of properties and values
+     * @throws \RuntimeException If object encoding is disabled
+     */
     private function getObjectProperties($object)
     {
         $array = [];

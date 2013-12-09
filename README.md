@@ -1,4 +1,4 @@
-# PHP code generating library for variables #
+# PHP encoding library #
 
 While PHP provides `json_encode()` to natively convert variables into JSON,
 there is no equivalent function for generating PHP code from variables. This
@@ -52,22 +52,18 @@ echo $encoder->encode(['foo' => 'bar', [1, true, false, null, 1.1]]);
 
   * The encoder does not detect variable references. Each reference is traversed
     as if it was any other variable.
-  * In order to avoid infinite loops on recursive array, maximum depth can be
-    set using `setMaxDepth($depth)`. This defaults to 20. Setting it to false
-    disables the limit.
+  * In order to avoid infinite loops on recursive arrays or objects, maximum
+    encoding depth can be set using `setMaxDepth($depth)`. This defaults to 20.
+    Setting it to false disables the limit.
   * The library does not handle resources. If resource is encountered, the
     library will throw an exception.
   * When encoding arrays, the output will omit any unnecessary numeric keys.
     Thus [0=>'a',1=>'b'] will output['a','b']. However, the order of elements
-    is maintained. Thus, [1=>'b',0=>'a'] will ouput [1=>'b',0=>'a']. When
+    is preserved. Thus, [1=>'b',0=>'a'] will ouput [1=>'b',0=>'a']. When
     `setAlignKeys($state)` is set to true, keys will not be omitted.
   * The library uses PHP_EOL as the end of line character (depends on system)
-  * Precision may be lost when using float values. This is simply due to the
-    fact that binary to decimal conversion may not be accurate with fractions.
-  * Some accuracy may be gained by setting `setBigIntegers($state)` to true,
-    which attempts to encode floats as integers if they do not have fractions.
-  * Float type is maintained using `(float)` cast when the number would
-    otherwise be parsed as an integer.
+  * Special care should be taken when encoding objects and floats. See below
+    for notes about encoding these types.
   * Due to being PHP 5.4 library, the outputted arrays will use short array
     notation, i.e. "[" and "]".
 
@@ -87,6 +83,30 @@ particular, affects how arrays are outputted:
     words, if the array keys have different lengths, then the `=>` sign is
     aligned in the same place on each row. Enabling this setting if indent is
     set to false does not make much sense as there are no line breaks.
+
+## Floats ##
+
+Encoding floating point values can be tricky due to problems related to
+precision. Mostly the issue is with meeting expectations vs. maintaining
+accuracy.
+
+The default behavior of the encoding library is to preserve accuracy and to
+preserve type. This means that, for example, if you have a floating point value
+of "1", if will be written as "1.0" in order to preserve the type. In addition,
+the library will write 17 significant digits of float as opposed to 14, which is
+default in many PHP installations.
+
+These behaviors can be changed using `setFloatPrecision($precision)` which
+can be used to change the number of significant digits in floats (or use false
+for PHP default) and `setBigIntegers($state)` which can be enabled to write any
+floating point value that does not have fractions as an integer representation
+(i.e. without scientific notation and the ".0" part used to preserve type).
+
+Smaller precision may sometimes be more desirable, if higher precision is not
+required, as high precision may lead to unexpected outputs. For example,
+encoding the value of "1.1" using 17 digits of precision will produce
+"1.1000000000000001". This is not a flaw in the library, but rather a side
+effect of how floating point values work.
 
 ## Objects ##
 

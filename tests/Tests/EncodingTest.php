@@ -31,22 +31,44 @@ class EncodingTest extends \PHPUnit_Framework_TestCase
         $this->assertEncode(-733, '-733', $encoder);
     }
 
+    public function testFloatDefaultPrecision()
+    {
+        $encoder = new PHPEncoder();
+        $this->assertEncode(1.1, '1.1000000000000001', $encoder);
+        $this->assertEncode(0.1, '0.10000000000000001', $encoder);
+        $this->assertEncode(1.0e+32, '1.0000000000000001E+32', $encoder);
+        $this->assertEncode(1.0e-32, '1.0000000000000001E-32', $encoder);
+        $this->assertEncode(-1.0e+32, '-1.0000000000000001E+32', $encoder);
+        $this->assertEncode(-1.0e-32, '-1.0000000000000001E-32', $encoder);
+    }
+
+    public function testFloatSmallPrecision()
+    {
+        $encoder = new PHPEncoder();
+        $encoder->setFloatPrecision(14);
+        $this->assertEncode(1.1, '1.1', $encoder);
+        $this->assertEncode(0.1, '0.1', $encoder);
+        $this->assertEncode(1.0e+32, '1.0E+32', $encoder);
+        $this->assertEncode(1.0e-32, '1.0E-32', $encoder);
+        $this->assertEncode(-1.0e+32, '-1.0E+32', $encoder);
+        $this->assertEncode(-1.0e-32, '-1.0E-32', $encoder);
+    }
+
     public function testFloat()
     {
         $encoder = new PHPEncoder();
-        $this->assertEncode((float) 1, '(float) 1', $encoder);
-        $this->assertEncode((float) -42, '(float) -42', $encoder);
-        $this->assertEncode(1.1, '1.1', $encoder);
-        $this->assertEncode(1.0e+32, '1.0E+32', $encoder);
+        $this->assertEncode((float) 0, '0.0', $encoder);
+        $this->assertEncode((float) 1, '1.0', $encoder);
+        $this->assertEncode((float) -42, '-42.0', $encoder);
 
         $this->assertEncode(INF, 'INF', $encoder);
         $this->assertEncode(-INF, '-INF', $encoder);
         $this->assertEncode(NAN, 'NAN', $encoder);
 
-        $encoder->setIndent(false);
-        $this->assertEncode((float) 1, '(float)1', $encoder);
-        $this->assertEncode((float) -42, '(float)-42', $encoder);
+        $this->assertEncode(999999999999999, '999999999999999.0', $encoder);
+        $this->assertEncode(8888888888888888, '8888888888888888.0', $encoder);
 
+        $encoder->setFloatPrecision(14);
         $float = $encoder->encode(999999999999999);
         $this->assertSame('1.0E+15', $float);
         $this->assertNotEquals(999999999999999, eval("return $float;"));

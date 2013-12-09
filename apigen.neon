@@ -1,5 +1,5 @@
 source: src
 destination: apidoc
 charset: UTF-8
-title: kit-urlparser
+title: kit-phpencoder
 report: apidoc/report.txt
