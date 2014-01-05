@@ -87,7 +87,7 @@ class ObjectEncodingTest extends \PHPUnit_Framework_TestCase
         $obj = new \stdClass();
         $this->assertSame("[]", $encoder->encode($obj));
         $mock = new \testMockObject();
-        $this->assertSame("['\0testMockObject\0foo'=>'A','\0*\0bar'=>'B','baz'=>'C']", $encoder->encode($mock));
+        $this->assertSame('["\x00testMockObject\x00foo"=>\'A\',"\x00*\x00bar"=>\'B\',\'baz\'=>\'C\']', $encoder->encode($mock));
         $this->assertSame(["\0testMockObject\0foo"=>'A',"\0*\0bar"=>'B','baz'=>'C'],
             eval('return ' . $encoder->encode($mock) . ';'));
     }

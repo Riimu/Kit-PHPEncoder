@@ -91,6 +91,14 @@ class EncodingTest extends \PHPUnit_Framework_TestCase
         $encoder = new PHPEncoder();
         $this->assertEncode('1', "'1'", $encoder);
         $this->assertEncode('"\\\'', "'\"\\\\\\''", $encoder);
+        $this->assertEncode("\r", '"\r"', $encoder);
+        $this->assertEncode(" ", "' '", $encoder);
+        $this->assertEncode("~", "'~'", $encoder);
+        $this->assertEncode("\t\$foo", '"\t\$foo"', $encoder);
+        $this->assertEncode("\t{\$foo}", '"\t{\$foo}"', $encoder);
+
+        $encoder->setEscapeStrings(false);
+        $this->assertEncode("\r", "'\r'", $encoder);
     }
 
     public function testNumericArray()

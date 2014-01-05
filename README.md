@@ -83,6 +83,10 @@ particular, affects how arrays are outputted:
     words, if the array keys have different lengths, then the `=>` sign is
     aligned in the same place on each row. Enabling this setting if indent is
     set to false does not make much sense as there are no line breaks.
+  * `setEscapeStrings($state)` defaults to true, which encodes strings using
+    escape sequences whenever they contain ascii control characters or bytes
+    with value of 127 or greater. This helps to ensure the string contents
+    remain intact when the data is transferred or stored in a file.
 
 ## Floats ##
 

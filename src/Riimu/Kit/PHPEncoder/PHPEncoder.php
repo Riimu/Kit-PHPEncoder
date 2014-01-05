@@ -24,7 +24,7 @@ class PHPEncoder
 
     /**
      * Maximum allow indentation level in the output.
-     * @var integer|false
+     * @var integer|boolean
      */
     private $maxDepth;
 
@@ -36,9 +36,15 @@ class PHPEncoder
 
     /**
      * Determines the maximum number of digits in floats.
-     * @var integer|false
+     * @var integer|boolean
      */
     private $floatPrecision;
+
+    /**
+     * Whether to encode strings using escape sequences or not.
+     * @var boolean
+     */
+    private $escapeStrings;
 
     /**
      * Combination of flags for handling objects.
@@ -114,6 +120,7 @@ class PHPEncoder
         $this->maxDepth = 20;
         $this->bigIntegers = false;
         $this->floatPrecision = 17;
+        $this->escapeStrings = true;
         $this->objectFlags = self::OBJECT_PROPERTIES | self::OBJECT_CAST;
         $this->alignKeys = false;
         $this->baseIndent = 0;
@@ -128,49 +135,11 @@ class PHPEncoder
      * If the maximum allowed depth is reached, an exception will be thrown. If
      * false is provided, no limit is used.
      *
-     * @param integer|false $depth Maximum depth or false for no limit.
+     * @param integer|boolean $depth Maximum depth or false for no limit.
      */
     public function setMaxDepth($depth)
     {
         $this->maxDepth = (int) $depth;
-    }
-
-    /**
-     * Whether to align array keys vertically in output.
-     * @param boolean $state True to align, false to not
-     */
-    public function setAlignKeys($state)
-    {
-        $this->alignKeys = (bool) $state;
-    }
-
-    /**
-     * Sets the indentation used in the output.
-     *
-     * Both arguments may be provided either as a string or an integer. If
-     * string is provided, that string is used as is for the indentation.
-     * Integer indicates the number of spaces to use. You may also provide
-     * false as the first agument, in which case all optional whitespace from
-     * the output will be omitted (including new lines and spaces).
-     *
-     * @param integer|string|false $indent Indenation for each level or false for none
-     * @param integer|string $base Base level of indentation
-     */
-    public function setIndent($indent, $base = 0)
-    {
-        $this->baseIndent = is_string($base) ? $base : (int) $base;
-        $this->indent = is_string($indent)
-            ? $indent : ($indent === false ? false : (int) $indent);
-        $this->space = $indent === false ? '' : ' ';
-    }
-
-    /**
-     * Sets the flags for object handling in output
-     * @param integer $flags Object handling flags
-     */
-    public function setObjectFlags($flags)
-    {
-        $this->objectFlags = $flags;
     }
 
     /**
@@ -199,11 +168,65 @@ class PHPEncoder
      * generate unexpected output in some cases like "0.1", but will provide
      * more accurate result in general.
      *
-     * @param integer|false $precision Number of significant digits in floats
+     * @param integer|boolean $precision Number of significant digits in floats
      */
     public function setFloatPrecision($precision)
     {
         $this->floatPrecision = $precision === false ? false : max(1, (int) $precision);
+    }
+
+    /**
+     * Sets whether to encode strings using escape sequences.
+     *
+     * When enabled, any string which contains control characters or bytes with
+     * value beyond 127 will be encoded using string escape sequences. This
+     * includes tabs and new line characters, but not spaces. This ensures that
+     * string data remains intact when stored or transferred and that the files
+     * are treated correctly as text files. This option defaults to true.
+     *
+     * @param boolean $state True to enable, false to disable.
+     */
+    public function setEscapeStrings($state)
+    {
+        $this->escapeStrings = (boolean) $state;
+    }
+
+    /**
+     * Sets the flags for object handling in output
+     * @param integer $flags Object handling flags
+     */
+    public function setObjectFlags($flags)
+    {
+        $this->objectFlags = $flags;
+    }
+
+    /**
+     * Whether to align array keys vertically in output.
+     * @param boolean $state True to align, false to not
+     */
+    public function setAlignKeys($state)
+    {
+        $this->alignKeys = (bool) $state;
+    }
+
+    /**
+     * Sets the indentation used in the output.
+     *
+     * Both arguments may be provided either as a string or an integer. If
+     * string is provided, that string is used as is for the indentation.
+     * Integer indicates the number of spaces to use. You may also provide
+     * false as the first agument, in which case all optional whitespace from
+     * the output will be omitted (including new lines and spaces).
+     *
+     * @param integer|string|boolean $indent Indenation for each level or false for none
+     * @param integer|string $base Base level of indentation
+     */
+    public function setIndent($indent, $base = 0)
+    {
+        $this->baseIndent = is_string($base) ? $base : (int) $base;
+        $this->indent = is_string($indent)
+            ? $indent : ($indent === false ? false : (int) $indent);
+        $this->space = $indent === false ? '' : ' ';
     }
 
     /**
@@ -315,7 +338,27 @@ class PHPEncoder
      */
     private function encodeString($string)
     {
-        return "'" . strtr($string, ["'" => "\\'", "\\" => "\\\\"]) . "'";
+        if (!$this->escapeStrings || preg_match('/^[\x20-\x7E]*$/', $string)) {
+            return "'" . strtr($string, ["'" => "\\'", "\\" => "\\\\"]) . "'";
+        }
+
+        return '"' . preg_replace_callback(
+            '/[\x00-\x1F\x7F-\xFF]/',
+            function ($matches) {
+                return '\x' . sprintf('%02x', ord($matches[0]));
+            },
+            strtr($string, [
+                "\\" => '\\\\',
+                "\n" => '\n',
+                "\r" => '\r',
+                "\t" => '\t',
+                "\v" => '\v',
+                "\e" => '\e',
+                "\f" => '\f',
+                "\$" => '\$',
+                "\"" => '\"',
+            ])
+        ) . '"';
     }
 
     /**
