@@ -1,19 +1,24 @@
-# PHP encoding library #
+# PHP value encoder #
 
-While PHP provides `json_encode()` to natively convert variables into JSON,
-there is no equivalent function for generating PHP code from variables. This
-library provides similar functionality, except that the generated code is in
-PHP.
+This library encodes values as PHP code similar to how `json_encode()` encodes
+values as JSON. The purpose of this library is to make it easier to write data
+into files directly as PHP instead of using auxialiry formats such as ini files
+or JSON.
 
-It is good to note, however, that in many cases there are alternatives that are
-better than dynamically generating PHP. Configuration files stored in JSON or
-other configuration file formats usually offer better portability and caching
-them using something like memcached mitigates the performance hit from parsing
-those formats.
+A common use case could be writing database configuration into file based on
+what user entered in a installation script. They can't exactly be stored in
+a database and using formats like JSON for just database configuration may be
+an overkill.
 
-But, for those rare cases, like when memcached is not available or you just
-need a way to save database configuration into a file, the PHP Encoder library
-can help you in creating those files.
+It is good to note, however, that storing dynamic data in PHP files is not
+always the best idea. For larger configuration files, it's usually advisable to
+use other formats such as JSON, because these tend to be easier to edit and
+errors in those configurations won't cause PHP parse errors. Data that can be
+edited though admin interfaces is also usually best stored in a database.
+
+Encoding values as PHP files may be a good idea, when you have bunch of static
+data that is often required but doesn't really change that much, such as
+database configuration values.
 
 API documentation for the classes can be generated using apigen.
 
@@ -21,7 +26,7 @@ API documentation for the classes can be generated using apigen.
 
 Using the library is mostly quite simple. In most cases, there is one method
 `encode()` that you need to concern yourself about, which simply produces the
-PHP code for the provided variable.
+PHP code for the provided value.
 
 For example:
 
@@ -46,6 +51,25 @@ $encoder->setIndent(false);
 echo $encoder->encode(['foo' => 'bar', [1, true, false, null, 1.1]]);
 
 // The above outputs: ['foo'=>'bar',[1,true,false,null,1.1]]
+```
+
+An example of common use case could be like:
+
+```PHP
+// Configuration script asks user for database details
+$config = [
+    'database' => 'mydb',
+    'hostname' => 'localhost',
+    'username' => 'dbuser',
+    'password' => 'dbpass'
+];
+
+// Store the configuration into a file
+$encoder = new \Riimu\Kit\PHPEncoder\PHPEncoder();
+file_put_contents('dbconf.php', '<?php return ' . $encoder->encode($config) . ';');
+
+// Load the config from the file
+$dbconf = require 'dbconf.php';
 ```
 
 ## Notes and limitiations ##
