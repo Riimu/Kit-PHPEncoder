@@ -1,8 +1,6 @@
 <?php
 
-namespace Tests;
-
-use Riimu\Kit\PHPEncoder\PHPEncoder;
+namespace Riimu\Kit\PHPEncoder;
 
 /**
  * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>
@@ -72,17 +70,17 @@ class EncodingTest extends \PHPUnit_Framework_TestCase
         $this->assertEncode(-INF, '-INF', $encoder);
         $this->assertEncode(NAN, 'NAN', $encoder);
 
-        $this->assertEncode(999999999999999, '999999999999999.0', $encoder);
-        $this->assertEncode(8888888888888888, '8888888888888888.0', $encoder);
+        $this->assertEncode(999999999999999.0, '999999999999999.0', $encoder);
+        $this->assertEncode(8888888888888888.0, '8888888888888888.0', $encoder);
 
         $encoder->setFloatPrecision(14);
-        $float = $encoder->encode(999999999999999);
+        $float = $encoder->encode(999999999999999.0);
         $this->assertSame('1.0E+15', $float);
-        $this->assertNotEquals(999999999999999, eval("return $float;"));
+        $this->assertNotEquals(999999999999999.0, eval("return $float;"));
 
         $encoder->setBigIntegers(true);
-        $this->assertEncode(199999999999999, '199999999999999', $encoder);
-        $this->assertEncode(999999999999999, '999999999999999', $encoder);
+        $this->assertEncode(199999999999999.0, '199999999999999', $encoder);
+        $this->assertEncode(999999999999999.0, '999999999999999', $encoder);
         $this->assertEncode(1.0e-32, '1.0E-32', $encoder);
     }
 

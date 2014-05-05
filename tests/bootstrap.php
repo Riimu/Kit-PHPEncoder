@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../src/Riimu/Kit/PHPEncoder/PHPEncoder.php';
+require_once __DIR__ . '/../src/PHPEncoder.php';
 
 class testMockObject {
     private   $foo = 'A';

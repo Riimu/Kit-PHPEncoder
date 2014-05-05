@@ -1,8 +1,6 @@
 <?php
 
-namespace Tests;
-
-use Riimu\Kit\PHPEncoder\PHPEncoder;
+namespace Riimu\Kit\PHPEncoder;
 
 /**
  * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>

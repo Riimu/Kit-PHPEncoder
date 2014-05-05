@@ -2,7 +2,7 @@
 
 This library encodes values as PHP code similar to how `json_encode()` encodes
 values as JSON. The purpose of this library is to make it easier to write data
-into files directly as PHP instead of using auxialiry formats such as ini files
+into files directly as PHP instead of using auxiliary formats such as ini files
 or JSON.
 
 A common use case could be writing database configuration into file based on
@@ -170,4 +170,4 @@ order to replicate `json_encode()` functionality.
 
 ## Credits ##
 
-This library is copyright 2013 to Riikka Kalliomäki
+This library is copyright 2013 - 2014 to Riikka Kalliomäki
