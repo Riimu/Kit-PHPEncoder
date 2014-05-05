@@ -79,8 +79,8 @@ class EncodingTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEquals(999999999999999.0, eval("return $float;"));
 
         $encoder->setBigIntegers(true);
-        $this->assertEncode(199999999999999, '199999999999999', $encoder);
-        $this->assertEncode(999999999999999, '999999999999999', $encoder);
+        $this->assertEncode(199999999999999, '199999999999999', $encoder, 199999999999999.0);
+        $this->assertEncode(999999999999999, '999999999999999', $encoder, 999999999999999.0);
         $this->assertEncode(1.0e-32, '1.0E-32', $encoder);
     }
 
@@ -182,9 +182,9 @@ class EncodingTest extends \PHPUnit_Framework_TestCase
         $encoder->encode(imagecreate(10, 10));
     }
 
-    private function assertEncode($value, $string, $encoder)
+    private function assertEncode($value, $string, $encoder, $initial = null)
     {
-        $output = $encoder->encode($value);
+        $output = $encoder->encode(func_num_args() < 4 ? $value : $initial);
         $this->assertSame($string, $output);
 
         if (is_double($value) && is_nan($value)) {
