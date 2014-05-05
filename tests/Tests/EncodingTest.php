@@ -79,8 +79,8 @@ class EncodingTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEquals(999999999999999.0, eval("return $float;"));
 
         $encoder->setBigIntegers(true);
-        $this->assertEncode(199999999999999.0, '199999999999999', $encoder);
-        $this->assertEncode(999999999999999.0, '999999999999999', $encoder);
+        $this->assertEncode(199999999999999, '199999999999999', $encoder);
+        $this->assertEncode(999999999999999, '999999999999999', $encoder);
         $this->assertEncode(1.0e-32, '1.0E-32', $encoder);
     }
 
