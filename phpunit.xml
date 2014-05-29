@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="tests/bootstrap.php">
+  <testsuites>
+    <testsuite name="Default">
+      <directory suffix="Test.php">tests/tests/</directory>
+    </testsuite>
+  </testsuites>
+  <filter>
+    <whitelist addUncoveredFilesFromWhitelist="true">
+      <directory suffix=".php">src/</directory>
+    </whitelist>
+  </filter>
+</phpunit>
