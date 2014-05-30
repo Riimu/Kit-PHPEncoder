@@ -22,6 +22,11 @@ database configuration values.
 
 API documentation for the classes can be generated using apigen.
 
+[![Build Status](https://travis-ci.org/Riimu/Kit-PHPEncoder.svg?branch=master)](https://travis-ci.org/Riimu/Kit-PHPEncoder)
+[![Coverage Status](https://coveralls.io/repos/Riimu/Kit-PHPEncoder/badge.png?branch=master)](https://coveralls.io/r/Riimu/Kit-PHPEncoder?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Riimu/Kit-PHPEncoder/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Riimu/Kit-PHPEncoder/?branch=master)
+
+
 ## Usage ##
 
 Using the library is mostly quite simple. In most cases, there is one method

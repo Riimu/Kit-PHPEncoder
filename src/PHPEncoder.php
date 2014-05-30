@@ -263,10 +263,10 @@ class PHPEncoder
                 return $this->encodeObject($value);
             case is_resource($value):
                 return $this->encodeResource($value);
-            case is_null($value):
-                return $this->encodeNull();
+            case $value === null:
+                return 'null';
             default:
-                throw new \InvalidArgumentException("Cannot encode value type: " . gettype($value));
+                throw new \InvalidArgumentException('Cannot encode value type: ' . gettype($value));
         }
     }
 
@@ -299,7 +299,7 @@ class PHPEncoder
     {
         if (is_infinite($float) || is_nan($float)) {
             return (string) $float;
-        } elseif ($this->bigIntegers && round($float) == $float) {
+        } elseif ($this->bigIntegers && round($float) === $float) {
             return number_format($float, 0, '.', '');
         }
 
@@ -307,7 +307,7 @@ class PHPEncoder
             $number = (string) $float;
         } else {
             $previous = ini_get('precision');
-            ini_set('precision', $this->floatPrecision);
+            ini_set('precision', (string) $this->floatPrecision);
             $number = (string) $float;
             ini_set('precision', $previous);
         }
@@ -324,7 +324,7 @@ class PHPEncoder
     private function encodeString($string)
     {
         if (!$this->escapeStrings || preg_match('/^[\x20-\x7E]*$/', $string)) {
-            return "'" . strtr($string, ["'" => "\\'", "\\" => "\\\\"]) . "'";
+            return "'" . strtr($string, ["'" => "\\'", '\\' => '\\\\']) . "'";
         }
 
         return '"' . preg_replace_callback(
@@ -333,15 +333,15 @@ class PHPEncoder
                 return '\x' . sprintf('%02x', ord($matches[0]));
             },
             strtr($string, [
-                "\\" => '\\\\',
+                '\\' => '\\\\',
                 "\n" => '\n',
                 "\r" => '\r',
                 "\t" => '\t',
                 "\v" => '\v',
                 "\e" => '\e',
                 "\f" => '\f',
-                "\$" => '\$',
-                "\"" => '\"',
+                '$' => '\$',
+                '"' => '\"',
             ])
         ) . '"';
     }
@@ -457,16 +457,7 @@ class PHPEncoder
             return 'gmp_init(\'' . gmp_strval($value) . '\')';
         }
 
-        throw new \InvalidArgumentException("Unsupported resource type: " . get_resource_type($value));
-    }
-
-    /**
-     * Encodes null type value.
-     * @return string The string 'null'
-     */
-    private function encodeNull()
-    {
-        return 'null';
+        throw new \InvalidArgumentException('Unsupported resource type: ' . get_resource_type($value));
     }
 
     /**
@@ -502,8 +493,7 @@ class PHPEncoder
                 $array[$key] = $value;
             }
         } elseif ($this->objectFlags & self::OBJECT_PROPERTIES) {
-            foreach ((new \ReflectionClass($object))
-                ->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
+            foreach ((new \ReflectionClass($object))->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
                 $array[$property->getName()] = $property->getValue($object);
             }
         } else {
