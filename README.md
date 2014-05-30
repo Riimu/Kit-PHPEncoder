@@ -8,7 +8,8 @@ or JSON.
 A common use case could be writing database configuration into file based on
 what user entered in a installation script. They can't exactly be stored in
 a database and using formats like JSON for just database configuration may be
-an overkill.
+an overkill. Another common use case might be creating cache files in PHP that
+store precomputed values.
 
 It is good to note, however, that storing dynamic data in PHP files is not
 always the best idea. For larger configuration files, it's usually advisable to
@@ -20,12 +21,28 @@ Encoding values as PHP files may be a good idea, when you have bunch of static
 data that is often required but doesn't really change that much, such as
 database configuration values.
 
-API documentation for the classes can be generated using apigen.
+API documentation is [available](http://kit.riimu.net/api/phpencoder/) and it
+can be generated using ApiGen.
 
 [![Build Status](https://travis-ci.org/Riimu/Kit-PHPEncoder.svg?branch=master)](https://travis-ci.org/Riimu/Kit-PHPEncoder)
 [![Coverage Status](https://coveralls.io/repos/Riimu/Kit-PHPEncoder/badge.png?branch=master)](https://coveralls.io/r/Riimu/Kit-PHPEncoder?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Riimu/Kit-PHPEncoder/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Riimu/Kit-PHPEncoder/?branch=master)
 
+## Installation ##
+
+This library can be easily installed using [Composer](http://getcomposer.org/)
+by including the following dependency in your `composer.json`:
+
+```json
+{
+    "require": {
+        "riimu/kit-phpencoder": "1.*"
+    }
+}
+```
+
+The library will be the installed by running `composer install` and the classes
+can be loaded with simply including the `vendor/autoload.php` file.
 
 ## Usage ##
 
@@ -84,8 +101,8 @@ $dbconf = require 'dbconf.php';
   * In order to avoid infinite loops on recursive arrays or objects, maximum
     encoding depth can be set using `setMaxDepth($depth)`. This defaults to 20.
     Setting it to false disables the limit.
-  * The library does not handle resources. If resource is encountered, the
-    library will throw an exception.
+  * The library will encode any GMP resource with `gmp_init()` around the string
+    value. Any other type of resource will throw an exception.
   * When encoding arrays, the output will omit any unnecessary numeric keys.
     Thus [0=>'a',1=>'b'] will output['a','b']. However, the order of elements
     is preserved. Thus, [1=>'b',0=>'a'] will ouput [1=>'b',0=>'a']. When
@@ -109,9 +126,9 @@ particular, affects how arrays are outputted:
     may provide `false` as the argument to remove all unnecessary whitespace
     from the provided code.
   * `setAlignKeys($state)` allows you to align array keys in a column. In other
-    words, if the array keys have different lengths, then the `=>` sign is
-    aligned in the same place on each row. Enabling this setting if indent is
-    set to false does not make much sense as there are no line breaks.
+    words, if the array keys have different lengths, then the `=>` operator will be
+    aligned in the same column on each row. Note that disabling whitespace via
+    `setIndent()` will also disable this setting.
   * `setEscapeStrings($state)` defaults to true, which encodes strings using
     escape sequences whenever they contain ascii control characters or bytes
     with value of 127 or greater. This helps to ensure the string contents
