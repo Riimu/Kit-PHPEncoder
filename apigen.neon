@@ -2,4 +2,6 @@ source: src
 destination: apidoc
 charset: UTF-8
 title: kit-phpencoder
-report: apidoc/report.txt
+report: apidoc/report.xml
+wipeout: Yes
+progressbar: No

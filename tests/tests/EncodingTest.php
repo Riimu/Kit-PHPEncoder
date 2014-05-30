@@ -125,8 +125,11 @@ class EncodingTest extends \PHPUnit_Framework_TestCase
         $this->assertEncode(['foo' => 'bar', 1 => true], "['foo'=>'bar',1=>true]", $encoder);
 
         $encoder->setIndent("\t", ' ');
-        $this->assertEncode(['foo' => 'bar', 1 => true],
-            "[$e \t'foo' => 'bar',$e \t1 => true,$e ]", $encoder);
+        $this->assertEncode(
+            ['foo' => 'bar', 1 => true],
+            "[$e \t'foo' => 'bar',$e \t1 => true,$e ]",
+            $encoder
+        );
     }
 
     public function testAlignedKeys()
@@ -136,9 +139,11 @@ class EncodingTest extends \PHPUnit_Framework_TestCase
         $encoder->setIndent(2);
         $encoder->setAlignKeys(true);
 
-        $this->assertEncode(['a' => 1, 'bb' => 2, 'cccc' => 3, 'ddd' => 4, 5],
+        $this->assertEncode(
+            ['a' => 1, 'bb' => 2, 'cccc' => 3, 'ddd' => 4, 5],
             "[$e  'a'    => 1,$e  'bb'   => 2,$e  'cccc' => 3,$e  'ddd'  => 4,$e  0      => 5,$e]",
-            $encoder);
+            $encoder
+        );
     }
 
     public function testMultiLevelArray()
@@ -147,20 +152,33 @@ class EncodingTest extends \PHPUnit_Framework_TestCase
         $encoder = new PHPEncoder();
 
         $encoder->setIndent(false);
-        $this->assertEncode([1,[2,3],4,[[5,6],[7,8]]], "[1,[2,3],4,[[5,6],[7,8]]]", $encoder);
+        $this->assertEncode([1, [2, 3], 4, [[5, 6], [7, 8]]], "[1,[2,3],4,[[5,6],[7,8]]]", $encoder);
 
         $encoder->setIndent(2, 1);
-        $this->assertEncode([1,[2,3],4,[[5,6],[7,8]]],
+        $this->assertEncode(
+            [1, [2, 3], 4, [[5, 6], [7, 8]]],
             "[$e   1,$e   [$e     2,$e     3,$e   ],$e   4,$e   [$e     " .
             "[$e       5,$e       6,$e     ],$e     [$e       7,$e       8,$e     ],$e   ],$e ]",
-            $encoder);
+            $encoder
+        );
+    }
+
+    public function testGMPEncoding()
+    {
+        if (!function_exists('gmp_init')) {
+            $this->markTestSkipped('Missing GMP library');
+        }
+
+        $encoder = new PHPEncoder();
+        $this->assertSame('gmp_init(\'123\')', $string = $encoder->encode(gmp_init('123')));
+        $this->assertSame(0, gmp_cmp(gmp_init('123'), eval('return ' . $string . ';')));
     }
 
     public function testMaxDepthSuccess()
     {
         $encoder = new PHPEncoder();
-        $encoder->setMaxDepth(3);
-        $this->assertNotEmpty($encoder->encode([1,[2,3],4,[[5,6],[7,8]]]));
+        $encoder->setMaxDepth(2);
+        $this->assertNotEmpty($encoder->encode([1, [2, 3], 4, [[5, 6], [7, 8]]]));
     }
 
     /**
@@ -169,20 +187,31 @@ class EncodingTest extends \PHPUnit_Framework_TestCase
     public function testMaxDepthFailure()
     {
         $encoder = new PHPEncoder();
-        $encoder->setMaxDepth(2);
-        $encoder->encode([1,[2,3],4,[[5,6],[7,8]]]);
+        $encoder->setMaxDepth(1);
+        $encoder->encode([1, [2, 3], 4, [[5, 6], [7, 8]]]);
     }
 
     /**
-     * @expectedException \RuntimeException
+     * @expectedException \InvalidArgumentException
      */
     public function testInvalidType()
     {
         $encoder = new PHPEncoder();
-        $encoder->encode(imagecreate(10, 10));
+        $fp = fopen(__FILE__, 'r');
+        fclose($fp);
+        $encoder->encode($fp);
     }
 
-    private function assertEncode($value, $string, $encoder, $initial = null)
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testInvalidResourceType()
+    {
+        $encoder = new PHPEncoder();
+        $encoder->encode(fopen(__FILE__, 'r'));
+    }
+
+    private function assertEncode($value, $string, PHPEncoder $encoder, $initial = null)
     {
         $output = $encoder->encode(func_num_args() < 4 ? $value : $initial);
         $this->assertSame($string, $output);

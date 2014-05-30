@@ -7,8 +7,8 @@ namespace Riimu\Kit\PHPEncoder;
  *
  * PHPEncoder provides functionality similar to json_encode(), but instead if
  * outputting JSON, it outputs PHP code. This makes it easier to dynamically
- * generate PHP files such as configuration files when you don't have to worry
- * about producing PHP code from dynamic variables.
+ * generate PHP files such as configuration or cache files when you don't have
+ * to worry about producing PHP code from dynamic variables.
  *
  * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>
  * @copyright Copyright (c) 2013, Riikka Kalliomäki
@@ -65,7 +65,7 @@ class PHPEncoder
     private $baseIndent;
 
     /**
-     * One level of indendation for the code.
+     * One level of indentation for the code.
      * @var integer|string
      */
     private $indent;
@@ -75,12 +75,6 @@ class PHPEncoder
      * @var string
      */
     private $space;
-
-    /**
-     * End of line character used in the output.
-     * @var string
-     */
-    private $eol;
 
     /**
      * @var integer Flag for converting objects into strings.
@@ -126,7 +120,6 @@ class PHPEncoder
         $this->baseIndent = 0;
         $this->indent = 4;
         $this->space = ' ';
-        $this->eol = PHP_EOL;
     }
 
     /**
@@ -143,7 +136,7 @@ class PHPEncoder
     }
 
     /**
-     * Sets whether to output franctionless floats as integers.
+     * Sets whether to output floats without fractions as integers.
      *
      * When enabled, any float that has no fractions, i.e. if
      * round($float) == $float, will be outputted as integer. The ".0" postfix
@@ -215,18 +208,25 @@ class PHPEncoder
      * Both arguments may be provided either as a string or an integer. If
      * string is provided, that string is used as is for the indentation.
      * Integer indicates the number of spaces to use. You may also provide
-     * false as the first agument, in which case all optional whitespace from
-     * the output will be omitted (including new lines and spaces).
+     * false as the first argument, in which case all optional whitespace from
+     * the output will be omitted (including new lines and spaces). Disabling
+     * whitespace will also disable array key alignment.
      *
-     * @param integer|string|boolean $indent Indenation for each level or false for none
+     * @param integer|string|boolean $indent Indentation for each level or false for none
      * @param integer|string $base Base level of indentation
      */
     public function setIndent($indent, $base = 0)
     {
         $this->baseIndent = is_string($base) ? $base : (int) $base;
-        $this->indent = is_string($indent)
-            ? $indent : ($indent === false ? false : (int) $indent);
-        $this->space = $indent === false ? '' : ' ';
+
+        if ($indent === false) {
+            $this->alignKeys = false;
+            $this->indent = false;
+            $this->space = '';
+        } else {
+            $this->indent = is_string($indent) ? $indent : (int) $indent;
+            $this->space = ' ';
+        }
     }
 
     /**
@@ -237,7 +237,6 @@ class PHPEncoder
     public function encode($variable)
     {
         $this->depth = 0;
-
         return $this->encodeValue($variable);
     }
 
@@ -245,44 +244,30 @@ class PHPEncoder
      * Encodes the variable correctly depending on type.
      * @param mixed $value Value to encode
      * @return string The value encoded as PHP
-     * @throws \RuntimeException If maximum depth has been reached
+     * @throws \InvalidArgumentException If the value has unknown argument type
      */
     private function encodeValue($value)
     {
-        if ($this->depth++ > $this->maxDepth && $this->maxDepth !== false) {
-            throw new \RuntimeException('Max encoding depth exceeded');
+        switch (true) {
+            case is_bool($value):
+                return $this->encodeBoolean($value);
+            case is_int($value):
+                return $this->encodeInteger($value);
+            case is_float($value):
+                return $this->encodeFloat($value);
+            case is_string($value):
+                return $this->encodeString($value);
+            case is_array($value):
+                return $this->encodeArray($value);
+            case is_object($value):
+                return $this->encodeObject($value);
+            case is_resource($value):
+                return $this->encodeResource($value);
+            case is_null($value):
+                return $this->encodeNull();
+            default:
+                throw new \InvalidArgumentException("Cannot encode value type: " . gettype($value));
         }
-
-        if (is_null($value)) {
-            $output = $this->encodeNull($value);
-        } elseif (is_bool($value)) {
-            $output = $this->encodeBoolean($value);
-        } elseif (is_int($value)) {
-            $output = $this->encodeInteger($value);
-        } elseif (is_float($value)) {
-            $output = $this->encodeFloat($value);
-        } elseif (is_string($value)) {
-            $output = $this->encodeString($value);
-        } elseif (is_array($value)) {
-            $output = $this->encodeArray($value);
-        } elseif (is_object($value)) {
-            $output = $this->encodeObject($value);
-        } else {
-            throw new \RuntimeException("Cannot encode value type: " . gettype($value));
-        }
-
-        $this->depth--;
-        return $output;
-    }
-
-    /**
-     * Encodes null type value.
-     * @param null $null Null
-     * @return string The string 'null'
-     */
-    private function encodeNull($null)
-    {
-        return 'null';
     }
 
     /**
@@ -365,53 +350,73 @@ class PHPEncoder
      * Encodes array type value.
      * @param array $array Array to encode
      * @return string Array presented in string format
+     * @throws \RuntimeException If maximum depth has been reached
      */
     private function encodeArray($array)
     {
-        $indent = $this->getIndent($this->depth);
-        $pairs = [];
-
-        if ($array === []) {
+        if ($this->depth > $this->maxDepth && $this->maxDepth !== false) {
+            throw new \RuntimeException('Max encoding depth exceeded');
+        } elseif ($array === []) {
             return '[]';
-        } else {
-            $nextNumber = 0;
-
-            if ($this->alignKeys) {
-                $maxKeyLength = 0;
-                $keys = [];
-
-                foreach (array_keys($array) as $key) {
-                    $keys[$key] = $this->encodeValue($key);
-                    $maxKeyLength = max($maxKeyLength, strlen($keys[$key]));
-                }
-            }
-
-            foreach ($array as $key => $value) {
-                if ($this->alignKeys) {
-                    $pairs[] = str_pad($keys[$key], $maxKeyLength) .
-                        ' => ' . $this->encodeValue($value);
-                } elseif ($key === $nextNumber) {
-                    $pairs[] = $this->encodeValue($value);
-                } else {
-                    $pairs[] =
-                        $this->encodeValue($key) .
-                        $this->space . '=>' . $this->space .
-                        $this->encodeValue($value);
-                }
-
-                if (is_int($key) && $key >= $nextNumber) {
-                    $nextNumber = $key + 1;
-                }
-            }
         }
+
+        $indent = $this->getIndent(++$this->depth);
+        $pairs = $this->alignKeys ? $this->getAlignedPairs($array) : $this->getPairs($array);
+        $this->depth--;
 
         if ($indent === false) {
             return '[' . implode(',', $pairs) . ']';
         }
 
-        return '[' . $this->eol .
-            $indent . implode(",$this->eol$indent", $pairs) . ',' . $this->eol .
-            $this->getIndent($this->depth - 1) . ']';
+        return '[' . PHP_EOL .
+            $indent . implode(',' . PHP_EOL . $indent, $pairs) . ',' . PHP_EOL .
+            $this->getIndent($this->depth) . ']';
+    }
+
+    /**
+     * Encodes keys and values ands aligns the keys with whitespace.
+     * @param array $array Array to encode into strings
+     * @return string[] Key and values encoded as strings
+     */
+    private function getAlignedPairs($array)
+    {
+        $keys = array_map([$this, 'encodeValue'], array_keys($array));
+        $maxKeyLength = $this->alignKeys ? max(array_map('strlen', $keys)) : 0;
+        $pairs = [];
+
+        foreach ($array as $value) {
+            $pairs[] = str_pad($keys[count($pairs)], $maxKeyLength) . ' => ' .
+                $this->encodeValue($value);
+        }
+
+        return $pairs;
+    }
+
+    /**
+     * Encodes the keys and values of an array into strings.
+     * @param array $array Array to encode into strings
+     * @return string[] Key and values encoded as strings
+     */
+    private function getPairs($array)
+    {
+        $pairs = [];
+        $nextIndex = 0;
+
+        foreach ($array as $key => $value) {
+            if ($key === $nextIndex && !$this->alignKeys) {
+                $pairs[] = $this->encodeValue($value);
+            } else {
+                $pairs[] = $this->encodeValue($key) .
+                    $this->space . '=>' . $this->space .
+                    $this->encodeValue($value);
+            }
+
+            if (is_int($key) && $key >= $nextIndex) {
+                $nextIndex = $key + 1;
+            }
+        }
+
+        return $pairs;
     }
 
     /**
@@ -421,8 +426,6 @@ class PHPEncoder
      */
     private function encodeObject($object)
     {
-        $this->depth--;
-
         if (method_exists($object, 'toPHP')) {
             $output = (string) $object->toPHP();
         } elseif (method_exists($object, 'toPHPValue')) {
@@ -439,9 +442,31 @@ class PHPEncoder
             }
         }
 
-        $this->depth++;
-
         return $output;
+    }
+
+    /**
+     * Encodes the resource as a string
+     * @param resource $value PHP resource to encode
+     * @return string The resource encoded as string
+     * @throws \InvalidArgumentException if the resource type is not supported
+     */
+    private function encodeResource($value)
+    {
+        if (get_resource_type($value) === 'GMP integer') {
+            return 'gmp_init(\'' . gmp_strval($value) . '\')';
+        }
+
+        throw new \InvalidArgumentException("Unsupported resource type: " . get_resource_type($value));
+    }
+
+    /**
+     * Encodes null type value.
+     * @return string The string 'null'
+     */
+    private function encodeNull()
+    {
+        return 'null';
     }
 
     /**
@@ -462,7 +487,7 @@ class PHPEncoder
 
     /**
      * Gets the properties of an object as an array.
-     * @param object $object Object to conver to an array
+     * @param object $object Object to convert to an array
      * @return array Array of properties and values
      * @throws \RuntimeException If object encoding is disabled
      */

@@ -2,15 +2,27 @@
 
 require_once __DIR__ . '/../src/PHPEncoder.php';
 
-class testMockObject {
-    private   $foo = 'A';
+class TestMockObject
+{
+    private $foo = 'A';
     protected $bar = 'B';
-    public    $baz = 'C';
-    public function __toString() { }
+    public $baz = 'C';
+    public function __toString()
+    {
+
+    }
 }
-class testMockObjectWithPHPValue extends testMockObject {
-    public function toPHPValue() { }
+class TestMockObjectWithPHPValue extends TestMockObject
+{
+    public function toPHPValue()
+    {
+
+    }
 }
-class testMockObjectWithPHP extends testMockObjectWithPHPValue {
-    public function toPHP() { }
+class TestMockObjectWithPHP extends TestMockObjectWithPHPValue
+{
+    public function toPHP()
+    {
+
+    }
 }
