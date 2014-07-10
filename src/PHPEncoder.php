@@ -66,7 +66,7 @@ class PHPEncoder
 
     /**
      * One level of indentation for the code.
-     * @var integer|string
+     * @var integer|string|false
      */
     private $indent;
 
