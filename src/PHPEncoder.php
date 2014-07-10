@@ -125,7 +125,7 @@ class PHPEncoder
         $this->bigIntegers = false;
         $this->floatPrecision = 17;
         $this->escapeStrings = true;
-        $this->objectFlags = self::OBJECT_PROPERTIES | self::OBJECT_CAST;
+        $this->objectFlags = self::OBJECT_VARS | self::OBJECT_CAST;
         $this->alignKeys = false;
         $this->baseIndent = 0;
         $this->indent = 4;
