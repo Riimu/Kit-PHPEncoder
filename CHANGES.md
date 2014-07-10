@@ -1,5 +1,10 @@
 # Changelog #
 
+## v1.5.0 (2014-07-10) ##
+
+  * Added new object conversion flags OBJECT_VARS and OBJECT_SET_STATE.
+  * Documentation now acknowledges the existence of var_export
+
 ## v1.4.0 (2014-05-31) ##
 
   * GMP Integer resources are now encoded using 'gmp_init()'

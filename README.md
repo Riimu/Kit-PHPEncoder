@@ -1,9 +1,9 @@
 # PHP value encoder #
 
-This library encodes values as PHP code similar to how `json_encode()` encodes
-values as JSON. The purpose of this library is to make it easier to write data
-into files directly as PHP instead of using auxiliary formats such as ini files
-or JSON.
+This library provides a more customizable and more accurate functionality for
+producing PHP code than PHP's built int `var_export`. In other words, the
+library can take PHP values and produce a string representation of those values
+that can be parsed as PHP code.
 
 A common use case could be writing database configuration into file based on
 what user entered in a installation script. They can't exactly be stored in
@@ -94,6 +94,18 @@ file_put_contents('dbconf.php', '<?php return ' . $encoder->encode($config) . ';
 $dbconf = require 'dbconf.php';
 ```
 
+## Comparison to var_export ##
+
+In addition to the other configurable options listed below, there are a few
+notable key differences between this library and the built in var_export
+
+  * var_export will sometimes produce integers from floats. This library
+    preserves the variables types
+  * Since this library is for PHP 5.4+, the arrays use the short syntax
+    exclusively (i.e. `[ ]` instead of `array( )`)
+  * Outputted arrays will omit unnecessary keys in the code, when possible
+  * There are number of different ways to treat objects
+
 ## Notes and limitiations ##
 
   * The encoder does not detect variable references. Each reference is traversed
@@ -104,8 +116,8 @@ $dbconf = require 'dbconf.php';
   * The library will encode any GMP resource with `gmp_init()` around the string
     value. Any other type of resource will throw an exception.
   * When encoding arrays, the output will omit any unnecessary numeric keys.
-    Thus [0=>'a',1=>'b'] will output['a','b']. However, the order of elements
-    is preserved. Thus, [1=>'b',0=>'a'] will ouput [1=>'b',0=>'a']. When
+    Thus [0=>'a',1=>'b'] will output ['a','b']. However, the order of elements
+    is preserved. Thus, [1=>'b',0=>'a'] will output [1=>'b',0=>'a']. When
     `setAlignKeys($state)` is set to true, keys will not be omitted.
   * The library uses PHP_EOL as the end of line character (depends on system)
   * Special care should be taken when encoding objects and floats. See below
@@ -175,20 +187,24 @@ If neither of these methods exist, then default object handling is used. This
 behavior can be changed by using the `setObjectFlags($flags)` method. Following
 flags exist:
 
-  * `PHPEncoder::OBJECT_STRING` converts all objects into string
+  * `PHPEncoder::OBJECT_STRING` casts all objects into strings
   * `PHPEncoder::OBJECT_SERIALIZE` serializes objects and wraps them around `unserialize()`
   * `PHPEncoder::OBJECT_ARRAY` casts objects into array
   * `PHPEncoder::OBJECT_ITERATE` iterates over object to convert into array
   * `PHPEncoder::OBJECT_PROPERTIES` iterates over all public properties of the
     object to turn into array.
+  * `PHPEncoder::OBJECT_VARS` fetches all object variables using `get_object_vars()`
+    for turning the object into array.
+  * `PHPEncoder::OBJECT_SET_STATE` converts objects into `__set_state` calls
+    similar to `var_export()`.
 
-When using, either 'OBJECT_ARRAY', 'OBJECT_ITERATE' or 'OBJECT_PROPERTIES', you
-may combine them with the flag `PHPEncoder::OBJECT_CAST` in order to add an
-`(object)` cast in front of the array, which will cause the array to be turned
-into stdClass instance on runtime.
+When using, either 'OBJECT_ARRAY', 'OBJECT_ITERATE', 'OBJECT_PROPERTIES' or
+'OBJECT_VARS' you may combine them with the flag `PHPEncoder::OBJECT_CAST` in
+order to add an `(object)` cast in front of the array, which will cause the
+array to be turned into stdClass instance on runtime.
 
-The default object handing is `self::OBJECT_PROPERTIES | self::OBJECT_CAST`, in
-order to replicate `json_encode()` functionality.
+The default object handing is `self::OBJECT_VARS | self::OBJECT_CAST`, in order
+to replicate `json_encode()` functionality.
 
 ## Credits ##
 

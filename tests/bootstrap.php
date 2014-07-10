@@ -12,6 +12,13 @@ class TestMockObject
 
     }
 }
+
+class ExtendsTestMockObject extends TestMockObject
+{
+    private $fooC = 'D';
+    public $bazC = 'E';
+}
+
 class TestMockObjectWithPHPValue extends TestMockObject
 {
     public function toPHPValue()
@@ -19,6 +26,7 @@ class TestMockObjectWithPHPValue extends TestMockObject
 
     }
 }
+
 class TestMockObjectWithPHP extends TestMockObjectWithPHPValue
 {
     public function toPHP()

@@ -65,7 +65,34 @@ class ObjectEncodingTest extends \PHPUnit_Framework_TestCase
 
         $std = new \stdClass();
         $std->baz = 'C';
-        $this->assertEquals($std, eval('return ' . $encoder->encode($obj) . ';'));
+        $this->assertEquals("(object) []", $encoder->encode($std));
+    }
+
+    public function testObjectVarsArray()
+    {
+        $encoder = new PHPEncoder();
+        $encoder->setIndent(false);
+        $encoder->setObjectFlags(PHPEncoder::OBJECT_VARS);
+
+        $std = new \stdClass();
+        $std->baz = 'C';
+        $this->assertEquals("['baz'=>'C']", $encoder->encode($std));
+
+        $encoder->setObjectFlags(PHPEncoder::OBJECT_VARS | PHPEncoder::OBJECT_CAST);
+        $this->assertEquals("(object)['baz'=>'C']", $encoder->encode($std));
+    }
+
+    public function testSetState()
+    {
+        $encoder = new PHPEncoder();
+        $encoder->setIndent(false);
+        $encoder->setObjectFlags(PHPEncoder::OBJECT_SET_STATE);
+
+        $obj = new \ExtendsTestMockObject();
+        $this->assertEquals(
+            "\\ExtendsTestMockObject::__set_state(['fooC'=>'D','bazC'=>'E','bar'=>'B','baz'=>'C','foo'=>'A'])",
+            $encoder->encode($obj)
+        );
     }
 
     public function testIteratingArray()

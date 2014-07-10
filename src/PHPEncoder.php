@@ -5,8 +5,8 @@ namespace Riimu\Kit\PHPEncoder;
 /**
  * PHPEncoder provides a way to convert variables into PHP code.
  *
- * PHPEncoder provides functionality similar to json_encode(), but instead if
- * outputting JSON, it outputs PHP code. This makes it easier to dynamically
+ * PHPEncoder provides functionality similar to var_export(), but allows more
+ * customization and wider range of features. This makes it easier to dynamically
  * generate PHP files such as configuration or cache files when you don't have
  * to worry about producing PHP code from dynamic variables.
  *
@@ -105,6 +105,16 @@ class PHPEncoder
      * @var integer Flag to cast any generated object array into object.
      */
     const OBJECT_CAST = 32;
+
+    /**
+     * @var integer Flag to get object's variables as an array.
+     */
+    const OBJECT_VARS = 64;
+
+    /**
+     * @var integer Flag to convert objects into __set_state calls.
+     */
+    const OBJECT_SET_STATE = 128;
 
     /**
      * Creates a new PHPEncoder instance.
@@ -434,6 +444,10 @@ class PHPEncoder
             $output = $this->encodeValue((string) $object);
         } elseif ($this->objectFlags & self::OBJECT_SERIALIZE) {
             $output = 'unserialize(' . $this->encodeValue(serialize($object)) .')';
+        } elseif ($this->objectFlags & self::OBJECT_SET_STATE) {
+            $output = '\\' . get_class($object) . '::__set_state(' .
+                $this->encodeValue($this->getAllProperties($object)) .
+                ')';
         } else {
             $output = $this->encodeValue($this->getObjectProperties($object));
 
@@ -496,10 +510,39 @@ class PHPEncoder
             foreach ((new \ReflectionClass($object))->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
                 $array[$property->getName()] = $property->getValue($object);
             }
+        } elseif ($this->objectFlags & self::OBJECT_VARS) {
+            $array = get_object_vars($object);
         } else {
             throw new \RuntimeException('Object encoding disabled, cannot encode objects');
         }
 
         return $array;
+    }
+
+    /**
+     * Returns array of all properties of the object and it's parents.
+     * @param object $object Object to turn into array
+     * @return array Properties of the object and it's parents
+     */
+    private function getAllProperties($object)
+    {
+        $class = new \ReflectionClass($object);
+        $visibility = \ReflectionProperty::IS_PRIVATE | \ReflectionProperty::IS_PROTECTED
+            | \ReflectionProperty::IS_PUBLIC;
+        $values = [];
+
+        do {
+            foreach ($class->getProperties($visibility) as $property) {
+                if (!isset($values[$property->getName()])) {
+                    $property->setAccessible(true);
+                    $values[$property->getName()] = $property->getValue($object);
+                }
+            }
+
+            $class = $class->getParentClass();
+            $visibility = \ReflectionProperty::IS_PRIVATE;
+        } while ($class);
+
+        return $values;
     }
 }
