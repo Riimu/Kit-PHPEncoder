@@ -39,7 +39,7 @@ class PHPEncoder
      * encoders will be used instead.
      *
      * @param array $options List of encoder options
-     * @param Encoder\Encoder[] $encoders List of encoders to use
+     * @param null|Encoder\Encoder[] $encoders List of encoders to use
      */
     public function __construct(array $options = [], array $encoders = null)
     {

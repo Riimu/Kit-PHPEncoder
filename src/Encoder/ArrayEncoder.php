@@ -89,7 +89,7 @@ class ArrayEncoder implements Encoder
      * @param array $array Array to convert into code
      * @param array $options List of encoder options
      * @param callable $encode Callback used to encode values
-     * @return string[] List of array key and value pairs as strings
+     * @return string|string[] Array encoded as strings or simple array as a string
      */
     private function getLines(array $array, array $options, callable $encode)
     {
@@ -147,7 +147,7 @@ class ArrayEncoder implements Encoder
      * @param boolean $inline Set to true, if all the keys were omitted, false otherwise     *
      * @return string[] List of array key and value pairs as strings
      */
-    private function getPairs($array, $space, $omit, callable $encode, & $inline = null)
+    private function getPairs($array, $space, $omit, callable $encode, & $inline = true)
     {
         $pairs = [];
         $nextIndex = 0;
@@ -156,7 +156,7 @@ class ArrayEncoder implements Encoder
 
         foreach ($array as $key => $value) {
             if ($key === $nextIndex && $omit) {
-                $pairs[] = $encode($value, +1);
+                $pairs[] = $encode($value, 1);
             } else {
                 $pairs[] = sprintf($format, $encode($key, 1), $encode($value, 1));
                 $inline = false;
