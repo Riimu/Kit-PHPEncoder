@@ -2,15 +2,15 @@
 
 namespace Riimu\Kit\PHPEncoder\Encoder;
 
-use Riimu\Kit\PHPEncoder\RecursiveEncoder;
-
 /**
+ * Encoder for float values.
  * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>
  * @copyright Copyright (c) 2014, Riikka Kalliomäki
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
 class FloatEncoder implements Encoder
 {
+    /** @var array Default values for options in the encoder */
     private static $defaultOptions = [
         'float.integers' => false,
         'float.precision' => 17,
@@ -39,6 +39,12 @@ class FloatEncoder implements Encoder
         return $this->enforceType($this->getFloatString($value, $options['float.precision']));
     }
 
+    /**
+     * Converts the float value into string representation.
+     * @param float $float Value to convert
+     * @param integer|false $precision Number of decimals in the number
+     * @return string The given float value as a string
+     */
     public function getFloatString($float, $precision)
     {
         if ($precision === false) {
@@ -53,8 +59,13 @@ class FloatEncoder implements Encoder
         return $output;
     }
 
+    /**
+     * Ensures that the float representation will be parsed as float value.
+     * @param string $string Float string representation
+     * @return string Float value as string with enforced type
+     */
     public function enforceType($string)
     {
-        return preg_match('/^[-+]?\d+$/', $string) ? "$string.0" : $string;
+        return $string . (preg_match('/^[-+]?\d+$/', $string) ? '.0' : '');
     }
 }

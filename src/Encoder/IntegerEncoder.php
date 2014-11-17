@@ -2,9 +2,8 @@
 
 namespace Riimu\Kit\PHPEncoder\Encoder;
 
-use Riimu\Kit\PHPEncoder\RecursiveEncoder;
-
 /**
+ * Encoder for integer values.
  * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>
  * @copyright Copyright (c) 2014, Riikka Kalliomäki
  * @license http://opensource.org/licenses/mit-license.php MIT License

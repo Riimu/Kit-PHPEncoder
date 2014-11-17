@@ -2,15 +2,15 @@
 
 namespace Riimu\Kit\PHPEncoder\Encoder;
 
-use Riimu\Kit\PHPEncoder\RecursiveEncoder;
-
 /**
+ * Encoder for null values.
  * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>
  * @copyright Copyright (c) 2014, Riikka Kalliomäki
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
 class NullEncoder implements Encoder
 {
+    /** @var array Default values for options in the encoder */
     private static $defaultOptions = [
         'null.capitalize' => false,
     ];
