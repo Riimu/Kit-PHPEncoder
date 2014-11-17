@@ -1,8 +1,8 @@
 {
     "name": "riimu/kit-phpencoder",
     "type": "library",
-    "description": "More customizable and accurate implementation of var_export.",
-    "keywords": ["variables", "encoding"],
+    "description": "Highly customisable alternative to var_export for PHP code generation.",
+    "keywords": ["variable", "export", "code", "generation", "encoding"],
     "license": "MIT",
     "authors": [
         {

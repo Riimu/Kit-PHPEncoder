@@ -1,2 +1,5 @@
 .idea
 apidoc
+coverage
+vendor
+dev

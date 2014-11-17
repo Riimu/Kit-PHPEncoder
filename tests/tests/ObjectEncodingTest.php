@@ -11,8 +11,7 @@ class ObjectEncodingTest extends \PHPUnit_Framework_TestCase
 {
     public function testSerialize()
     {
-        $encoder = new PHPEncoder();
-        $encoder->setObjectFlags(PHPEncoder::OBJECT_SERIALIZE);
+        $encoder = new PHPEncoder(['object.format' => 'serialize']);
         $obj = new \stdClass();
         $obj->foo = 'bar';
         $obj->baz = true;
@@ -26,10 +25,15 @@ class ObjectEncodingTest extends \PHPUnit_Framework_TestCase
 
     public function testStringConversion()
     {
-        $encoder = new PHPEncoder();
-        $encoder->setObjectFlags(PHPEncoder::OBJECT_STRING);
-        $mock = $this->getMock('TestMockObject', ['__toString']);
+        $encoder = new PHPEncoder([
+            'object.format' => 'string',
+            'object.method' => false,
+        ]);
+
+        $mock = $this->getMock('TestMockObject', ['__toString', 'toPHP']);
         $mock->expects($this->once())->method('__toString')->will($this->returnValue('Mocked'));
+        $mock->expects($this->exactly(0))->method('toPHP');
+
         $this->assertSame('Mocked', eval('return ' . $encoder->encode($mock) . ';'));
     }
 
@@ -49,7 +53,7 @@ class ObjectEncodingTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('"Mocked"', $encoder->encode($mock));
     }
 
-    public function testPropertiesArray()
+    public function atestPropertiesArray()
     {
         $e = PHP_EOL;
         $encoder = new PHPEncoder();
@@ -70,46 +74,59 @@ class ObjectEncodingTest extends \PHPUnit_Framework_TestCase
 
     public function testObjectVarsArray()
     {
-        $encoder = new PHPEncoder();
-        $encoder->setIndent(false);
-        $encoder->setObjectFlags(PHPEncoder::OBJECT_VARS);
+        $encoder = new PHPEncoder([
+            'whitespace' => false,
+            'object.format' => 'vars',
+            'object.cast' => false,
+        ]);
 
         $std = new \stdClass();
         $std->baz = 'C';
         $this->assertEquals("['baz'=>'C']", $encoder->encode($std));
-
-        $encoder->setObjectFlags(PHPEncoder::OBJECT_VARS | PHPEncoder::OBJECT_CAST);
-        $this->assertEquals("(object)['baz'=>'C']", $encoder->encode($std));
+        $this->assertEquals("(object) [\n 'baz' => 'C',\n]", $encoder->encode($std, [
+            'object.cast' => true,
+            'whitespace' => true,
+            'array.eol' => "\n",
+            'array.indent' => ' ',
+        ]));
     }
 
-    public function testSetState()
+    public function testObjectExport()
     {
-        $encoder = new PHPEncoder();
-        $encoder->setIndent(false);
-        $encoder->setObjectFlags(PHPEncoder::OBJECT_SET_STATE);
+        $encoder = new PHPEncoder([
+            'object.format' => 'export',
+            'whitespace' => false,
+        ]);
 
         $obj = new \ExtendsTestMockObject();
+        $obj->var = true;
         $this->assertEquals(
-            "\\ExtendsTestMockObject::__set_state(['fooC'=>'D','bazC'=>'E','bar'=>'B','baz'=>'C','foo'=>'A'])",
+            "\\ExtendsTestMockObject::__set_state(['bazC'=>'E','baz'=>'C','var'=>true,'fooC'=>'D','bar'=>'B','foo'=>'A'])",
             $encoder->encode($obj)
         );
     }
 
     public function testIteratingArray()
     {
+        $encoder = new PHPEncoder([
+            'whitespace' => false,
+            'object.format' => 'iterate',
+            'object.cast' => false,
+        ]);
+
         $array = ['foo' => 'bar', [1, 2], 3, 10 => 1337, 11 => 7, 6 => 6];
-        $encoder = new PHPEncoder();
-        $encoder->setIndent(false);
-        $encoder->setObjectFlags(PHPEncoder::OBJECT_ITERATE);
         $this->assertSame("['foo'=>'bar',[1,2],3,10=>1337,7,6=>6]", $encoder->encode(new \ArrayObject($array)));
         $this->assertSame($array, eval('return ' . $encoder->encode(new \ArrayObject($array)) . ';'));
     }
 
     public function testArrayCasting()
     {
-        $encoder = new PHPEncoder();
-        $encoder->setIndent(false);
-        $encoder->setObjectFlags(PHPEncoder::OBJECT_ARRAY);
+        $encoder = new PHPEncoder([
+            'whitespace' => false,
+            'object.format' => 'array',
+            'object.cast' => false,
+        ]);
+
         $obj = new \stdClass();
         $this->assertSame("[]", $encoder->encode($obj));
         $mock = new \TestMockObject();
@@ -123,13 +140,10 @@ class ObjectEncodingTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @expectedException \RuntimeException
-     */
-    public function testNoObjectHandling()
+    public function testInvalidFormat()
     {
-        $encoder = new PHPEncoder();
-        $encoder->setObjectFlags(0);
+        $encoder = new PHPEncoder(['object.format' => 'invalid']);
+        $this->setExpectedException('RuntimeException');
         $encoder->encode(new \stdClass());
     }
 }
