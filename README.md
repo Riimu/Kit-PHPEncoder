@@ -81,7 +81,7 @@ This would create the following output:
 
 Of course, the most important feature of this library is the ability to
 customize the created the PHP code. As the second argument, the `encode()`
-method takes an array of options, which can be used to customise the returned
+method takes an array of options, which can be used to customize the returned
 PHP code. For example:
 
 ```php

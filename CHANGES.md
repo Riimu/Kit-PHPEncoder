@@ -1,6 +1,6 @@
 # Changelog #
 
-## v2.0.0 (?) ##
+## v2.0.0 (2014-12-29) ##
 
   * Encoding is now separated into external encoding classes
   * Various options are now set via PHPEncoder::setOption() instead
