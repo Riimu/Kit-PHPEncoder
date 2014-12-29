@@ -191,13 +191,13 @@ apply to following calls.
     Default object encoding format. The possible values are:
     
      * `string` casts the object to string and then encodes that string as PHP.
-     * `serialize` serializes the object and wraps it with `unseriealize()`
+     * `serialize` serializes the object and wraps it with `unserialize()`
      * `export` mimics the `var_export()` object representation
      * `array` casts the object to an array and encodes that array 
      * `vars` turns object into an array using `get_object_vars()`
      * `iterate` turns the object into an array by iterating over it with `foreach`
     
-  * **object.cast** : &lt;boolean&gt; (true)
+  * **object.cast** : &lt;boolean&gt; (true)  
     Whether to add an `(object)` cast in front of arrays generated from objects
     when using `vars`, `array` or `iterate` formats.
     
