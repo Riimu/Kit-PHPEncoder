@@ -158,7 +158,7 @@ apply to following calls.
     Base indentation for arrays as number of spaces or as a string. Useful, when
     generating code into files with specific level of indentation.
     
-  * **array.indent** : &lt;integer|string&gt; (0)  
+  * **array.indent** : &lt;integer|string&gt; (4)  
     Amount of indentation for single level of indentation as number of spaces or
     a string.
     
