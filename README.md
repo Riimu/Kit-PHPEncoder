@@ -1,211 +1,220 @@
-# PHP value encoder #
+# PHP Variable Exporting #
 
-This library provides a more customizable and more accurate functionality for
-producing PHP code than PHP's built int `var_export`. In other words, the
-library can take PHP values and produce a string representation of those values
-that can be parsed as PHP code.
+PHPEncoder is a PHP library for exporting variables into PHP code similar to the
+built in function `var_export()`. Compared to the built in function, this 
+library provides a more customizable alternative that makes it easier to 
+dynamically create configuration files and cache files in the format you desire.
 
-A common use case could be writing database configuration into file based on
-what user entered in a installation script. They can't exactly be stored in
-a database and using formats like JSON for just database configuration may be
-an overkill. Another common use case might be creating cache files in PHP that
-store precomputed values.
+The purpose of this library is to address some of the problems with
+`var_export()`. For example, there are no options to control the amount of
+whitespace in the output, which sometimes results in too verbose output. This
+library also offers more options in how to export objects.
 
-It is good to note, however, that storing dynamic data in PHP files is not
-always the best idea. For larger configuration files, it's usually advisable to
-use other formats such as JSON, because these tend to be easier to edit and
-errors in those configurations won't cause PHP parse errors. Data that can be
-edited though admin interfaces is also usually best stored in a database.
+The large number of customization options in this library allows you to create
+code that fits your purposes. You can create very compact code, when you need to
+limit the size of the output, or you can create code in the style that actually
+fits in any of your dynamically generated PHP files.
 
-Encoding values as PHP files may be a good idea, when you have bunch of static
-data that is often required but doesn't really change that much, such as
-database configuration values.
-
-API documentation is [available](http://kit.riimu.net/api/phpencoder/) and it
-can be generated using ApiGen.
+The API documentation, which can be generated using Apigen, can be read online
+at: http://kit.riimu.net/api/phpencoder/
 
 [![Build Status](https://travis-ci.org/Riimu/Kit-PHPEncoder.svg?branch=master)](https://travis-ci.org/Riimu/Kit-PHPEncoder)
 [![Coverage Status](https://coveralls.io/repos/Riimu/Kit-PHPEncoder/badge.png?branch=master)](https://coveralls.io/r/Riimu/Kit-PHPEncoder?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Riimu/Kit-PHPEncoder/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Riimu/Kit-PHPEncoder/?branch=master)
 
+## Requirements ##
+
+In order to use this library, the following requirements must be met:
+
+  * PHP version 5.4
+
 ## Installation ##
 
-This library can be easily installed using [Composer](http://getcomposer.org/)
-by including the following dependency in your `composer.json`:
+This library can be installed via [Composer](http://getcomposer.org/). To do
+this, download `composer.phar` and require this library as dependency. For
+example:
+
+```
+$ php -r "readfile('https://getcomposer.org/installer');" | php
+$ php composer.phar require riimu/kit-phpencoder:2.*
+```
+
+Alternatively, you add the dependency to your `composer.json` and run `composer
+install`. For example:
 
 ```json
 {
     "require": {
-        "riimu/kit-phpencoder": "1.*"
+        "riimu/kit-phpencoder": "2.*"
     }
 }
 ```
 
-The library will be the installed by running `composer install` and the classes
-can be loaded with simply including the `vendor/autoload.php` file.
+If you installed the library via Composer. You can load the library by including
+the `vendor/autoload.php` file. If you do not want to use Composer, you can
+download the latest release and include the `src/autoload.php` file instead.
 
 ## Usage ##
 
-Using the library is mostly quite simple. In most cases, there is one method
-`encode()` that you need to concern yourself about, which simply produces the
-PHP code for the provided value.
+The most relevant method provided by this library is the `encode()` method
+provided by `PHPEncoder`. The method takes any value as an argument and returns
+the PHP code representation for that value.
 
 For example:
 
 ```php
 <?php
-$encoder = new \Riimu\Kit\PHPEncoder\PHPEncoder();
-echo $encoder->encode(['foo' => 'bar', [1, true, false, null, 1.1]]);
 
-/* The above outputs:
+require 'vendor/autoload.php';
+$encoder = new \Riimu\Kit\PHPEncoder\PHPEncoder();
+echo $encoder->encode(['foo' => 'bar', [1, true, false, null, 1.0]]);
+```
+
+This would create the following output:
+
+``` 
 [
     'foo' => 'bar',
-    [
-        1,
-        true,
-        false,
-        null,
-        1.1,
-    ],
-]*/
-
-$encoder->setIndent(false);
-echo $encoder->encode(['foo' => 'bar', [1, true, false, null, 1.1]]);
-
-// The above outputs: ['foo'=>'bar',[1,true,false,null,1.1]]
+    [1, true, false, null, 1.0],
+]
 ```
 
-An example of common use case could be like:
+Of course, the most important feature of this library is the ability to
+customize the created the PHP code. As the second argument, the `encode()`
+method takes an array of options, which can be used to customise the returned
+PHP code. For example:
 
-```PHP
-// Configuration script asks user for database details
-$config = [
-    'database' => 'mydb',
-    'hostname' => 'localhost',
-    'username' => 'dbuser',
-    'password' => 'dbpass'
-];
+```php
+<?php
 
-// Store the configuration into a file
+require 'vendor/autoload.php';
 $encoder = new \Riimu\Kit\PHPEncoder\PHPEncoder();
-file_put_contents('dbconf.php', '<?php return ' . $encoder->encode($config) . ';');
-
-// Load the config from the file
-$dbconf = require 'dbconf.php';
+echo $encoder->encode(['foo' => 'bar', [1, true, false, null, 1.0]], [
+    'array.inline' => false,
+    'array.omit' => false,
+    'array.indent' => 2,
+    'boolean.capitalize' => true,
+    'null.capitalize' => true,
+]);
 ```
 
-## Comparison to var_export ##
+This would create the following output:
 
-In addition to the other configurable options listed below, there are a few
-notable key differences between this library and the built in var_export
+```
+[
+  'foo' => 'bar',
+  0 => [
+    0 => 1,
+    1 => TRUE,
+    2 => FALSE,
+    3 => NULL,
+    4 => 1.0,
+  ],
+]
+```
 
-  * var_export will sometimes produce integers from floats. This library
-    preserves the variables types
-  * Since this library is for PHP 5.4+, the arrays use the short syntax
-    exclusively (i.e. `[ ]` instead of `array( )`)
-  * Outputted arrays will omit unnecessary keys in the code, when possible
-  * There are number of different ways to treat objects
+### Options ###
 
-## Notes and limitiations ##
+Encoding options allow you to customize the output of the `encode()` method. It
+is possible to set these options in three different ways:
 
-  * The encoder does not detect variable references. Each reference is traversed
-    as if it was any other variable.
-  * In order to avoid infinite loops on recursive arrays or objects, maximum
-    encoding depth can be set using `setMaxDepth($depth)`. This defaults to 20.
-    Setting it to false disables the limit.
-  * The library will encode any GMP resource with `gmp_init()` around the string
-    value. Any other type of resource will throw an exception.
-  * When encoding arrays, the output will omit any unnecessary numeric keys.
-    Thus [0=>'a',1=>'b'] will output ['a','b']. However, the order of elements
-    is preserved. Thus, [1=>'b',0=>'a'] will output [1=>'b',0=>'a']. When
-    `setAlignKeys($state)` is set to true, keys will not be omitted.
-  * The library uses PHP_EOL as the end of line character (depends on system)
-  * Special care should be taken when encoding objects and floats. See below
-    for notes about encoding these types.
-  * Due to being PHP 5.4 library, the outputted arrays will use short array
-    notation, i.e. "[" and "]".
+  * Options can be provided as an array to the `PHPEncoder` constructor.
+  * Option values can be set via the `setOption()` method.
+  * Options can be passed as an array as the second argument to the `encode()` method.
+  
+Note that options passed to the `encode()` method are only temporary and do not
+apply to following calls.
 
-## Formatting ##
+### List of Options ###
 
-There are couple of ways to change how the output is formatted, which, in
-particular, affects how arrays are outputted:
-
-  * `setIndent($indent, $baseIndent = 0)` allows you to define how arrays are
-    indented. $indent defines how much each level is indented and $baseIndent
-    defines how much should the base indentation level be. Both arguments may
-    be strings or integers. If string is provided, then that string is used as
-    is, if number is provided, then that many spaces is used. Additionally, you
-    may provide `false` as the argument to remove all unnecessary whitespace
-    from the provided code.
-  * `setAlignKeys($state)` allows you to align array keys in a column. In other
-    words, if the array keys have different lengths, then the `=>` operator will be
-    aligned in the same column on each row. Note that disabling whitespace via
-    `setIndent()` will also disable this setting.
-  * `setEscapeStrings($state)` defaults to true, which encodes strings using
-    escape sequences whenever they contain ascii control characters or bytes
-    with value of 127 or greater. This helps to ensure the string contents
-    remain intact when the data is transferred or stored in a file.
-
-## Floats ##
-
-Encoding floating point values can be tricky due to problems related to
-precision. Mostly the issue is with meeting expectations vs. maintaining
-accuracy.
-
-The default behavior of the encoding library is to preserve accuracy and to
-preserve type. This means that, for example, if you have a floating point value
-of "1", if will be written as "1.0" in order to preserve the type. In addition,
-the library will write 17 significant digits of float as opposed to 14, which is
-default in many PHP installations.
-
-These behaviors can be changed using `setFloatPrecision($precision)` which
-can be used to change the number of significant digits in floats (or use false
-for PHP default) and `setBigIntegers($state)` which can be enabled to write any
-floating point value that does not have fractions as an integer representation
-(i.e. without scientific notation and the ".0" part used to preserve type).
-
-Smaller precision may sometimes be more desirable, if higher precision is not
-required, as high precision may lead to unexpected outputs. For example,
-encoding the value of "1.1" using 17 digits of precision will produce
-"1.1000000000000001". This is not a flaw in the library, but rather a side
-effect of how floating point values work.
-
-## Objects ##
-
-There is no object notation in PHP similar to JSON. Because of this, this library
-does not assume that there is one solution for every possible case for handling
-objects. In order to provide a good solution, the library provides following
-possible approaches.
-
-First and foremost, each encountered object is checked for method 'toPHP' or
-'toPHPValue'. If the method 'toPHP' is detected, it's called and the return
-value is inserted into the outputted code directly. The difference to
-'toPHPValue' is, that value returned by 'toPHPValue' is encoded into PHP by
-the library, instead of being inserted directly into code.
-
-If neither of these methods exist, then default object handling is used. This
-behavior can be changed by using the `setObjectFlags($flags)` method. Following
-flags exist:
-
-  * `PHPEncoder::OBJECT_STRING` casts all objects into strings
-  * `PHPEncoder::OBJECT_SERIALIZE` serializes objects and wraps them around `unserialize()`
-  * `PHPEncoder::OBJECT_ARRAY` casts objects into array
-  * `PHPEncoder::OBJECT_ITERATE` iterates over object to convert into array
-  * `PHPEncoder::OBJECT_PROPERTIES` iterates over all public properties of the
-    object to turn into array.
-  * `PHPEncoder::OBJECT_VARS` fetches all object variables using `get_object_vars()`
-    for turning the object into array.
-  * `PHPEncoder::OBJECT_SET_STATE` converts objects into `__set_state` calls
-    similar to `var_export()`.
-
-When using, either 'OBJECT_ARRAY', 'OBJECT_ITERATE', 'OBJECT_PROPERTIES' or
-'OBJECT_VARS' you may combine them with the flag `PHPEncoder::OBJECT_CAST` in
-order to add an `(object)` cast in front of the array, which will cause the
-array to be turned into stdClass instance on runtime.
-
-The default object handing is `self::OBJECT_VARS | self::OBJECT_CAST`, in order
-to replicate `json_encode()` functionality.
+  * **whitespace** : &lt;boolean&gt; (true)  
+    When set to false, generation of all extra whitespace is disabled.
+    
+  * **null.capitalize** : &lt;boolean&gt; (false)  
+    When set to true, nulls are written in upper case instead of lower case. 
+ 
+  * **boolean.capitalize** : &lt;boolean&gt; (false)  
+    When set to true, true and false are written in upper case instead of lower case.
+    
+  * **float.integers** : &lt;boolean&gt; (false)  
+    When set to true, float values that represent integers are encoded as
+    integers instead of floats (e.g. '2.0' will be simply written as '2').
+    
+  * **float.precision** : &lt;integer|false&gt; (17)  
+    Maximum number of decimals in floats. If set to false, the PHP ini setting
+    'precision' is used instead. Note that due to the way floating point values
+    work, more than 17 digits does not provide any additional precision.
+    
+  * **string.escape** : &lt;boolean&gt; (true)  
+    When set to true, all strings containing bytes outside the 32-126 ASCII
+    range will be written with double quotes and the characters outside the
+    range will be escaped.
+    
+  * **array.short** : &lt;boolean&gt; (true)  
+    When set to true, arrays are enclosed using square brackets `[]` instead of
+    the `array()` notation.
+    
+  * **array.base** : &lt;integer|string&gt; (0)  
+    Base indentation for arrays as number of spaces or as a string. Useful, when
+    generating code into files with specific level of indentation.
+    
+  * **array.indent** : &lt;integer|string&gt; (0)  
+    Amount of indentation for single level of indentation as number of spaces or
+    a string.
+    
+  * **array.align** : &lt;boolean&gt; (false)  
+    When set to true, array assignment operators `=>` are aligned to the same
+    column using spaces.
+    
+  * **array.inline** : &lt;boolean|integer&gt; (70)  
+    When set to true, any array that can be written without any array keys will
+    be written in a single line. If an integer is provided instead, the array
+    will be written as a single line only if it does not exceed that number of
+    characters.
+     
+  * **array.omit** : &lt;boolean&gt; (true)  
+    When set to true, any redundant array key will not be written. (e.g. the
+    array `[0 => 'a', 1 => 'b']` would be written just as `['a', 'b']`)
+  
+  * **array.eol** : &lt;string|false&gt; (false)  
+    The end of line character used by array output. When set to false, the
+    default `PHP_EOL` will be used instead.
+    
+  * **object.method** : &lt;boolean&gt; (true)  
+    When set to true, any encoded object will be checked for methods `toPHP()`
+    and `toPHPValue()`. If the method `toPHP()` exists, the returned string will
+    be used as the PHP code representation of the object. If the method
+    `toPHPValue()` exists instead, the returned value will be encoded as PHP and
+    used as the code representation of the object.
+    
+  * **object.format** : &lt;string&gt; ('vars')  
+    Default object encoding format. The possible values are:
+    
+     * `string` casts the object to string and then encodes that string as PHP.
+     * `serialize` serializes the object and wraps it with `unseriealize()`
+     * `export` mimics the `var_export()` object representation
+     * `array` casts the object to an array and encodes that array 
+     * `vars` turns object into an array using `get_object_vars()`
+     * `iterate` turns the object into an array by iterating over it with `foreach`
+    
+  * **object.cast** : &lt;boolean&gt; (true)
+    Whether to add an `(object)` cast in front of arrays generated from objects
+    when using `vars`, `array` or `iterate` formats.
+    
+  * **recursion.detect** : &lt;boolean&gt; (true)  
+    When set to true, the encoder will attempt to detect circular references in
+    arrays and objects to avoid infinite loops.
+    
+  * **recursion.ignore** : &lt;boolean&gt; (false)  
+    When set to true, any circular reference will be replaced with null instead
+    of throwing an exception.
+    
+  * **recursion.max** : &lt;integer|false&gt; (false)  
+    Maximum number of levels when encoding arrays and objects. Exception is
+    thrown when the maximum is exceeded. Set to false to have no limit.
 
 ## Credits ##
 
-This library is copyright 2013 - 2014 to Riikka Kalliomäki
+This library is copyright 2013 - 2014 to Riikka Kalliomäki.
+
+See LICENSE for license and copying information.

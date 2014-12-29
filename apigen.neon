@@ -1,7 +1,10 @@
-source: src
-destination: apidoc
-charset: UTF-8
-title: kit-phpencoder
-report: apidoc/report.xml
-wipeout: Yes
-progressbar: No
+source:
+	- src
+	
+destination: api
+charset:
+	- UTF-8
+	
+main: Riimu\Kit\PHPEncoder
+title: PHPEncoder
+php: false

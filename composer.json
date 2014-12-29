@@ -2,14 +2,14 @@
     "name": "riimu/kit-phpencoder",
     "type": "library",
     "description": "Highly customisable alternative to var_export for PHP code generation.",
+    "homepage": "http://kit.riimu.net",
     "keywords": ["variable", "export", "code", "generation", "encoding"],
     "license": "MIT",
     "authors": [
         {
             "name": "Riikka Kalliomäki",
             "email": "riikka.kalliomaki@gmail.com",
-            "homepage": "http://riimu.net",
-            "role": "Developer"
+            "homepage": "http://riimu.net"
         }
     ],
     "require": {

@@ -65,11 +65,18 @@ class PHPEncoder
 
     /**
      * Adds a new encoder.
+     *
+     * Note that values are always encoded by the first encoder that supports
+     * it. Thus, all objects will be caught by the ObjectEncoder, for example.
+     * If you want the encoder to be tried first, set the $prepend parameter
+     * true which adds it to beginning of the list.
+     *
      * @param Encoder\Encoder $encoder Encoder for encoding values
+     * @param boolean $prepend True to prepend the encoder to the list, false to add it as last
      */
-    public function addEncoder(Encoder\Encoder $encoder)
+    public function addEncoder(Encoder\Encoder $encoder, $prepend = false)
     {
-        $this->encoders[] = $encoder;
+        $prepend ? array_unshift($this->encoders, $encoder) : array_push($this->encoders, $encoder);
     }
 
     /**
@@ -122,7 +129,7 @@ class PHPEncoder
      * Returns a list of all encoder options.
      * @param array $overrides Options to override in the returned values
      * @return array List of encoder options
-     * @throws \InvalidArgumentException If any of the option overrides are invalid
+     * @throws \InvalidArgumentException If any of the option overrides is invalid
      */
     public function getAllOptions(array $overrides = [])
     {

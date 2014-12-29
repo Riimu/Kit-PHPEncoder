@@ -45,7 +45,7 @@ class FloatEncoder implements Encoder
      * @param integer|false $precision Number of decimals in the number
      * @return string The given float value as a string
      */
-    public function getFloatString($float, $precision)
+    private function getFloatString($float, $precision)
     {
         if ($precision === false) {
             return (string) $float;
@@ -64,7 +64,7 @@ class FloatEncoder implements Encoder
      * @param string $string Float string representation
      * @return string Float value as string with enforced type
      */
-    public function enforceType($string)
+    private function enforceType($string)
     {
         return $string . (preg_match('/^[-+]?\d+$/', $string) ? '.0' : '');
     }

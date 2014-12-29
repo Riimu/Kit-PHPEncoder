@@ -3,7 +3,7 @@
 namespace Riimu\Kit\PHPEncoder\Encoder;
 
 /**
- * Encoder for generic object values.
+ * Encoder for generic objects.
  * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>
  * @copyright Copyright (c) 2014, Riikka Kalliomäki
  * @license http://opensource.org/licenses/mit-license.php MIT License
@@ -47,7 +47,7 @@ class ObjectEncoder implements Encoder
      * @param callable $encode Callback used to encode values
      * @return string The object encoded as string
      */
-    public function encodeObject($object, array $options, callable $encode)
+    private function encodeObject($object, array $options, callable $encode)
     {
         if ($options['object.format'] === 'string') {
             return $encode((string) $object);
