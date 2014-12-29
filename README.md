@@ -125,7 +125,7 @@ is possible to set these options in three different ways:
 Note that options passed to the `encode()` method are only temporary and do not
 apply to following calls.
 
-### List of Options ###
+#### List of Options ####
 
   * **whitespace** : &lt;boolean&gt; (true)  
     When set to false, generation of all extra whitespace is disabled.
