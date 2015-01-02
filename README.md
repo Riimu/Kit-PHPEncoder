@@ -39,8 +39,8 @@ $ php -r "readfile('https://getcomposer.org/installer');" | php
 $ php composer.phar require riimu/kit-phpencoder:2.*
 ```
 
-Alternatively, you add the dependency to your `composer.json` and run `composer
-install`. For example:
+Alternatively, you ca add the dependency to your `composer.json` and run
+`composer install`. For example:
 
 ```json
 {
