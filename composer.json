@@ -1,7 +1,7 @@
 {
     "name": "riimu/kit-phpencoder",
     "type": "library",
-    "description": "Highly customisable alternative to var_export for PHP code generation.",
+    "description": "Highly customizable alternative to var_export for PHP code generation",
     "homepage": "http://kit.riimu.net",
     "keywords": ["variable", "export", "code", "generation", "encoding"],
     "license": "MIT",
