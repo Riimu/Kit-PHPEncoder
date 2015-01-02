@@ -215,6 +215,6 @@ apply to following calls.
 
 ## Credits ##
 
-This library is copyright 2013 - 2014 to Riikka Kalliomäki.
+This library is copyright 2013 - 2015 to Riikka Kalliomäki.
 
 See LICENSE for license and copying information.
