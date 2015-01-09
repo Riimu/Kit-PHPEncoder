@@ -32,31 +32,32 @@ class FloatEncoder implements Encoder
             return 'NAN';
         } elseif (is_infinite($value)) {
             return $value < 0 ? '-INF' : 'INF';
-        } elseif ($options['float.integers'] && round($value) === $value) {
-            return number_format($value, 0, '.', '');
         }
 
-        return $this->enforceType($this->getFloatString($value, $options['float.precision']));
+        return $this->getFloat($value, $options['float.precision'], $options['float.integers']);
     }
 
     /**
      * Converts the float value into string representation.
      * @param float $float Value to convert
-     * @param integer|false $precision Number of decimals in the number
+     * @param integer|false $precision Number of decimals in the number or false for default
+     * @param boolean $useIntegers Whether to represent integer values as integers or not
      * @return string The given float value as a string
      */
-    private function getFloatString($float, $precision)
+    private function getFloat($float, $precision, $useIntegers)
     {
-        if ($precision === false) {
-            return (string) $float;
+        if ($useIntegers && round($float) === $float) {
+            return number_format($float, 0, '.', '');
+        } elseif ($precision === false) {
+            $output = (string) $float;
+        } else {
+            $original = ini_get('precision');
+            ini_set('precision', (int) $precision);
+            $output = (string) $float;
+            ini_set('precision', $original);
         }
 
-        $current = ini_get('precision');
-        ini_set('precision', (int) $precision);
-        $output = (string) $float;
-        ini_set('precision', $current);
-
-        return $output;
+        return $this->enforceType($output);
     }
 
     /**

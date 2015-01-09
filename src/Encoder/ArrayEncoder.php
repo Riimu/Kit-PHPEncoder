@@ -55,7 +55,7 @@ class ArrayEncoder implements Encoder
      * @param callable $encode Callback used to encode values
      * @return string The PHP code representation for the array
      */
-    private function getFormattedArray(array $array, $depth, $options, $encode)
+    private function getFormattedArray(array $array, $depth, array $options, callable $encode)
     {
         $lines = $this->getPairs($array, ' ', $options['array.omit'], $encode, $omitted);
 
@@ -82,11 +82,11 @@ class ArrayEncoder implements Encoder
 
         if (preg_match('/[\r\n\t]/', $output)) {
             return false;
-        } elseif ($options['array.inline'] !== true && strlen($output) > (int) $options['array.inline']) {
-            return false;
+        } elseif ($options['array.inline'] === true || strlen($output) <= (int) $options['array.inline']) {
+            return $output;
         }
 
-        return $output;
+        return false;
     }
 
     /**
