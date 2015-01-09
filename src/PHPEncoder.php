@@ -44,10 +44,9 @@ class PHPEncoder
     public function __construct(array $options = [], array $encoders = null)
     {
         $this->options = self::$defaultOptions;
-        $this->encoders = [];
 
         if ($encoders === null) {
-            $encoders = [
+            $this->encoders = [
                 new Encoder\NullEncoder(),
                 new Encoder\BooleanEncoder(),
                 new Encoder\IntegerEncoder(),
@@ -57,14 +56,12 @@ class PHPEncoder
                 new Encoder\GMPEncoder(),
                 new Encoder\ObjectEncoder(),
             ];
+        } else {
+            $this->encoders = [];
+            array_map([$this, 'addEncoder'], $encoders);
         }
 
-        foreach ($encoders as $encoder) {
-            $this->addEncoder($encoder);
-        }
-        foreach ($options as $option => $value) {
-            $this->setOption($option, $value);
-        }
+        array_map([$this, 'setOption'], array_keys($options), $options);
     }
 
     /**
