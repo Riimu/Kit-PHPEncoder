@@ -53,25 +53,6 @@ class ObjectEncodingTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('"Mocked"', $encoder->encode($mock));
     }
 
-    public function atestPropertiesArray()
-    {
-        $e = PHP_EOL;
-        $encoder = new PHPEncoder();
-        $obj = new \TestMockObject();
-
-        $encoder->setIndent(false);
-        $encoder->setObjectFlags(PHPEncoder::OBJECT_PROPERTIES);
-        $this->assertSame("['baz'=>'C']", $encoder->encode($obj));
-
-        $encoder->setIndent(1);
-        $encoder->setObjectFlags(PHPEncoder::OBJECT_PROPERTIES | PHPEncoder::OBJECT_CAST);
-        $this->assertSame("(object) [$e 'baz' => 'C',$e]", $encoder->encode($obj));
-
-        $std = new \stdClass();
-        $std->baz = 'C';
-        $this->assertEquals("(object) []", $encoder->encode($std));
-    }
-
     public function testObjectVarsArray()
     {
         $encoder = new PHPEncoder([

@@ -40,18 +40,49 @@ class ArrayEncoder implements Encoder
                 implode(',', $this->getPairs($value, '', $options['array.omit'], $encode)),
                 $options['array.short']
             );
+        } elseif ($options['array.align']) {
+            return $this->buildArray($this->getAlignedPairs($value, $encode), $depth, $options);
         }
 
-        if (is_string($lines = $this->getLines($value, $options, $encode))) {
-            return $lines;
+        return $this->getFormattedArray($value, $depth, $options, $encode);
+    }
+
+    private function getFormattedArray(array $array, $depth, $options, $encode)
+    {
+        $lines = $this->getPairs($array, ' ', $options['array.omit'], $encode, $omitted);
+
+        if ($omitted && $options['array.inline'] !== false) {
+            $output = $this->getInlineArray($lines, $options);
+
+            if ($output !== false) {
+                return $output;
+            }
         }
 
+        return $this->buildArray($lines, $depth, $options);
+    }
+
+    private function getInlineArray($lines, $options)
+    {
+        $output = $this->wrap(implode(', ', $lines), $options['array.short']);
+
+        if (preg_match('/[\r\n\t]/', $output)) {
+            return false;
+        } elseif ($options['array.inline'] !== true && strlen($output) > (int) $options['array.inline']) {
+            return false;
+        }
+
+        return $output;
+    }
+
+    private function buildArray(array $lines, $depth, array $options)
+    {
         $indent = $this->buildIndent($options['array.base'], $options['array.indent'], $depth + 1);
         $last = $this->buildIndent($options['array.base'], $options['array.indent'], $depth);
         $eol = $options['array.eol'] === false ? PHP_EOL : (string) $options['array.eol'];
 
         return $this->wrap(
-            $eol . $indent . implode(',' . $eol .$indent, $lines) . ',' . $eol .$last,
+            sprintf('%s%s%s,%1$s%s', $eol, $indent, implode(',' . $eol . $indent, $lines), $last),
             $options['array.short']
         );
     }
@@ -85,38 +116,10 @@ class ArrayEncoder implements Encoder
     }
 
     /**
-     * Returns the code representation for the array values and keys.
-     * @param array $array Array to convert into code
-     * @param array $options List of encoder options
-     * @param callable $encode Callback used to encode values
-     * @return string|string[] Array encoded as strings or simple array as a string
-     */
-    private function getLines(array $array, array $options, callable $encode)
-    {
-        if ($options['array.align']) {
-            return $this->getAlignedPairs($array, $encode);
-        }
-
-        $lines = $this->getPairs($array, ' ', $options['array.omit'], $encode, $inline);
-
-        if ($inline && $options['array.inline'] !== false) {
-            $output = $this->wrap(implode(', ', $lines), $options['array.short']);
-
-            if (!preg_match('/[\r\n\t]/', $output) &&
-                ($options['array.inline'] === true || strlen($output) <= (int) $options['array.inline'])
-            ) {
-                return $output;
-            }
-        }
-
-        return $lines;
-    }
-
-    /**
-     * Returns the array as aligned key and value pairs.
+     * Returns each encoded key and value pair with aligned assignment operators.
      * @param array $array Array to convert into code
      * @param callable $encode Callback used to encode values
-     * @return string[] List of array key and value pairs as strings
+     * @return string[] Each of key and value pair encoded as php
      */
     private function getAlignedPairs($array, callable $encode)
     {
@@ -139,19 +142,19 @@ class ArrayEncoder implements Encoder
     }
 
     /**
-     * Encodes the array as code pairs according to given parameters
+     * Returns each key and value pair encoded as array assignment.
      * @param array $array Array to convert into code
      * @param string $space Whitespace between array assignment operator
      * @param boolean $omit True to omit unnecessary keys, false to not
      * @param callable $encode Callback used to encode values
-     * @param boolean $inline Set to true, if all the keys were omitted, false otherwise     *
-     * @return string[] List of array key and value pairs as strings
+     * @param boolean $omitted Set to true, if all the keys were omitted, false otherwise
+     * @return string[] Each of key and value pair encoded as php
      */
-    private function getPairs($array, $space, $omit, callable $encode, & $inline = true)
+    private function getPairs($array, $space, $omit, callable $encode, & $omitted = true)
     {
         $pairs = [];
         $nextIndex = 0;
-        $inline = true;
+        $omitted = true;
         $format = '%s' . $space . '=>' . $space . '%s';
 
         foreach ($array as $key => $value) {
@@ -159,7 +162,7 @@ class ArrayEncoder implements Encoder
                 $pairs[] = $encode($value, 1);
             } else {
                 $pairs[] = sprintf($format, $encode($key, 1), $encode($value, 1));
-                $inline = false;
+                $omitted = false;
             }
 
             if (is_int($key) && $key >= $nextIndex) {

@@ -65,14 +65,27 @@ class ArrayEncodingTest extends \PHPUnit_Framework_TestCase
         $this->assertEncode([1, 2], "array(\n 1,\n 2,\n)", $encoder);
     }
 
-    public function atestAssociativeArray()
+    public function testTooLongForInline()
+    {
+        $encoder = new PHPEncoder(['array.indent'  => 1, 'array.inline' => 14, 'array.eol' => "\n"]);
+        $this->assertEncode(['0123456789'], "['0123456789']", $encoder);
+
+        $encoder->setOption('array.inline', 13);
+        $this->assertEncode(['0123456789'], "[\n '0123456789',\n]", $encoder);
+    }
+
+    public function testAssociativeArray()
     {
         $encoder = new PHPEncoder(['whitespace' => false]);
         $this->assertEncode([1 => 1], "[1=>1]", $encoder);
         $this->assertEncode([1 => 1, 0 => 0], "[1=>1,0=>0]", $encoder);
         $this->assertEncode(['foo' => 'bar', 1 => true], "['foo'=>'bar',1=>true]", $encoder);
 
-        $encoder->setIndent("\t", ' ');
+        $encoder->setOption('whitespace', true);
+        $encoder->setOption('array.base', ' ');
+        $encoder->setOption('array.indent', "\t");
+
+        $e = PHP_EOL;
         $this->assertEncode(
             ['foo' => 'bar', 1 => true],
             "[$e \t'foo' => 'bar',$e \t1 => true,$e ]",
