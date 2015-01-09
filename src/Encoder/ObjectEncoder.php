@@ -42,7 +42,7 @@ class ObjectEncoder implements Encoder
 
     /**
      * Encodes the object as string according to encoding options.
-     * @param object $object Object to convert to code
+     * @param object $object Object to encode as PHP
      * @param array $options List of encoder options
      * @param callable $encode Callback used to encode values
      * @return string The object encoded as string
@@ -55,6 +55,22 @@ class ObjectEncoder implements Encoder
             return sprintf('unserialize(%s)', $encode(serialize($object)));
         } elseif ($options['object.format'] === 'export') {
             return sprintf('\\%s::__set_state(%s)', get_class($object), $encode($this->getObjectState($object)));
+        }
+
+        return $this->encodeObjectArray($object, $options, $encode);
+    }
+
+    /**
+     * Encodes the object into one of the array formats.
+     * @param object $object Object to encode as PHP
+     * @param array $options List of encoder options
+     * @param callable $encode Callback used to encode values
+     * @return string The object encoded as string
+     */
+    private function encodeObjectArray($object, array $options, callable $encode)
+    {
+        if (!in_array($options['object.format'], ['array', 'vars', 'iterate'])) {
+            throw new \RuntimeException('Invalid object encoding format: ' . $options['object.format']);
         }
 
         $output = $encode($this->getObjectArray($object, $options['object.format']));
@@ -79,15 +95,15 @@ class ObjectEncoder implements Encoder
             return (array) $object;
         } elseif ($format === 'vars') {
             return get_object_vars($object);
-        } elseif ($format === 'iterate') {
-            $array = [];
-            foreach ($object as $key => $value) {
-                $array[$key] = $value;
-            }
-            return $array;
         }
 
-        throw new \RuntimeException('Invalid object encoding format: ' . $format);
+        $array = [];
+
+        foreach ($object as $key => $value) {
+            $array[$key] = $value;
+        }
+
+        return $array;
     }
 
     /**

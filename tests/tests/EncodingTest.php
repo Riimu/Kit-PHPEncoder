@@ -190,6 +190,20 @@ class EncodingTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testMaxDeathOnNoRecursionDetection()
+    {
+        $foo = [1];
+        $foo[1] = & $foo;
+
+        $encoder = new PHPEncoder([
+            'recursion.detect' => false,
+            'recursion.max' => 5
+        ]);
+
+        $this->setExpectedException('RuntimeException');
+        $encoder->encode($foo);
+    }
+
     private function assertEncode($value, $string, PHPEncoder $encoder, $initial = null)
     {
         $output = $encoder->encode(func_num_args() < 4 ? $value : $initial);
