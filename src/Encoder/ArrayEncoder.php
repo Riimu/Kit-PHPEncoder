@@ -47,6 +47,14 @@ class ArrayEncoder implements Encoder
         return $this->getFormattedArray($value, $depth, $options, $encode);
     }
 
+    /**
+     * Returns the PHP code for the array as inline or multi line array.
+     * @param array $array Array to encode
+     * @param integer $depth Current indentation depth of the output
+     * @param array $options List of encoder options
+     * @param callable $encode Callback used to encode values
+     * @return string The PHP code representation for the array
+     */
     private function getFormattedArray(array $array, $depth, $options, $encode)
     {
         $lines = $this->getPairs($array, ' ', $options['array.omit'], $encode, $omitted);
@@ -62,7 +70,13 @@ class ArrayEncoder implements Encoder
         return $this->buildArray($lines, $depth, $options);
     }
 
-    private function getInlineArray($lines, $options)
+    /**
+     * Returns the code for the inlined array, if possible.
+     * @param string[] $lines Encoded key and value pairs
+     * @param array $options List of encoder options
+     * @return string|false Array encoded as single line of PHP code or false if not possible
+     */
+    private function getInlineArray(array $lines, array $options)
     {
         $output = $this->wrap(implode(', ', $lines), $options['array.short']);
 
@@ -75,6 +89,13 @@ class ArrayEncoder implements Encoder
         return $output;
     }
 
+    /**
+     * Builds the complete array from the encoded key and value pairs.
+     * @param string[] $lines Encoded key and value pairs
+     * @param integer $depth Current indentation depth of the output
+     * @param array $options List of encoder options
+     * @return string Array encoded as PHP code
+     */
     private function buildArray(array $lines, $depth, array $options)
     {
         $indent = $this->buildIndent($options['array.base'], $options['array.indent'], $depth + 1);
@@ -121,7 +142,7 @@ class ArrayEncoder implements Encoder
      * @param callable $encode Callback used to encode values
      * @return string[] Each of key and value pair encoded as php
      */
-    private function getAlignedPairs($array, callable $encode)
+    private function getAlignedPairs(array $array, callable $encode)
     {
         $keys = [];
         $values = [];
@@ -150,7 +171,7 @@ class ArrayEncoder implements Encoder
      * @param boolean $omitted Set to true, if all the keys were omitted, false otherwise
      * @return string[] Each of key and value pair encoded as php
      */
-    private function getPairs($array, $space, $omit, callable $encode, & $omitted = true)
+    private function getPairs(array $array, $space, $omit, callable $encode, & $omitted = true)
     {
         $pairs = [];
         $nextIndex = 0;
@@ -169,6 +190,12 @@ class ArrayEncoder implements Encoder
         return $pairs;
     }
 
+    /**
+     * Tells if the key can be omitted from array output based on expected index.
+     * @param integer|string $key Current array key
+     * @param integer $nextIndex Next expected key that can be omitted
+     * @return bool True if the key can be omitted, false if not
+     */
     private function canOmit($key, & $nextIndex)
     {
         if (!is_int($key) || $key < $nextIndex) {
