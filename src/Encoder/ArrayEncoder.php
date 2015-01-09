@@ -158,18 +158,26 @@ class ArrayEncoder implements Encoder
         $format = '%s' . $space . '=>' . $space . '%s';
 
         foreach ($array as $key => $value) {
-            if ($key === $nextIndex && $omit) {
+            if ($omit && $this->canOmit($key, $nextIndex)) {
                 $pairs[] = $encode($value, 1);
             } else {
                 $pairs[] = sprintf($format, $encode($key, 1), $encode($value, 1));
                 $omitted = false;
             }
-
-            if (is_int($key) && $key >= $nextIndex) {
-                $nextIndex = $key + 1;
-            }
         }
 
         return $pairs;
+    }
+
+    private function canOmit($key, & $nextIndex)
+    {
+        if (!is_int($key) || $key < $nextIndex) {
+            return false;
+        }
+
+        $result = $key === $nextIndex;
+        $nextIndex = $key + 1;
+
+        return $result;
     }
 }
