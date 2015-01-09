@@ -47,7 +47,7 @@ class PHPEncoder
         $this->encoders = [];
 
         if ($encoders === null) {
-            $this->encoders = [
+            $encoders = [
                 new Encoder\NullEncoder(),
                 new Encoder\BooleanEncoder(),
                 new Encoder\IntegerEncoder(),
@@ -57,12 +57,11 @@ class PHPEncoder
                 new Encoder\GMPEncoder(),
                 new Encoder\ObjectEncoder(),
             ];
-        } else {
-            foreach ($encoders as $encoder) {
-                $this->addEncoder($encoder);
-            }
         }
 
+        foreach ($encoders as $encoder) {
+            $this->addEncoder($encoder);
+        }
         foreach ($options as $option => $value) {
             $this->setOption($option, $value);
         }
