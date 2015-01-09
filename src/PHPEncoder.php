@@ -44,20 +44,25 @@ class PHPEncoder
     public function __construct(array $options = [], array $encoders = null)
     {
         $this->options = self::$defaultOptions;
-        $this->encoders = $encoders !== null ? [] : [
-            new Encoder\NullEncoder(),
-            new Encoder\BooleanEncoder(),
-            new Encoder\IntegerEncoder(),
-            new Encoder\FloatEncoder(),
-            new Encoder\StringEncoder(),
-            new Encoder\ArrayEncoder(),
-            new Encoder\GMPEncoder(),
-            new Encoder\ObjectEncoder(),
-        ];
+        $this->encoders = [];
 
-        foreach ($encoders ?: [] as $encoder) {
-            $this->addEncoder($encoder);
+        if ($encoders === null) {
+            $this->encoders = [
+                new Encoder\NullEncoder(),
+                new Encoder\BooleanEncoder(),
+                new Encoder\IntegerEncoder(),
+                new Encoder\FloatEncoder(),
+                new Encoder\StringEncoder(),
+                new Encoder\ArrayEncoder(),
+                new Encoder\GMPEncoder(),
+                new Encoder\ObjectEncoder(),
+            ];
+        } else {
+            foreach ($encoders as $encoder) {
+                $this->addEncoder($encoder);
+            }
         }
+
         foreach ($options as $option => $value) {
             $this->setOption($option, $value);
         }
@@ -160,17 +165,9 @@ class PHPEncoder
      * @return string The PHP code that represents the given value
      * @throws \RuntimeException On recursion or upon reaching maximum depth
      */
-    private function generate($value, $depth, array $options, $recursion = [])
+    private function generate($value, $depth, array $options, array $recursion = [])
     {
-        if ($options['recursion.detect']) {
-            if (array_search($value, $recursion, true) !== false) {
-                if ($options['recursion.ignore']) {
-                    $value = null;
-                } else {
-                    throw new \RuntimeException('Recursion detected');
-                }
-            }
-
+        if ($this->detectRecursion($value, $options, $recursion)) {
             $recursion[] = $value;
         }
 
@@ -183,6 +180,30 @@ class PHPEncoder
         };
 
         return $this->encodeValue($value, $depth, $options, $callback);
+    }
+
+    /**
+     * Attempts to detect circular references in values.
+     * @param mixed $value Value to try for circular reference
+     * @param array $options List of encoder options
+     * @param array $recursion Upper values in the encoding tree
+     * @return boolean True if values should be recorded, false if not
+     */
+    private function detectRecursion(& $value, array $options, array $recursion)
+    {
+        if ($options['recursion.detect']) {
+            if (array_search($value, $recursion, true) !== false) {
+                if ($options['recursion.ignore']) {
+                    $value = null;
+                } else {
+                    throw new \RuntimeException('Recursion detected');
+                }
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
