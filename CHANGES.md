@@ -1,5 +1,9 @@
 # Changelog #
 
+## v2.0.1 (2015-01-10) ##
+
+  * Improvements on code quality, documentation and tests
+
 ## v2.0.0 (2014-12-29) ##
 
   * Encoding is now separated into external encoding classes

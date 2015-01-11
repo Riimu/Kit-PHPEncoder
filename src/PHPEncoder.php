@@ -16,7 +16,7 @@ namespace Riimu\Kit\PHPEncoder;
  */
 class PHPEncoder
 {
-    /** @var Encoder\Encoder[] List of used encoders */
+    /** @var Encoder\Encoder[] List of value encoders */
     private $encoders;
 
     /** @var array List of defined encoder option values. */
@@ -33,13 +33,13 @@ class PHPEncoder
     /**
      * Creates a new PHPEncoder instance.
      *
-     * It's possible to define the list of default options for the encoder in
-     * the constructor. You may also customize the list of used encoders by
-     * providing an array of encoders. If null is provided, a list of default of
-     * encoders will be used instead.
+     * Optionally, you can provide a list of default options to the constructor
+     * as an associative array. If you do not want to use the default list of
+     * encoders supplied with the library, you may also provide a list of
+     * value encoders to the constructor.
      *
      * @param array $options List of encoder options
-     * @param null|Encoder\Encoder[] $encoders List of encoders to use
+     * @param null|Encoder[] $encoders List of encoders to use or null for default
      */
     public function __construct(array $options = [], array $encoders = null)
     {
@@ -67,10 +67,10 @@ class PHPEncoder
     /**
      * Adds a new encoder.
      *
-     * Note that values are always encoded by the first encoder that supports
-     * it. Thus, all objects will be caught by the ObjectEncoder, for example.
-     * If you want the encoder to be tried first, set the $prepend parameter
-     * true which adds it to beginning of the list.
+     * Values are always encoded by the first encoder that supports encoding
+     * that type of value. By setting the second optional parameter to true,
+     * you can prepend the encoder to the list to ensure that it will be tested
+     * first.
      *
      * @param Encoder\Encoder $encoder Encoder for encoding values
      * @param boolean $prepend True to prepend the encoder to the list, false to add it as last
