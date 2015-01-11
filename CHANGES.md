@@ -1,6 +1,6 @@
 # Changelog #
 
-## v2.0.1 (2015-01-10) ##
+## v2.0.1 (2015-01-11) ##
 
   * Improvements on code quality, documentation and tests
 
