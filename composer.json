@@ -3,7 +3,7 @@
     "type": "library",
     "description": "Highly customizable alternative to var_export for PHP code generation",
     "homepage": "http://kit.riimu.net",
-    "keywords": ["variable", "export", "code", "generation", "encoding"],
+    "keywords": ["variable", "export", "code", "generator", "encoding"],
     "license": "MIT",
     "authors": [
         {
