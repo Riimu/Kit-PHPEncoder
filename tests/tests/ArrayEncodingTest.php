@@ -178,6 +178,19 @@ EOP;
         );
     }
 
+    public function testInlineOnAlignedArray()
+    {
+        $encoder = new PHPEncoder(['array.omit' => true, 'array.align' => true]);
+        $input  = [0 => 'The Doctor', 1 => 'Martha Jones', 2 => 'Rose Tyler', 3 => 'Clara'];
+        $output = $encoder->encode($input);
+
+        $this->assertEquals(
+            "['The Doctor', 'Martha Jones', 'Rose Tyler', 'Clara']",
+            $output,
+            'Encoding did not produce aligned output with redundant numeric keys omitted.'
+        );
+    }
+
     private function assertEncode($value, $string, PHPEncoder $encoder, $initial = null)
     {
         $output = $encoder->encode(func_num_args() < 4 ? $value : $initial);
