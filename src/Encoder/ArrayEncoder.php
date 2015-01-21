@@ -204,15 +204,11 @@ class ArrayEncoder implements Encoder
         $format = '%s' . $space . '=>' . $space . '%s';
 
         foreach ($array as $key => $value) {
-            if ($this->canOmitKey($omit, $key, $nextIndex)) {
+            if ($omit && $this->canOmitKey($key, $nextIndex)) {
                 $pairs[] = $encode($value, 1);
             } else {
                 $pairs[] = sprintf($format, $encode($key, 1), $encode($value, 1));
                 $omitted = false;
-            }
-
-            if (is_int($key)) {
-                $nextIndex = max($key + 1, $nextIndex);
             }
         }
 
@@ -221,13 +217,18 @@ class ArrayEncoder implements Encoder
 
     /**
      * Tells if the key can be omitted from array output based on expected index.
-     * @param boolean $omit Whether key omission is allowed or not
      * @param integer|string $key Current array key
      * @param integer $nextIndex Next expected key that can be omitted
      * @return bool True if the key can be omitted, false if not
      */
-    private function canOmitKey($omit, $key, $nextIndex)
+    private function canOmitKey($key, & $nextIndex)
     {
-        return $omit && $key === $nextIndex;
+        $result = $key === $nextIndex;
+
+        if (is_int($key)) {
+            $nextIndex = max($key + 1, $nextIndex);
+        }
+
+        return $result;
     }
 }
