@@ -169,8 +169,9 @@ apply to following calls.
     
   * **array.align** : &lt;boolean&gt; (false)  
     When set to true, array assignment operators `=>` are aligned to the same
-    column using spaces. When `array.omit` is also set to true, the keys will be
-    omitted only if all the keys in the array can be omitted.
+    column using spaces. Even if enabled, `array.omit` and `array.inline`
+    options are still respected, but only if all the keys in the array (or in 
+    any multi level array) can be omitted.
     
   * **array.inline** : &lt;boolean|integer&gt; (70)  
     When set to true, any array that can be written without any array keys will
