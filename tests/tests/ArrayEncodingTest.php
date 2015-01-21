@@ -157,8 +157,7 @@ class ArrayEncodingTest extends \PHPUnit_Framework_TestCase
 
     public function testAlignedArrayOmitsDefaultKeys()
     {
-
-        $encoder = new PHPEncoder(['array.omit' => true, 'array.align' => true]);
+        $encoder = new PHPEncoder(['array.omit' => true, 'array.align' => true, 'array.inline' => false]);
 
         $input  = [0 => 'The Doctor', 1 => 'Martha Jones', 2 => 'Rose Tyler', 3 => 'Clara'];
         $output = $encoder->encode($input);
@@ -168,7 +167,7 @@ class ArrayEncodingTest extends \PHPUnit_Framework_TestCase
     'The Doctor',
     'Martha Jones',
     'Rose Tyler',
-    'Clara'
+    'Clara',
 ]
 EOP;
 
