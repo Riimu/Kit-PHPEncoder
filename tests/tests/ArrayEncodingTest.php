@@ -22,6 +22,29 @@ class ArrayEncodingTest extends \PHPUnit_Framework_TestCase
         $this->assertEncode("[7, 8, 8, 9]", [7, 8, 8, 9], $encoder);
     }
 
+    public function testOmittedKeySkips()
+    {
+        $this->assertEncode(
+            $this->format(
+                <<<'RESULT'
+[
+    1 => 1,
+    2,
+    10 => 10,
+    3 => 3,
+    4 => 4,
+    11,
+    12,
+    13,
+    15 => 15,
+]
+RESULT
+            ),
+            [1 => 1, 2 => 2, 10 => 10, 3 => 3, 4 => 4, 11 => 11, 12 => 12, 13 => 13, 15 => 15],
+            new PHPEncoder()
+        );
+    }
+
     public function testInlineWithMultiLineString()
     {
         $this->assertEncode(
