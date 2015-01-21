@@ -132,7 +132,8 @@ apply to following calls.
 #### List of Options ####
 
   * **whitespace** : &lt;boolean&gt; (true)  
-    When set to false, generation of all extra whitespace is disabled.
+    When set to false, generation of all extra whitespace is disabled and all
+    other settings that affect whitespace are ignored.
     
   * **null.capitalize** : &lt;boolean&gt; (false)  
     When set to true, nulls are written in upper case instead of lower case. 
