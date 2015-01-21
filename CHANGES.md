@@ -1,5 +1,12 @@
 # Changelog #
 
+## v2.0.2 (2015-01-21) ##
+
+  * `array.align` will now respect `array.omit` and `array.inline` settings if
+     all the keys in the array can be omitted.
+  *  Clarified documentation on how these settings are intended to work
+     together.
+
 ## v2.0.1 (2015-01-11) ##
 
   * Improvements on code quality, documentation and tests

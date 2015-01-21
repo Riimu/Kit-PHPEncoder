@@ -108,14 +108,18 @@ class ArrayEncodingTest extends \PHPUnit_Framework_TestCase
 
     public function testAlignedKeys()
     {
+        $encoder = new PHPEncoder(['array.indent' => 2, 'array.align' => true, 'array.eol' => "\n"]);
         $this->assertEncode(
             ['a' => 1, 'bb' => 2, 'cccc' => 3, 'ddd' => 4, 5],
             "[\n  'a'    => 1,\n  'bb'   => 2,\n  'cccc' => 3,\n  'ddd'  => 4,\n  0      => 5,\n]",
-            new PHPEncoder([
-                'array.indent' => 2,
-                'array.align' => true,
-                'array.eol' => "\n",
-            ])
+            $encoder
+        );
+
+        $encoder->setOption('array.indent', 1);
+        $this->assertEncode(
+            [0 => 'a', 10 => 'b'],
+            "[\n 0  => 'a',\n 10 => 'b',\n]",
+            $encoder
         );
     }
 

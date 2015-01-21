@@ -168,13 +168,14 @@ apply to following calls.
     
   * **array.align** : &lt;boolean&gt; (false)  
     When set to true, array assignment operators `=>` are aligned to the same
-    column using spaces.
+    column using spaces. When `array.omit` is also set to true, the keys will be
+    omitted only if all the keys in the array can be omitted.
     
   * **array.inline** : &lt;boolean|integer&gt; (70)  
     When set to true, any array that can be written without any array keys will
     be written in a single line. If an integer is provided instead, the array
     will be written as a single line only if it does not exceed that number of
-    characters.
+    characters. This option has no effect when `array.omit` is set to false.
      
   * **array.omit** : &lt;boolean&gt; (true)  
     When set to true, any redundant array key will not be written. (e.g. the

@@ -41,10 +41,35 @@ class ArrayEncoder implements Encoder
                 $options['array.short']
             );
         } elseif ($options['array.align']) {
-            return $this->buildArray($this->getAlignedPairs($value, $encode), $depth, $options);
+            return $this->getAlignedArray($value, $depth, $options, $encode);
         }
 
         return $this->getFormattedArray($value, $depth, $options, $encode);
+    }
+
+    /**
+     * Returns the PHP code for aligned array accounting for omitted keys and inlined arrays.
+     * @param array $array Array to encode
+     * @param integer $depth Current indentation depth of the output
+     * @param array $options List of encoder options
+     * @param callable $encode Callback used to encode values
+     * @return string The PHP code representation for the array
+     */
+    private function getAlignedArray(array $array, $depth, array $options, callable $encode)
+    {
+        $next = 0;
+        $omit = $options['array.omit'];
+
+        foreach (array_keys($array) as $key) {
+            if ($key !== $next++) {
+                $omit = false;
+                break;
+            }
+        }
+
+        return $omit
+            ? $this->getFormattedArray($array, $depth, $options, $encode)
+            : $this->buildArray($this->getAlignedPairs($array, $encode), $depth, $options);
     }
 
     /**
