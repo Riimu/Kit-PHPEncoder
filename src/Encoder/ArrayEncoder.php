@@ -204,18 +204,16 @@ class ArrayEncoder implements Encoder
         $format = '%s' . $space . '=>' . $space . '%s';
 
         foreach ($array as $key => $value) {
-            if (is_int($key)) {
-                if ($this->canOmitKey($omit, $key, $nextIndex)) {
-                    $pairs[] = $encode($value, 1);
-                    $nextIndex = $key + 1;
-                    continue;
-                }
-
-                $nextIndex = max($key + 1, $nextIndex);
+            if ($this->canOmitKey($omit, $key, $nextIndex)) {
+                $pairs[] = $encode($value, 1);
+            } else {
+                $pairs[] = sprintf($format, $encode($key, 1), $encode($value, 1));
+                $omitted = false;
             }
 
-            $pairs[] = sprintf($format, $encode($key, 1), $encode($value, 1));
-            $omitted = false;
+            if (is_int($key)) {
+                $nextIndex = max($key + 1, $nextIndex);
+            }
         }
 
         return $pairs;
