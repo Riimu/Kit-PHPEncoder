@@ -1,6 +1,6 @@
 # PHP Variable Exporter #
 
-PHPEncoder is a PHP library for exporting variables into PHP code similar to the
+*PHPEncoder* is a PHP library for exporting variables into PHP code similar to the
 built in function `var_export()`. Compared to the built in function, this 
 library provides a more customizable alternative that makes it easier to 
 dynamically create configuration files and cache files in the format you desire.

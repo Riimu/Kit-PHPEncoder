@@ -1,10 +1,11 @@
 source:
 	- src
-	
+
 destination: api
 charset:
 	- UTF-8
-	
-main: Riimu\Kit\PHPEncoder
-title: PHPEncoder
+
+main: Riimu\Kit\CSRF
+title: CSRF
 php: false
+tree: true
