@@ -1,5 +1,22 @@
 # Changelog #
 
+## v2.1.0 (2015-04-18) ##
+
+  * Encoder options with `null` default value will now be recognized
+  * The integer encoder will now add an `(int)` cast in front of integers, if
+    their value equals `PHP_INT_MAX * -1 - 1`.
+  * If `float.integers` is set to `true`, the float encoder will now only encode
+    floats as integers if the value is accurately represented by the float. Set
+    the value to `"all"` to restore the previous behavior.
+  * The float encoder no longer breaks if the PHP locale uses comma as a decimal
+    separator.
+  * The float encoder now behaves slightly differently when deciding whether to
+    use the exponential float notation or not.
+  * The float encoder now uses `serialize_precision` when the option `precision`
+    is set to `false` 
+  * Several methods will now throw an InvalidOptionException if any invalid
+    encoder options have been provided
+
 ## v2.0.2 (2015-01-21) ##
 
   * `array.align` will now respect `array.omit` and `array.inline` settings if

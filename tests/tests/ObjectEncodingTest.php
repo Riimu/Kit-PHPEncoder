@@ -82,7 +82,8 @@ class ObjectEncodingTest extends \PHPUnit_Framework_TestCase
         $obj = new \ExtendsTestMockObject();
         $obj->var = true;
         $this->assertEquals(
-            "\\ExtendsTestMockObject::__set_state(['bazC'=>'E','baz'=>'C','var'=>true,'fooC'=>'D','bar'=>'B','foo'=>'A'])",
+            "\\ExtendsTestMockObject::__set_state(['bazC'=>'E','baz'=>'C'," .
+            "'var'=>true,'fooC'=>'D','bar'=>'B','foo'=>'A'])",
             $encoder->encode($obj)
         );
     }

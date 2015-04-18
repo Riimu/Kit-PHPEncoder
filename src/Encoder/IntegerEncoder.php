@@ -22,6 +22,12 @@ class IntegerEncoder implements Encoder
 
     public function encode($value, $depth, array $options, callable $encode)
     {
-        return (string) $value;
+        $string = number_format($value, 0, '.', '');
+
+        if ($value === 1 << (PHP_INT_SIZE * 8 - 1)) {
+            $string = sprintf('(int)%s%s', $options['whitespace'] ? ' ' : '', $string);
+        }
+
+        return $string;
     }
 }

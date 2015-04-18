@@ -11,7 +11,7 @@ namespace Riimu\Kit\PHPEncoder\Encoder;
 interface Encoder
 {
     /**
-     * Returns a list of options and their default values as associative array.
+     * Returns a list of options and their default values as an associative array.
      * @return array List of options and their default values
      */
     public function getDefaultOptions();
@@ -24,9 +24,9 @@ interface Encoder
     public function supports($value);
 
     /**
-     * Generates to code for the given value.
+     * Generates the PHP code representation for the given value.
      * @param mixed $value Value to encode
-     * @param integer $depth Current indentation depth of the output
+     * @param int $depth Current indentation depth of the output
      * @param array $options List of encoder options
      * @param callable $encode Callback used to encode values
      * @return string The PHP code that represents the given value

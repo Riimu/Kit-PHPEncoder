@@ -50,7 +50,7 @@ class ArrayEncoder implements Encoder
     /**
      * Returns the PHP code for aligned array accounting for omitted keys and inlined arrays.
      * @param array $array Array to encode
-     * @param integer $depth Current indentation depth of the output
+     * @param int $depth Current indentation depth of the output
      * @param array $options List of encoder options
      * @param callable $encode Callback used to encode values
      * @return string The PHP code representation for the array
@@ -75,7 +75,7 @@ class ArrayEncoder implements Encoder
     /**
      * Returns the PHP code for the array as inline or multi line array.
      * @param array $array Array to encode
-     * @param integer $depth Current indentation depth of the output
+     * @param int $depth Current indentation depth of the output
      * @param array $options List of encoder options
      * @param callable $encode Callback used to encode values
      * @return string The PHP code representation for the array
@@ -117,7 +117,7 @@ class ArrayEncoder implements Encoder
     /**
      * Builds the complete array from the encoded key and value pairs.
      * @param string[] $lines Encoded key and value pairs
-     * @param integer $depth Current indentation depth of the output
+     * @param int $depth Current indentation depth of the output
      * @param array $options List of encoder options
      * @return string Array encoded as PHP code
      */
@@ -136,7 +136,7 @@ class ArrayEncoder implements Encoder
     /**
      * Wraps the array code using short or long array notation.
      * @param string $string Array string representation to wrap
-     * @param boolean $short True to use short notation, false to use long notation
+     * @param bool $short True to use short notation, false to use long notation
      * @return string The array wrapped appropriately
      */
     private function wrap($string, $short)
@@ -148,7 +148,7 @@ class ArrayEncoder implements Encoder
      * Builds the indentation based on the options.
      * @param string|integer $base The base indentation
      * @param string|integer $indent A single indentation level
-     * @param integer $depth The level of indentation
+     * @param int $depth The level of indentation
      * @return string The indentation for the current depth
      */
     private function buildIndent($base, $indent, $depth)
@@ -191,9 +191,9 @@ class ArrayEncoder implements Encoder
      * Returns each key and value pair encoded as array assignment.
      * @param array $array Array to convert into code
      * @param string $space Whitespace between array assignment operator
-     * @param boolean $omit True to omit unnecessary keys, false to not
+     * @param bool $omit True to omit unnecessary keys, false to not
      * @param callable $encode Callback used to encode values
-     * @param boolean $omitted Set to true, if all the keys were omitted, false otherwise
+     * @param bool $omitted Set to true, if all the keys were omitted, false otherwise
      * @return string[] Each of key and value pair encoded as php
      */
     private function getPairs(array $array, $space, $omit, callable $encode, & $omitted = true)
@@ -217,8 +217,8 @@ class ArrayEncoder implements Encoder
 
     /**
      * Tells if the key can be omitted from array output based on expected index.
-     * @param integer|string $key Current array key
-     * @param integer $nextIndex Next expected key that can be omitted
+     * @param int|string $key Current array key
+     * @param int $nextIndex Next expected key that can be omitted
      * @return bool True if the key can be omitted, false if not
      */
     private function canOmitKey($key, & $nextIndex)

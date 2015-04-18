@@ -7,5 +7,6 @@ charset:
 
 main: Riimu\Kit\PHPEncoder
 title: PHPEncoder
-php: false
+php: true
 tree: true
+templateTheme: bootstrap

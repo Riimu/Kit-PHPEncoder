@@ -6,11 +6,13 @@ php:
   - 5.4
 
 before_script:
-  - composer require "satooshi/php-coveralls dev-master"
+  - composer require "satooshi/php-coveralls:dev-master"
+  - composer require "squizlabs/php_codesniffer:2.*"
 
 script:
   - mkdir -p build/logs
   - phpunit --coverage-clover build/logs/clover.xml
+  - php vendor/bin/phpcs --standard=PSR2 src
 
 after_script:
   - php vendor/bin/coveralls -v
