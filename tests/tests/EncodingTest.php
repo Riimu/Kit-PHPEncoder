@@ -125,11 +125,13 @@ class EncodingTest extends \PHPUnit_Framework_TestCase
     public function testMaximumFloatIntegers()
     {
         $encoder = new PHPEncoder(['float.integers' => true]);
+        $positive = FloatEncoder::FLOAT_MAX - 1;
+        $negative = -FloatEncoder::FLOAT_MAX + 1;
 
         $this->assertEncode(FloatEncoder::FLOAT_MAX, '9.0071992547409927E+15', $encoder);
         $this->assertEncode(-FloatEncoder::FLOAT_MAX, '-9.0071992547409927E+15', $encoder);
-        $this->assertEncode(FloatEncoder::FLOAT_MAX - 1, '9007199254740991', $encoder);
-        $this->assertEncode(-FloatEncoder::FLOAT_MAX + 1, '-9007199254740991', $encoder);
+        $this->assertEncode(number_format($positive, 0, '', '') + 0, '9007199254740991', $encoder, $positive);
+        $this->assertEncode(number_format($negative, 0, '', '') + 0, '-9007199254740991', $encoder, $negative);
     }
 
     public function testLargeFloatIntegers()
