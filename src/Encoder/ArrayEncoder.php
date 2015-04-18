@@ -48,7 +48,7 @@ class ArrayEncoder implements Encoder
     }
 
     /**
-     * Returns the PHP code for aligned array accounting for omitted keys and inlined arrays.
+     * Returns the PHP code for aligned array accounting for omitted keys and inline arrays.
      * @param array $array Array to encode
      * @param int $depth Current indentation depth of the output
      * @param array $options List of encoder options
@@ -96,7 +96,7 @@ class ArrayEncoder implements Encoder
     }
 
     /**
-     * Returns the code for the inlined array, if possible.
+     * Returns the code for the inline array, if possible.
      * @param string[] $lines Encoded key and value pairs
      * @param array $options List of encoder options
      * @return string|false Array encoded as single line of PHP code or false if not possible
