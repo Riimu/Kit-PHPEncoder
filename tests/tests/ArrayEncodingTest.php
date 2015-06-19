@@ -7,19 +7,17 @@ namespace Riimu\Kit\PHPEncoder;
  * @copyright Copyright (c) 2014, Riikka Kalliomäki
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
-class ArrayEncodingTest extends \PHPUnit_Framework_TestCase
+class ArrayEncodingTest extends EncodingTestCase
 {
     public function testEmptyArray()
     {
-        $this->assertEncode('[]', [], new PHPEncoder());
+        $this->assertEncode('[]', []);
     }
 
     public function testInlineArray()
     {
-        $encoder = new PHPEncoder();
-
-        $this->assertEncode("[1]", [1], $encoder);
-        $this->assertEncode("[7, 8, 8, 9]", [7, 8, 8, 9], $encoder);
+        $this->assertEncode("[1]", [1]);
+        $this->assertEncode("[7, 8, 8, 9]", [7, 8, 8, 9]);
     }
 
     public function testOmittedKeySkips()
@@ -40,8 +38,7 @@ class ArrayEncodingTest extends \PHPUnit_Framework_TestCase
 ]
 RESULT
             ),
-            [1 => 1, 2 => 2, 10 => 10, 3 => 3, 4 => 4, 11 => 11, 12 => 12, 13 => 13, 15 => 15],
-            new PHPEncoder()
+            [1 => 1, 2 => 2, 10 => 10, 3 => 3, 4 => 4, 11 => 11, 12 => 12, 13 => 13, 15 => 15]
         );
     }
 
@@ -57,7 +54,7 @@ bar',
 RESULT
             ),
             ['foo' . PHP_EOL . 'bar'],
-            new PHPEncoder(['string.escape' => false])
+            ['string.escape' => false]
         );
     }
 
@@ -149,13 +146,13 @@ RESULT
         $this->assertEncode(
             "[\n1 => 1,\n0 => 0,\n]",
             [1 => 1, 0 => 0],
-            new PHPEncoder(['array.eol' => "\n", 'array.indent' => 0])
+            ['array.eol' => "\n", 'array.indent' => 0]
         );
 
         $this->assertEncode(
             "[\r1 => 1,\r0 => 0,\r]",
             [1 => 1, 0 => 0],
-            new PHPEncoder(['array.eol' => "\r", 'array.indent' => 0])
+            ['array.eol' => "\r", 'array.indent' => 0]
         );
 
         $this->assertEncode(
@@ -168,7 +165,7 @@ RESULT
 RESULT
             ),
             ['foo' => 'bar', 1 => true],
-            new PHPEncoder(['array.base' => 1, 'array.indent' => 2])
+            ['array.base' => 1, 'array.indent' => 2]
         );
 
         $this->assertEncode(
@@ -181,10 +178,10 @@ RESULT
 RESULT
             ),
             ['foo' => 'bar', 1 => true],
-            new PHPEncoder([
+            [
                 'array.base' => "\t",
                 'array.indent' => "\t",
-            ])
+            ]
         );
     }
 
@@ -193,7 +190,7 @@ RESULT
         $this->assertEncode(
             "[1,[2,3],4,[[5,6],[7,8]]]",
             [1, [2, 3], 4, [[5, 6], [7, 8]]],
-            new PHPEncoder(['whitespace' => false])
+            ['whitespace' => false]
         );
 
         $this->assertEncode(
@@ -220,7 +217,7 @@ RESULT
 RESULT
             ),
             [1, [2, 3], 4, [[5, 6], [7, 8]]],
-            new PHPEncoder(['array.inline' => false])
+            ['array.inline' => false]
         );
 
         $this->assertEncode(
@@ -232,11 +229,10 @@ RESULT
 ]
 RESULT
             ),
-            ['foo' => [1, 2], 'bar' => [3, 4]],
-            new PHPEncoder()
+            ['foo' => [1, 2], 'bar' => [3, 4]]
         );
 
-        $this->assertEncode("[[1,2],[3,4]]", [[1, 2], [3, 4]], new PHPEncoder(['whitespace' => false]));
+        $this->assertEncode("[[1,2],[3,4]]", [[1, 2], [3, 4]], ['whitespace' => false]);
     }
 
     public function testNotOmittingKeys()
@@ -253,7 +249,7 @@ RESULT
 RESULT
             ),
             [7, 8, 8, 9],
-            new PHPEncoder(['array.omit' => false])
+            ['array.omit' => false]
         );
     }
 
@@ -333,7 +329,7 @@ RESULT
         $this->assertEncode(
             "['The Doctor', 'Martha Jones', 'Rose Tyler', 'Clara']",
             [0 => 'The Doctor', 1 => 'Martha Jones', 2 => 'Rose Tyler', 3 => 'Clara'],
-            new PHPEncoder(['array.omit' => true, 'array.align' => true])
+            ['array.omit' => true, 'array.align' => true]
         );
     }
 
@@ -350,24 +346,5 @@ RESULT
         }
 
         return preg_replace('/\r\n|\r|\n/', $eol, $string);
-    }
-
-    /**
-     * Assert that expected code is generated (and it results in original value)
-     * @param string $expected Expected generated code
-     * @param mixed $value Original value to encode
-     * @param PHPEncoder $encoder Encoder used to encode the value
-     * @param null $initial
-     */
-    private function assertEncode($expected, $value, PHPEncoder $encoder, $initial = null)
-    {
-        $output = $encoder->encode(func_num_args() < 4 ? $value : $initial);
-        $this->assertSame($expected, $output);
-
-        if (is_double($value) && is_nan($value)) {
-            $this->assertTrue(is_nan(eval("return $output;")));
-        } else {
-            $this->assertSame($value, eval("return $output;"));
-        }
     }
 }

@@ -9,7 +9,7 @@ use Riimu\Kit\PHPEncoder\Encoder\FloatEncoder;
  * @copyright Copyright (c) 2013, Riikka Kalliomäki
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
-class EncodingTest extends \PHPUnit_Framework_TestCase
+class EncodingTest extends EncodingTestCase
 {
     public function testOptions()
     {
@@ -35,95 +35,94 @@ class EncodingTest extends \PHPUnit_Framework_TestCase
 
     public function testNullEncoding()
     {
-        $this->assertEncode(null, 'null', new PHPEncoder());
-        $this->assertEncode(null, 'NULL', new PHPEncoder(['null.capitalize' => true]));
+        $this->assertEncode('null', null);
+        $this->assertEncode('NULL', null, ['null.capitalize' => true]);
     }
 
     public function testBooleanEncoding()
     {
-        $this->assertEncode(true, 'true', new PHPEncoder());
-        $this->assertEncode(false, 'false', new PHPEncoder());
-        $this->assertEncode(true, 'TRUE', new PHPEncoder(['boolean.capitalize' => true]));
-        $this->assertEncode(false, 'FALSE', new PHPEncoder(['boolean.capitalize' => true]));
+        $this->assertEncode('true', true);
+        $this->assertEncode('false', false);
+        $this->assertEncode('TRUE', true, ['boolean.capitalize' => true]);
+        $this->assertEncode('FALSE', false, ['boolean.capitalize' => true]);
     }
 
     public function testIntegerEncoding()
     {
-        $encoder = new PHPEncoder();
-        $this->assertEncode(0, '0', $encoder);
-        $this->assertEncode(1, '1', $encoder);
-        $this->assertEncode(-1, '-1', $encoder);
-        $this->assertEncode(1337, '1337', $encoder);
-        $this->assertEncode(-1337, '-1337', $encoder);
+        $this->assertEncode('0', 0);
+        $this->assertEncode('1', 1);
+        $this->assertEncode('-1', -1);
+        $this->assertEncode('1337', 1337);
+        $this->assertEncode('-1337', -1337);
     }
 
     public function testMaximumInteger()
     {
-        $this->assertEncode(PHP_INT_MAX, (string) PHP_INT_MAX, new PHPEncoder());
+        $this->assertEncode((string) PHP_INT_MAX, PHP_INT_MAX);
     }
 
     public function testMinimumInteger()
     {
-        $this->assertEncode(-PHP_INT_MAX - 1, '(int) ' . (-PHP_INT_MAX - 1), new PHPEncoder());
-        $this->assertEncode(-PHP_INT_MAX - 1, '(int)' . (-PHP_INT_MAX - 1), new PHPEncoder(['whitespace' => false]));
+        $this->assertEncode('(int) ' . (-PHP_INT_MAX - 1), -PHP_INT_MAX - 1);
+        $this->assertEncode('(int)' . (-PHP_INT_MAX - 1), -PHP_INT_MAX - 1, ['whitespace' => false]);
     }
 
     public function testFloatEncoding()
     {
-        $encoder = new PHPEncoder();
-        $this->assertEncode(0.0, '0.0', $encoder);
-        $this->assertEncode(1.0, '1.0', $encoder);
-        $this->assertEncode(-1.0, '-1.0', $encoder);
-        $this->assertEncode(1337.0, '1337.0', $encoder);
-        $this->assertEncode(-1337.0, '-1337.0', $encoder);
+        $this->assertEncode('0.0', 0.0);
+        $this->assertEncode('1.0', 1.0);
+        $this->assertEncode('-1.0', -1.0);
+        $this->assertEncode('1337.0', 1337.0);
+        $this->assertEncode('-1337.0', -1337.0);
     }
 
     public function testFloatPrecision()
     {
-        $encoder = new PHPEncoder();
-        $this->assertEncode(1.1, '1.1000000000000001', $encoder);
-        $this->assertEncode(0.1, '0.10000000000000001', $encoder);
+        $this->assertEncode('1.1000000000000001', 1.1);
+        $this->assertEncode('0.10000000000000001', 0.1);
 
-        $encoder->setOption('float.precision', 14);
-        $this->assertEncode(1.1, '1.1', $encoder);
-        $this->assertEncode(0.1, '0.1', $encoder);
+        $this->assertEncode('1.1', 1.1, ['float.precision' => 14]);
+        $this->assertEncode('0.1', 0.1, ['float.precision' => 14]);
     }
 
     public function testFloatExponents()
     {
-        $encoder = new PHPEncoder();
-        $this->assertEncode(1.0e+32, '1.0E+32', $encoder);
-        $this->assertEncode(1.0e-32, '1.0E-32', $encoder);
-        $this->assertEncode(-1.0e+32, '-1.0E+32', $encoder);
-        $this->assertEncode(-1.0e-32, '-1.0E-32', $encoder);
+        $this->assertEncode('1.0E+32', 1.0e+32);
+        $this->assertEncode('1.0E-32', 1.0e-32);
+        $this->assertEncode('-1.0E+32', -1.0e+32);
+        $this->assertEncode('-1.0E-32', -1.0e-32);
     }
 
     public function testPHPDefaultPrecision()
     {
         $float = 1.12345678901234567890;
-        $this->assertEncode($float, var_export($float, true), new PHPEncoder(['float.precision' => false]));
+        $this->assertEncode(var_export($float, true), $float, ['float.precision' => false]);
     }
 
     public function testInfiniteFloat()
     {
-        $encoder = new PHPEncoder();
-        $this->assertEncode(INF, 'INF', $encoder);
-        $this->assertEncode(-INF, '-INF', $encoder);
+        $this->assertEncode('INF', INF);
+        $this->assertEncode('-INF', -INF);
     }
 
     public function testNanFloat()
     {
-        //$this->assertEncode(NAN, 'NAN', $encoder);
+        $code = (new PHPEncoder())->encode(NAN);
+        $this->assertSame('NAN', $code);
+
+        $value = eval("return $code;");
+        $this->assertInternalType('float', $value);
+        $this->assertTrue(is_nan($value));
     }
 
     public function testFloatIntegers()
     {
         $encoder = new PHPEncoder(['float.integers' => true]);
-        $this->assertEncode(0, '0', $encoder, 0.0);
-        $this->assertEncode(1, '1', $encoder, 1.0);
-        $this->assertEncode(-1, '-1', $encoder, -1.0);
-        $this->assertEncode(1337, '1337', $encoder, 1337.0);
-        $this->assertEncode(-1337, '-1337', $encoder, -1337.0);
+        $this->assertEncode('0', 0, $encoder, 0.0);
+        $this->assertEncode('1', 1, $encoder, 1.0);
+        $this->assertEncode('-1', -1, $encoder, -1.0);
+        $this->assertEncode('1337', 1337, $encoder, 1337.0);
+        $this->assertEncode('-1337', -1337, $encoder, -1337.0);
     }
 
     public function testMaximumFloatIntegers()
@@ -132,16 +131,16 @@ class EncodingTest extends \PHPUnit_Framework_TestCase
         $positive = FloatEncoder::FLOAT_MAX - 1;
         $negative = -FloatEncoder::FLOAT_MAX + 1;
 
-        $this->assertEncode(FloatEncoder::FLOAT_MAX, '9.0071992547409927E+15', $encoder);
-        $this->assertEncode(-FloatEncoder::FLOAT_MAX, '-9.0071992547409927E+15', $encoder);
-        $this->assertEncode(number_format($positive, 0, '', '') + 0, '9007199254740991', $encoder, $positive);
-        $this->assertEncode(number_format($negative, 0, '', '') + 0, '-9007199254740991', $encoder, $negative);
+        $this->assertEncode('9.0071992547409927E+15', FloatEncoder::FLOAT_MAX, $encoder);
+        $this->assertEncode('-9.0071992547409927E+15', -FloatEncoder::FLOAT_MAX, $encoder);
+        $this->assertEncode('9007199254740991', number_format($positive, 0, '', '') + 0, $encoder, $positive);
+        $this->assertEncode('-9007199254740991', number_format($negative, 0, '', '') + 0, $encoder, $negative);
     }
 
     public function testLargeFloatIntegers()
     {
-        $this->assertEncode(1.0E+20, '1.0E+20', new PHPEncoder(['float.integers' => true]));
-        $this->assertEncode(1.0E+20, '100000000000000000000', new PHPEncoder(['float.integers' => 'all']));
+        $this->assertEncode('1.0E+20', 1.0E+20, ['float.integers' => true]);
+        $this->assertEncode('100000000000000000000', 1.0E+20, ['float.integers' => 'all']);
     }
 
     public function testFloatRounding()
@@ -156,38 +155,35 @@ class EncodingTest extends \PHPUnit_Framework_TestCase
 
     public function testFloatPresentation()
     {
+        $this->assertEncode('9007199254740991.0', FloatEncoder::FLOAT_MAX - 1);
+        $this->assertEncode('-9007199254740991.0', -FloatEncoder::FLOAT_MAX + 1);
+        $this->assertEncode('9.0071992547409927E+15', FloatEncoder::FLOAT_MAX);
+        $this->assertEncode('-9.0071992547409927E+15', -FloatEncoder::FLOAT_MAX);
+
+        $this->assertEncode('0.0001', 0.0001);
+        $this->assertEncode('1.0E-5', 0.00001);
+
         $encoder = new PHPEncoder();
-
-        $this->assertEncode(FloatEncoder::FLOAT_MAX - 1, '9007199254740991.0', $encoder);
-        $this->assertEncode(-FloatEncoder::FLOAT_MAX + 1, '-9007199254740991.0', $encoder);
-        $this->assertEncode(FloatEncoder::FLOAT_MAX, '9.0071992547409927E+15', $encoder);
-        $this->assertEncode(-FloatEncoder::FLOAT_MAX, '-9.0071992547409927E+15', $encoder);
-
-        $this->assertEncode(0.0001, '0.0001', $encoder);
-        $this->assertEncode(0.00001, '1.0E-5', $encoder);
-
         $encoder->setOption('float.precision', 2);
 
-        $this->assertEncode(10.0, '10.0', $encoder);
-        $this->assertEncode(100.0, '1.0E+2', $encoder);
-        $this->assertEncode(0.1, '0.1', $encoder);
-        $this->assertEncode(0.01, '1.0E-2', $encoder);
+        $this->assertEncode('10.0', 10.0, $encoder);
+        $this->assertEncode('1.0E+2', 100.0, $encoder);
+        $this->assertEncode('0.1', 0.1, $encoder);
+        $this->assertEncode('1.0E-2', 0.01, $encoder);
     }
 
     public function testStringEncoding()
     {
-        $encoder = new PHPEncoder();
-        $this->assertEncode('1', "'1'", $encoder);
-        $this->assertEncode('"\\\'', "'\"\\\\\\''", $encoder);
-        $this->assertEncode("\r", '"\r"', $encoder);
-        $this->assertEncode(" ", "' '", $encoder);
-        $this->assertEncode("~", "'~'", $encoder);
-        $this->assertEncode("\t\$foo", '"\t\$foo"', $encoder);
-        $this->assertEncode("\t{\$foo}", '"\t{\$foo}"', $encoder);
-        $this->assertEncode("\x00", '"\x00"', $encoder);
+        $this->assertEncode("'1'", '1');
+        $this->assertEncode("'\"\\\\\\''", '"\\\'');
+        $this->assertEncode('"\r"', "\r");
+        $this->assertEncode("' '", " ");
+        $this->assertEncode("'~'", "~");
+        $this->assertEncode('"\t\$foo"', "\t\$foo");
+        $this->assertEncode('"\t{\$foo}"', "\t{\$foo}");
+        $this->assertEncode('"\x00"', "\x00");
 
-        $encoder->setOption('string.escape', false);
-        $this->assertEncode("\r", "'\r'", $encoder);
+        $this->assertEncode("'\r'", "\r", ['string.escape' => false]);
     }
 
     public function testGMPEncoding()
@@ -196,9 +192,8 @@ class EncodingTest extends \PHPUnit_Framework_TestCase
             $this->markTestSkipped('Missing GMP library');
         }
 
-        $encoder = new PHPEncoder();
         $gmp = gmp_init('123');
-        $string = $encoder->encode($gmp);
+        $string = (new PHPEncoder())->encode($gmp);
 
         $this->assertSame('gmp_init(\'123\')', $string);
         $this->assertSame(0, gmp_cmp($gmp, eval('return ' . $string . ';')));
@@ -281,12 +276,5 @@ class EncodingTest extends \PHPUnit_Framework_TestCase
 
         $this->setExpectedException('RuntimeException');
         $encoder->encode($foo);
-    }
-
-    private function assertEncode($value, $string, PHPEncoder $encoder, $initial = null)
-    {
-        $output = $encoder->encode(func_num_args() < 4 ? $value : $initial);
-        $this->assertSame($string, $output);
-        $this->assertSame($value, eval("return $output;"));
     }
 }
