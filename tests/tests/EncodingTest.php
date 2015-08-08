@@ -150,7 +150,10 @@ class EncodingTest extends EncodingTestCase
 
         $float = $encoder->encode($value);
         $this->assertSame('1.0E+15', $float);
-        $this->assertNotEquals($value, eval("return $float;"));
+
+        $evaluated = eval("return $float;");
+        $this->assertInternalType('float', $evaluated);
+        $this->assertNotSame($value, $evaluated);
     }
 
     public function testFloatPresentation()
@@ -177,8 +180,8 @@ class EncodingTest extends EncodingTestCase
         $this->assertEncode("'1'", '1');
         $this->assertEncode("'\"\\\\\\''", '"\\\'');
         $this->assertEncode('"\r"', "\r");
-        $this->assertEncode("' '", " ");
-        $this->assertEncode("'~'", "~");
+        $this->assertEncode("' '", ' ');
+        $this->assertEncode("'~'", '~');
         $this->assertEncode('"\t\$foo"', "\t\$foo");
         $this->assertEncode('"\t{\$foo}"', "\t{\$foo}");
         $this->assertEncode('"\x00"', "\x00");
@@ -260,7 +263,7 @@ class EncodingTest extends EncodingTestCase
 
         $this->assertSame(
             [1, null],
-            eval('return ' .(new PHPEncoder(['recursion.ignore' => true]))->encode($foo) . ';')
+            eval('return ' . (new PHPEncoder(['recursion.ignore' => true]))->encode($foo) . ';')
         );
     }
 
@@ -271,7 +274,7 @@ class EncodingTest extends EncodingTestCase
 
         $encoder = new PHPEncoder([
             'recursion.detect' => false,
-            'recursion.max' => 5
+            'recursion.max'    => 5,
         ]);
 
         $this->setExpectedException('RuntimeException');

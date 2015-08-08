@@ -146,13 +146,19 @@ RESULT
         $this->assertEncode(
             "[\n1 => 1,\n0 => 0,\n]",
             [1 => 1, 0 => 0],
-            ['array.eol' => "\n", 'array.indent' => 0]
+            [
+                'array.eol'    => "\n",
+                'array.indent' => 0,
+            ]
         );
 
         $this->assertEncode(
             "[\r1 => 1,\r0 => 0,\r]",
             [1 => 1, 0 => 0],
-            ['array.eol' => "\r", 'array.indent' => 0]
+            [
+                'array.eol'    => "\r",
+                'array.indent' => 0,
+            ]
         );
 
         $this->assertEncode(
@@ -165,7 +171,10 @@ RESULT
 RESULT
             ),
             ['foo' => 'bar', 1 => true],
-            ['array.base' => 1, 'array.indent' => 2]
+            [
+                'array.base'   => 1,
+                'array.indent' => 2,
+            ]
         );
 
         $this->assertEncode(
@@ -179,7 +188,7 @@ RESULT
             ),
             ['foo' => 'bar', 1 => true],
             [
-                'array.base' => "\t",
+                'array.base'   => "\t",
                 'array.indent' => "\t",
             ]
         );
@@ -188,7 +197,7 @@ RESULT
     public function testMultiLevelArray()
     {
         $this->assertEncode(
-            "[1,[2,3],4,[[5,6],[7,8]]]",
+            '[1,[2,3],4,[[5,6],[7,8]]]',
             [1, [2, 3], 4, [[5, 6], [7, 8]]],
             ['whitespace' => false]
         );
@@ -232,7 +241,7 @@ RESULT
             ['foo' => [1, 2], 'bar' => [3, 4]]
         );
 
-        $this->assertEncode("[[1,2],[3,4]]", [[1, 2], [3, 4]], ['whitespace' => false]);
+        $this->assertEncode('[[1,2],[3,4]]', [[1, 2], [3, 4]], ['whitespace' => false]);
     }
 
     public function testNotOmittingKeys()
@@ -290,7 +299,7 @@ RESULT
     public function testAlignedArrayOmitsDefaultKeys()
     {
         $encoder = new PHPEncoder(['array.align' => true, 'array.inline' => false]);
-        $input = [0 => 'The Doctor', 1 => 'Martha Jones', 2 => 'Rose Tyler', 3 => 'Clara'];
+        $input = ['The Doctor', 'Martha Jones', 'Rose Tyler', 'Clara'];
 
         $this->assertEncode(
             $this->format(
@@ -328,7 +337,7 @@ RESULT
     {
         $this->assertEncode(
             "['The Doctor', 'Martha Jones', 'Rose Tyler', 'Clara']",
-            [0 => 'The Doctor', 1 => 'Martha Jones', 2 => 'Rose Tyler', 3 => 'Clara'],
+            ['The Doctor', 'Martha Jones', 'Rose Tyler', 'Clara'],
             ['array.omit' => true, 'array.align' => true]
         );
     }
@@ -336,7 +345,7 @@ RESULT
     /**
      * Formats system dependent line endings to correct format.
      * @param string $string String to format
-     * @param string|boolean $eol Line ending to use or false for system default
+     * @param string|bool $eol Line ending to use or false for system default
      * @return string The text formatted using correct line endings
      */
     private function format($string, $eol = false)
