@@ -132,4 +132,11 @@ class ObjectEncodingTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException('RuntimeException');
         $encoder->encode(new \stdClass());
     }
+
+    public function testInvalidFormatValueType()
+    {
+        $encoder = new PHPEncoder(['object.format' => true]);
+        $this->setExpectedException('RuntimeException');
+        $encoder->encode(new \stdClass());
+    }
 }

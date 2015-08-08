@@ -1,5 +1,12 @@
 # Changelog #
 
+## v2.1.1 (2015-08-08) ##
+
+  * Fixed object encoder not throwing an exception on some incorrect
+    object.format values.
+  * Fixed coding standards issues around the code and api documentation
+  * Improved Travis build process
+
 ## v2.1.0 (2015-04-18) ##
 
   * Encoder options with `null` default value will now be recognized
@@ -20,9 +27,9 @@
 ## v2.0.2 (2015-01-21) ##
 
   * `array.align` will now respect `array.omit` and `array.inline` settings if
-     all the keys in the array can be omitted.
-  *  Clarified documentation on how these settings are intended to work
-     together.
+    all the keys in the array can be omitted.
+  * Clarified documentation on how these settings are intended to work
+    together.
 
 ## v2.0.1 (2015-01-11) ##
 
