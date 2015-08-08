@@ -15,7 +15,7 @@ script:
   - mkdir -p build/logs
   - vendor/bin/phpunit --coverage-clover build/logs/clover.xml
   - vendor/bin/phpcs --standard=PSR2 src
-  - vendor/bin/php-cs-fixer --dry-run --diff
+  - vendor/bin/php-cs-fixer fix --dry-run --diff
 
 after_script:
   - vendor/bin/coveralls -v
