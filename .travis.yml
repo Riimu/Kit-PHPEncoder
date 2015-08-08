@@ -10,11 +10,17 @@ cache:
   directories:
   - vendor
 
-before_script:
+before_install:
+  - composer self-update
+
+install:
   - composer require "phpunit/phpunit:4.*" "satooshi/php-coveralls:dev-master" "squizlabs/php_codesniffer:2.*" "fabpot/php-cs-fixer:1.*"
+  - composer install
+
+before_script:
+  - mkdir -p build/logs
 
 script:
-  - mkdir -p build/logs
   - vendor/bin/phpunit --coverage-clover build/logs/clover.xml
   - vendor/bin/phpcs --standard=PSR2 src
   - vendor/bin/php-cs-fixer fix --dry-run --diff
