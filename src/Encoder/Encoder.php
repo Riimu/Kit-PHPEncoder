@@ -19,7 +19,7 @@ interface Encoder
     /**
      * Tells if the encoder supports encoding the given value.
      * @param mixed $value Value to test
-     * @return boolean True if the value can be encoded, false otherwise
+     * @return bool True if the value can be encoded, false otherwise
      */
     public function supports($value);
 

@@ -24,10 +24,10 @@ class PHPEncoder
 
     /** @var array Default values for options in the encoder */
     private static $defaultOptions = [
-        'whitespace' => true,
+        'whitespace'       => true,
         'recursion.detect' => true,
         'recursion.ignore' => false,
-        'recursion.max' => false,
+        'recursion.max'    => false,
     ];
 
     /**
@@ -157,6 +157,7 @@ class PHPEncoder
         }
 
         ksort($options);
+
         return $options;
     }
 

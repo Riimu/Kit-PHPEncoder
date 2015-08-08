@@ -16,8 +16,8 @@ class ArrayEncodingTest extends EncodingTestCase
 
     public function testInlineArray()
     {
-        $this->assertEncode("[1]", [1]);
-        $this->assertEncode("[7, 8, 8, 9]", [7, 8, 8, 9]);
+        $this->assertEncode('[1]', [1]);
+        $this->assertEncode('[7, 8, 8, 9]', [7, 8, 8, 9]);
     }
 
     public function testOmittedKeySkips()
@@ -112,10 +112,10 @@ RESULT
     {
         $encoder = new PHPEncoder(['whitespace' => false]);
 
-        $this->assertEncode("[1=>1]", [1 => 1], $encoder);
-        $this->assertEncode("[1=>1,0=>0]", [1 => 1, 0 => 0], $encoder);
+        $this->assertEncode('[1=>1]', [1 => 1], $encoder);
+        $this->assertEncode('[1=>1,0=>0]', [1 => 1, 0 => 0], $encoder);
         $this->assertEncode("['foo'=>'bar',1=>true]", ['foo' => 'bar', 1 => true], $encoder);
-        $this->assertEncode("[1,2,3,4]", [1, 2, 3, 4], $encoder);
+        $this->assertEncode('[1,2,3,4]', [1, 2, 3, 4], $encoder);
     }
 
     public function testLongArrayNotation()

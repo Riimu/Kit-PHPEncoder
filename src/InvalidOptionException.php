@@ -10,5 +10,4 @@ namespace Riimu\Kit\PHPEncoder;
  */
 class InvalidOptionException extends \InvalidArgumentException
 {
-
 }

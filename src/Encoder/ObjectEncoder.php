@@ -14,7 +14,7 @@ class ObjectEncoder implements Encoder
     private static $defaultOptions = [
         'object.method' => true,
         'object.format' => 'vars',
-        'object.cast' => true,
+        'object.cast'   => true,
     ];
 
     public function getDefaultOptions()
@@ -69,7 +69,7 @@ class ObjectEncoder implements Encoder
      */
     private function encodeObjectArray($object, array $options, callable $encode)
     {
-        if (!in_array($options['object.format'], ['array', 'vars', 'iterate'])) {
+        if (!in_array((string) $options['object.format'], ['array', 'vars', 'iterate'], true)) {
             throw new \RuntimeException('Invalid object encoding format: ' . $options['object.format']);
         }
 

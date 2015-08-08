@@ -16,11 +16,15 @@ class ObjectEncodingTest extends \PHPUnit_Framework_TestCase
         $obj->foo = 'bar';
         $obj->baz = true;
 
+        $code = $encoder->encode($obj);
         $this->assertSame(
             'unserialize(\'O:8:"stdClass":2:{s:3:"foo";s:3:"bar";s:3:"baz";b:1;}\')',
-            $encoder->encode($obj)
+            $code
         );
-        $this->assertEquals($obj, eval('return ' . $encoder->encode($obj) . ';'));
+
+        $evaluated = eval("return $code;");
+        $this->assertSame(get_class($obj), get_class($evaluated));
+        $this->assertSame((array) $obj, (array) $evaluated);
     }
 
     public function testStringConversion()

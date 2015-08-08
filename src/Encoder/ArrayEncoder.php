@@ -12,13 +12,13 @@ class ArrayEncoder implements Encoder
 {
     /** @var array Default values for options in the encoder */
     private static $defaultOptions = [
-        'array.short' => true,
-        'array.base' => 0,
+        'array.short'  => true,
+        'array.base'   => 0,
         'array.indent' => 4,
-        'array.align' => false,
+        'array.align'  => false,
         'array.inline' => 70,
-        'array.omit' => true,
-        'array.eol' => false,
+        'array.omit'   => true,
+        'array.eol'    => false,
     ];
 
     public function getDefaultOptions()
@@ -146,8 +146,8 @@ class ArrayEncoder implements Encoder
 
     /**
      * Builds the indentation based on the options.
-     * @param string|integer $base The base indentation
-     * @param string|integer $indent A single indentation level
+     * @param string|int $base The base indentation
+     * @param string|int $indent A single indentation level
      * @param int $depth The level of indentation
      * @return string The indentation for the current depth
      */
