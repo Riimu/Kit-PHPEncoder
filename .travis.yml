@@ -15,7 +15,7 @@ before_install:
 
 install:
   - composer require --no-update --no-interaction "phpunit/phpunit:4.*" "satooshi/php-coveralls:dev-master" "squizlabs/php_codesniffer:2.*" "fabpot/php-cs-fixer:1.*"
-  - tarvis_retry composer install --no-interaction
+  - travis_retry composer install --no-interaction
 
 before_script:
   - mkdir -p build/logs
