@@ -34,7 +34,7 @@ class ObjectEncodingTest extends \PHPUnit_Framework_TestCase
             'object.method' => false,
         ]);
 
-        $mock = $this->getMock('TestMockObject', ['__toString', 'toPHP']);
+        $mock = $this->getMock('Test\TestMockObject', ['__toString', 'toPHP']);
         $mock->expects($this->once())->method('__toString')->will($this->returnValue('Mocked'));
         $mock->expects($this->exactly(0))->method('toPHP');
 
@@ -83,10 +83,10 @@ class ObjectEncodingTest extends \PHPUnit_Framework_TestCase
             'whitespace'    => false,
         ]);
 
-        $obj = new \ExtendsTestMockObject();
+        $obj = new \Test\ExtendsTestMockObject();
         $obj->var = true;
         $this->assertSame(
-            "\\ExtendsTestMockObject::__set_state(['bazC'=>'E','baz'=>'C'," .
+            "\\Test\\ExtendsTestMockObject::__set_state(['bazC'=>'E','baz'=>'C'," .
             "'var'=>true,'fooC'=>'D','bar'=>'B','foo'=>'A'])",
             $encoder->encode($obj)
         );
@@ -115,13 +115,13 @@ class ObjectEncodingTest extends \PHPUnit_Framework_TestCase
 
         $obj = new \stdClass();
         $this->assertSame('[]', $encoder->encode($obj));
-        $mock = new \TestMockObject();
+        $mock = new \Test\TestMockObject();
         $this->assertSame(
-            '["\x00TestMockObject\x00foo" =>\'A\',"\x00*\x00bar"=>\'B\',\'baz\'=>\'C\']',
+            '["\x00Test\\\\TestMockObject\x00foo"=>\'A\',"\x00*\x00bar"=>\'B\',\'baz\'=>\'C\']',
             $encoder->encode($mock)
         );
         $this->assertSame(
-            ["\0TestMockObject\0foo" => 'A', "\0*\0bar" => 'B', 'baz' => 'C'],
+            ["\0Test\\TestMockObject\0foo" => 'A', "\0*\0bar" => 'B', 'baz' => 'C'],
             eval('return ' . $encoder->encode($mock) . ';')
         );
     }
