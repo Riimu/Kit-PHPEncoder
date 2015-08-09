@@ -14,16 +14,17 @@ before_install:
   - composer self-update
 
 install:
-  - composer require --no-update --no-interaction "phpunit/phpunit:4.*" "satooshi/php-coveralls:dev-master" "squizlabs/php_codesniffer:2.*" "fabpot/php-cs-fixer:1.*"
+  - composer require --no-update --no-interaction "phpunit/phpunit:4.*" "squizlabs/php_codesniffer:2.*" "fabpot/php-cs-fixer:1.*"
   - travis_retry composer install --no-interaction
+  - travis_retry wget https://scrutinizer-ci.com/ocular.phar
 
 before_script:
   - mkdir -p build/logs
 
 script:
-  - vendor/bin/phpunit --coverage-clover build/logs/clover.xml
+  - vendor/bin/phpunit --coverage-clover=coverage.clover
   - vendor/bin/phpcs --standard=PSR2 src tests
   - vendor/bin/php-cs-fixer fix --dry-run --diff
 
 after_script:
-  - vendor/bin/coveralls -v
+  - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
