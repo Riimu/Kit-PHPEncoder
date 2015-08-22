@@ -17,9 +17,11 @@ class GMPEncoder implements Encoder
 
     public function supports($value)
     {
-        return version_compare(PHP_VERSION, '5.6.0', '>=')
-            ? is_object($value) && $value instanceof \GMP
-            : is_resource($value) && get_resource_type($value) === 'GMP integer';
+        if (version_compare(PHP_VERSION, '5.6.0', '>=')) {
+            return is_object($value) && get_class($value) === 'GMP';
+        }
+
+        return is_resource($value) && get_resource_type($value) === 'GMP integer';
     }
 
     public function encode($value, $depth, array $options, callable $encode)
