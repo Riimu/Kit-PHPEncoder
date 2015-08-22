@@ -15,6 +15,9 @@
     "require": {
         "php": ">=5.4.0"
     },
+    "suggest": {
+        "ext-gmp" : "To convert GMP numbers into PHP code"
+    },
     "autoload": {
         "psr-4": {
             "Riimu\\Kit\\PHPEncoder\\": "src/"
