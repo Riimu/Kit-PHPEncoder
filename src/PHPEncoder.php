@@ -94,7 +94,10 @@ class PHPEncoder
     public function setOption($option, $value)
     {
         if (!$this->isValidOption($option)) {
-            throw new InvalidOptionException("Invalid encoder option '$option'");
+            throw new InvalidOptionException(sprintf(
+                "Invalid encoder option '%s'",
+                $option
+            ));
         }
 
         $this->options[$option] = $value;
@@ -150,7 +153,10 @@ class PHPEncoder
 
         foreach ($overrides as $name => $value) {
             if (!array_key_exists($name, $options)) {
-                throw new InvalidOptionException("Invalid encoder option '$name'");
+                throw new InvalidOptionException(sprintf(
+                    "Invalid encoder option '%s'",
+                    $name
+                ));
             }
 
             $options[$name] = $value;
