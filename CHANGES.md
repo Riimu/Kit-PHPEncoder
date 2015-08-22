@@ -1,9 +1,13 @@
 # Changelog #
 
+## v2.1.2 (2015-08-22) ##
+
+  * The GMP encoder no longer tries to encode classes that extend the GMP class
+
 ## v2.1.1 (2015-08-08) ##
 
   * Fixed object encoder not throwing an exception on some incorrect
-    object.format values.
+    object.format values
   * Fixed coding standards issues around the code and api documentation
   * Improved Travis build process
 
