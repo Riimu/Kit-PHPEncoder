@@ -241,6 +241,16 @@ apply to following calls.
     Maximum number of levels when encoding arrays and objects. Exception is
     thrown when the maximum is exceeded. Set to `false` to have no limit.
 
+## Known Issues ##
+
+If you are running this library on a PHP version earlier than 5.4.5, you may
+receive the following error, if you are trying to encode a recursive array:
+
+`Fatal error:  Nesting level too deep - recursive dependency?`
+
+In order to fix this, it is recommended to disable `recursion.detect` and set
+a max value for `recursion.max` if you expect to encounter recursive arrays.
+
 ## Credits ##
 
 This library is copyright 2013 - 2015 to Riikka Kalliomäki.

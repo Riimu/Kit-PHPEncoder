@@ -96,7 +96,14 @@ class EncodingTest extends EncodingTestCase
     public function testPHPDefaultPrecision()
     {
         $float = 1.12345678901234567890;
+
+        $cast = ini_set('precision', 17);
+        $serialize = ini_set('serialize_precision', 17);
+
         $this->assertEncode(var_export($float, true), $float, ['float.precision' => false]);
+
+        ini_set('precision', $cast);
+        ini_set('serialize_precision', $serialize);
     }
 
     public function testInfiniteFloat()
@@ -249,6 +256,10 @@ class EncodingTest extends EncodingTestCase
 
     public function testArrayRecursion()
     {
+        if (version_compare(PHP_VERSION, '5.4.5', '<')) {
+            $this->markTestSkipped();
+        }
+
         $foo = [1];
         $foo[1] = & $foo;
 
@@ -258,6 +269,10 @@ class EncodingTest extends EncodingTestCase
 
     public function testIgnoredArrayRecursion()
     {
+        if (version_compare(PHP_VERSION, '5.4.5', '<')) {
+            $this->markTestSkipped();
+        }
+
         $foo = [1];
         $foo[1] = & $foo;
 
