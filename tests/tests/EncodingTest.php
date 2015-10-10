@@ -95,12 +95,12 @@ class EncodingTest extends EncodingTestCase
 
     public function testPHPDefaultPrecision()
     {
-        $float = 1.12345678901234567890;
+        $float = 1.1234567890123456;
 
-        $cast = ini_set('precision', 17);
-        $serialize = ini_set('serialize_precision', 17);
+        $cast = ini_set('precision', 13);
+        $serialize = ini_set('serialize_precision', 13);
 
-        $this->assertEncode(var_export($float, true), $float, ['float.precision' => false]);
+        $this->assertEncode('1.123456789012', $float, ['float.precision' => false]);
 
         ini_set('precision', $cast);
         ini_set('serialize_precision', $serialize);
