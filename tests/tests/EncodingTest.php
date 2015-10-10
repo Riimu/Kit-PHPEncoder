@@ -93,16 +93,17 @@ class EncodingTest extends EncodingTestCase
         $this->assertEncode('-1.0E-32', -1.0e-32);
     }
 
-    public function testPHPDefaultPrecision()
+    public function testUsingIniPrecision()
     {
-        $float = 1.1234567890123456;
+        if (defined('HHVM_VERSION')) {
+            $this->markTestSkipped();
+        }
 
-        $cast = ini_set('precision', 13);
+        $float = 1.1234567890123456;
         $serialize = ini_set('serialize_precision', 13);
 
         $this->assertEncode('1.123456789012', $float, ['float.precision' => false]);
 
-        ini_set('precision', $cast);
         ini_set('serialize_precision', $serialize);
     }
 
