@@ -34,11 +34,10 @@ class ObjectEncodingTest extends \PHPUnit_Framework_TestCase
             'object.method' => false,
         ]);
 
-        $mock = $this->getMock('Test\TestMockObject', ['__toString', 'toPHP']);
-        $mock->expects($this->once())->method('__toString')->will($this->returnValue('Mocked'));
+        $mock = $this->getMock('Test\StringObject', ['toPHP']);
         $mock->expects($this->exactly(0))->method('toPHP');
 
-        $this->assertSame('Mocked', eval('return ' . $encoder->encode($mock) . ';'));
+        $this->assertSame('Stringed', eval('return ' . $encoder->encode($mock) . ';'));
     }
 
     public function testPHPValue()

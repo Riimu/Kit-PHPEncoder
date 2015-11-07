@@ -10,5 +10,6 @@ class TestMockObject
 
     public function __toString()
     {
+        return '';
     }
 }
