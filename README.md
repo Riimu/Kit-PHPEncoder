@@ -7,7 +7,7 @@ provides more options to customize the output, which makes it easier to generate
 code for different kinds of purposes such as readable configuration files or
 optimized cache files.
 
-The purpose of this library is to address some of the shortcomings with the 
+The purpose of this library is to address some of the shortcomings with the
 built in `var_export()`. For example, there is no way to control the amount of
 whitespace in the output and there is no way to choose between different array
 notations. This library also provides functionality to convert objects into PHP
@@ -24,13 +24,15 @@ at: http://kit.riimu.net/api/phpencoder/
 [![Build Status](https://img.shields.io/travis/Riimu/Kit-PHPEncoder.svg?style=flat)](https://travis-ci.org/Riimu/Kit-PHPEncoder)
 [![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/Riimu/Kit-PHPEncoder.svg?style=flat)](https://scrutinizer-ci.com/g/Riimu/Kit-PHPEncoder/)
 [![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/Riimu/Kit-PHPEncoder.svg?style=flat)](https://scrutinizer-ci.com/g/Riimu/Kit-PHPEncoder/)
+[![HHVM Status](https://img.shields.io/hhvm/riimu/kit-phpencoder.svg)](http://hhvm.h4cc.de/package/riimu/kit-phpencoder)
+![PHP7 Status](https://img.shields.io/badge/PHP7-tested-brightgreen.svg)
 
 ## Requirements ##
 
 In order to use this library, the following requirements must be met:
 
   * PHP version 5.4
-  
+
 ## Installation ##
 
 This library can be installed by using [Composer](http://getcomposer.org/). In
@@ -87,7 +89,7 @@ echo $encoder->encode(['foo' => 'bar', [1, true, false, null, 1.0]]);
 
 This would create the following output:
 
-``` 
+```
 [
     'foo' => 'bar',
     [1, true, false, null, 1.0],
@@ -137,107 +139,107 @@ is possible to set these options in three different ways:
   * Option values can be set via the `setOption()` method.
   * Options can be passed as an array as the second argument to the `encode()`
     method.
-  
+
 Note that options passed to the `encode()` method are only temporary and do not
 apply to following calls.
 
 #### List of Options ####
 
-  * **whitespace** : &lt;boolean&gt; (true)  
+  * **whitespace** : &lt;boolean&gt; (true)<br>
     When set to `false`, generation of all extra whitespace is disabled and all
     other settings that affect whitespace are ignored.
-    
-  * **null.capitalize** : &lt;boolean&gt; (false)  
+
+  * **null.capitalize** : &lt;boolean&gt; (false)<br>
     When set to `true`, all `null` values are written in upper case instead of
-    lower case. 
- 
-  * **boolean.capitalize** : &lt;boolean&gt; (false)  
+    lower case.
+
+  * **boolean.capitalize** : &lt;boolean&gt; (false)<br>
     When set to `true`, all `true` and `false` values are written in upper case
     instead of lower case.
-    
-  * **float.integers** : &lt;boolean|"all"&gt; (false)  
+
+  * **float.integers** : &lt;boolean|"all"&gt; (false)<br>
     When set to `true`, any float that represents an integer and has a value
     that is accurately represented by the floating point number will be encoded
     as an integer instead of a float. (e.g. the value `2.0` will be encoded as
     `2`). To include the values that are not accurately represented, you may set
     option to `"all"`.
-    
-  * **float.precision** : &lt;integer|false&gt; (17)  
+
+  * **float.precision** : &lt;integer|false&gt; (17)<br>
     The maximum precision of encoded floating point values, which usually also
     means the maximum number of digits in encoded floats. If the value is set to
     `false`, the PHP ini setting `serialize_precision` will be used instead.
     Note that due to the way floating point values work, a value greater than 17
     does not provide any additional precision.
-    
-  * **string.escape** : &lt;boolean&gt; (true)  
+
+  * **string.escape** : &lt;boolean&gt; (true)<br>
     When set to `true`, all strings containing bytes outside the 32-126 ASCII
     range will be written with double quotes and the characters outside the
     range will be escaped.
-    
-  * **array.short** : &lt;boolean&gt; (true)  
+
+  * **array.short** : &lt;boolean&gt; (true)<br>
     When set to `true`, arrays are enclosed using square brackets `[]` instead
     using of the long array notation `array()`.
-    
-  * **array.base** : &lt;integer|string&gt; (0)  
+
+  * **array.base** : &lt;integer|string&gt; (0)<br>
     Base indentation for arrays as a number of spaces or as a string. Provides
     convenience when you need to output code to a file with specific level of
     indentation.
-    
-  * **array.indent** : &lt;integer|string&gt; (4)  
+
+  * **array.indent** : &lt;integer|string&gt; (4)<br>
     Amount of indentation for single level of indentation as a number of spaces
     or a string.
-    
-  * **array.align** : &lt;boolean&gt; (false)  
+
+  * **array.align** : &lt;boolean&gt; (false)<br>
     When set to `true`, array assignment operators `=>` are aligned to the same
     column using spaces. Even if enabled, `array.omit` and `array.inline`
-    options are still respected, but only if all the keys in the specific array 
+    options are still respected, but only if all the keys in the specific array
     can be omitted.
-    
-  * **array.inline** : &lt;boolean|integer&gt; (70)  
+
+  * **array.inline** : &lt;boolean|integer&gt; (70)<br>
     When set to `true`, any array that can be written without any array keys
     will be written in a single line. If an integer is provided instead, the
     array will be written as a single line only if it does not exceed that
     number of characters. This option has no effect when `array.omit` is set to
     false.
-     
-  * **array.omit** : &lt;boolean&gt; (true)  
+
+  * **array.omit** : &lt;boolean&gt; (true)<br>
     When set to `true`, any redundant array keys will not be included (e.g. the
     array `[0 => 'a', 1 => 'b']` would be encoded just as `['a', 'b']`).
-  
-  * **array.eol** : &lt;string|false&gt; (false)  
+
+  * **array.eol** : &lt;string|false&gt; (false)<br>
     The end of line character used by array output. When set to `false`, the
     default `PHP_EOL` will be used instead.
-    
-  * **object.method** : &lt;boolean&gt; (true)  
+
+  * **object.method** : &lt;boolean&gt; (true)<br>
     When set to `true`, any encoded object will be checked for methods `toPHP()`
     and `toPHPValue()`. If the method `toPHP()` exists, the returned string will
     be used as the PHP code representation of the object. If the method
     `toPHPValue()` exists instead, the returned value will be encoded as PHP and
     used as the code representation of the object.
-    
-  * **object.format** : &lt;string&gt; ('vars')  
+
+  * **object.format** : &lt;string&gt; ('vars')<br>
     Default object encoding format. The possible values are:
-    
+
      * `string` casts the object to string and then encodes that string as PHP.
      * `serialize` serializes the object and wraps it with `unserialize()`
      * `export` mimics the `var_export()` object representation
-     * `array` casts the object to an array and encodes that array 
+     * `array` casts the object to an array and encodes that array
      * `vars` turns object into an array using `get_object_vars()`
      * `iterate` turns the object into an array by iterating over it with `foreach`
-    
-  * **object.cast** : &lt;boolean&gt; (true)  
+
+  * **object.cast** : &lt;boolean&gt; (true)<br>
     Whether to add an `(object)` cast in front of arrays generated from objects
     or not when using the object encoding formats `vars`, `array` or `iterate`.
-    
-  * **recursion.detect** : &lt;boolean&gt; (true)  
+
+  * **recursion.detect** : &lt;boolean&gt; (true)<br>
     When set to `true`, the encoder will attempt to detect circular references
     in arrays and objects to avoid infinite loops.
-    
-  * **recursion.ignore** : &lt;boolean&gt; (false)  
+
+  * **recursion.ignore** : &lt;boolean&gt; (false)<br>
     When set to `true`, any circular reference will be replaced with `null`
     instead of throwing an exception.
-    
-  * **recursion.max** : &lt;integer|false&gt; (false)  
+
+  * **recursion.max** : &lt;integer|false&gt; (false)<br>
     Maximum number of levels when encoding arrays and objects. Exception is
     thrown when the maximum is exceeded. Set to `false` to have no limit.
 
