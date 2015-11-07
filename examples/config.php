@@ -22,6 +22,6 @@ echo PHP_EOL . PHP_EOL;
 $dbconf = require 'dbconf.php';
 
 echo "Array read from the config file:" . PHP_EOL;
-var_dump($dbconf);
+print_r($dbconf);
 
 unlink('dbconf.php');
