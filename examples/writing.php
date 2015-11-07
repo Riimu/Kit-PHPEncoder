@@ -1,5 +1,8 @@
 <?php
 
+/* This simple example demonstrates how to encode a simple array using default
+   settings and while using minimal whitespace */
+
 require __DIR__ . '/../src/autoload.php';
 
 $encoder = new \Riimu\Kit\PHPEncoder\PHPEncoder();
