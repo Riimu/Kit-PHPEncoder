@@ -25,7 +25,7 @@ at: http://kit.riimu.net/api/phpencoder/
 [![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/Riimu/Kit-PHPEncoder.svg?style=flat)](https://scrutinizer-ci.com/g/Riimu/Kit-PHPEncoder/)
 [![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/Riimu/Kit-PHPEncoder.svg?style=flat)](https://scrutinizer-ci.com/g/Riimu/Kit-PHPEncoder/)
 [![HHVM Status](https://img.shields.io/hhvm/riimu/kit-phpencoder.svg)](http://hhvm.h4cc.de/package/riimu/kit-phpencoder)
-![PHP7 Status](https://img.shields.io/badge/PHP7-tested-brightgreen.svg)
+[![PHP7 Status](https://img.shields.io/badge/PHP7-tested-brightgreen.svg)]()
 
 ## Requirements ##
 

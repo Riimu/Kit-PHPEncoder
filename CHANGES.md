@@ -1,5 +1,9 @@
 # Changelog #
 
+## v2.1.3 (2015-11-08) ##
+
+  * Ensure the tests run on both HHVM and PHP7
+
 ## v2.1.2 (2015-08-22) ##
 
   * The GMP encoder no longer tries to encode classes that extend the GMP class
@@ -24,7 +28,7 @@
   * The float encoder now behaves slightly differently when deciding whether to
     use the exponential float notation or not.
   * The float encoder now uses `serialize_precision` when the option `precision`
-    is set to `false` 
+    is set to `false`
   * Several methods will now throw an InvalidOptionException if any invalid
     encoder options have been provided
 
