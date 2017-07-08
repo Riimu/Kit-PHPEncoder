@@ -12,23 +12,15 @@ cache:
   directories:
   - vendor
 
-before_install:
-  - if [[ $TRAVIS_PHP_VERSION =~ ^7 ]]; then phpenv config-rm xdebug.ini; fi
-
 install:
-  - travis_retry composer update --no-interaction
+  - travis_retry composer update -a --no-interaction
   - travis_retry wget https://scrutinizer-ci.com/ocular.phar
 
 before_script:
   - if [[ $TRAVIS_PHP_VERSION =~ ^hhvm ]]; then echo 'xdebug.enable = On' >> /etc/hhvm/php.ini; fi
 
 script:
-  - >
-    if [[ $TRAVIS_PHP_VERSION =~ ^7 ]]; then
-      phpdbg -qrr vendor/phpunit/phpunit/phpunit --coverage-clover=coverage.clover --coverage-text;
-    else
-      vendor/bin/phpunit --coverage-clover=coverage.clover --coverage-text;
-    fi
+  - vendor/bin/phpunit --coverage-clover=coverage.clover --coverage-text;
   - vendor/bin/phpcs --standard=PSR2 src tests
   - vendor/bin/php-cs-fixer fix -v --dry-run --allow-risky=yes --using-cache=no
 
