@@ -244,18 +244,6 @@ apply to following calls.
 
 ## Known Issues ##
 
-### Recursive arrays on PHP < 5.4.5 ###
-
-If you try to encode recursive arrays on PHP versions earlier than 5.4.5, you
-may encounter the following error (due to the way array comparisons work
-internally in PHP):
-
-`Fatal error:  Nesting level too deep - recursive dependency?`
-
-In order to fix this, you should disable the recursive array detection by
-setting the option `recursion.detect` to false and set a value for the option
-`recursion.max` to prevent recursive arrays from causing an infinite loop.
-
 ### Float precision on HHVM ###
 
 Note that HHVM does not support the ini setting `serialize_precision`. Thus,

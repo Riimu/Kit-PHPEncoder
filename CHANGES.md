@@ -1,5 +1,12 @@
 # Changelog #
 
+## v2.2.0 (2017-07-08) ##
+
+  * Increase the minimum PHP version requirement to 5.6
+  * Update to latest coding standards
+  * Update tests to work with PHPUnit 6
+  * Update travis build to test for PHP 7.1
+
 ## v2.1.3 (2015-11-08) ##
 
   * Ensure the tests run on both HHVM and PHP7
