@@ -21,17 +21,16 @@ fits in any of your dynamically generated PHP files.
 The API documentation, which can be generated using Apigen, can be read online
 at: http://kit.riimu.net/api/phpencoder/
 
-[![Build Status](https://img.shields.io/travis/Riimu/Kit-PHPEncoder.svg?style=flat)](https://travis-ci.org/Riimu/Kit-PHPEncoder)
-[![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/Riimu/Kit-PHPEncoder.svg?style=flat)](https://scrutinizer-ci.com/g/Riimu/Kit-PHPEncoder/)
-[![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/Riimu/Kit-PHPEncoder.svg?style=flat)](https://scrutinizer-ci.com/g/Riimu/Kit-PHPEncoder/)
-[![HHVM Status](https://img.shields.io/hhvm/riimu/Kit-PHPEncoder.svg)](http://hhvm.h4cc.de/package/riimu/Kit-PHPEncoder)
-[![PHP7 Status](https://img.shields.io/badge/PHP7-tested-brightgreen.svg)]()
+[![Travis](https://img.shields.io/travis/Riimu/Kit-PHPEncoder.svg?style=flat-square)](https://travis-ci.org/Riimu/Kit-PHPEncoder)
+[![Scrutinizer](https://img.shields.io/scrutinizer/g/Riimu/Kit-PHPEncoder.svg?style=flat-square)](https://scrutinizer-ci.com/g/Riimu/Kit-PHPEncoder/)
+[![Scrutinizer Coverage](https://img.shields.io/scrutinizer/coverage/g/Riimu/Kit-PHPEncoder.svg?style=flat-square)](https://scrutinizer-ci.com/g/Riimu/Kit-PHPEncoder/)
+[![Packagist](https://img.shields.io/packagist/v/riimu/kit-phpencoder.svg?style=flat-square)](https://packagist.org/packages/riimu/kit-phpencoder)
 
 ## Requirements ##
 
 In order to use this library, the following requirements must be met:
 
-  * PHP version 5.4
+  * PHP version 5.6
 
 ## Installation ##
 
@@ -245,18 +244,6 @@ apply to following calls.
 
 ## Known Issues ##
 
-### Recursive arrays on PHP < 5.4.5 ###
-
-If you try to encode recursive arrays on PHP versions earlier than 5.4.5, you
-may encounter the following error (due to the way array comparisons work
-internally in PHP):
-
-`Fatal error:  Nesting level too deep - recursive dependency?`
-
-In order to fix this, you should disable the recursive array detection by
-setting the option `recursion.detect` to false and set a value for the option
-`recursion.max` to prevent recursive arrays from causing an infinite loop.
-
 ### Float precision on HHVM ###
 
 Note that HHVM does not support the ini setting `serialize_precision`. Thus,
@@ -265,6 +252,6 @@ on HHVM.
 
 ## Credits ##
 
-This library is copyright 2013 - 2015 to Riikka Kalliomäki.
+This library is Copyright (c) 2013-2017 Riikka Kalliomäki.
 
 See LICENSE for license and copying information.

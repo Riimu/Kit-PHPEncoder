@@ -5,7 +5,7 @@ namespace Riimu\Kit\PHPEncoder\Encoder;
 /**
  * Encoder for float values.
  * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>
- * @copyright Copyright (c) 2014, Riikka Kalliomäki
+ * @copyright Copyright (c) 2014-2017 Riikka Kalliomäki
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
 class FloatEncoder implements Encoder
@@ -96,8 +96,8 @@ class FloatEncoder implements Encoder
         }
 
         // Deal with overflow that results from rounding
-        $log += (int) (round(abs($float) / pow(10, $log), $precision - 1) / 10);
-        $string = $this->formatFloat($float / pow(10, $log), $precision - 1);
+        $log += (int) (round(abs($float) / 10 ** $log, $precision - 1) / 10);
+        $string = $this->formatFloat($float / 10 ** $log, $precision - 1);
 
         return sprintf('%sE%+d', $string, $log);
     }

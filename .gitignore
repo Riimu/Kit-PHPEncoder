@@ -1,5 +1,4 @@
+build/
+vendor/
 examples/dbconf.php
-api
-coverage
-vendor
-dev
+composer.lock

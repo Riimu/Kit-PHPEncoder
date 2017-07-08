@@ -2,12 +2,17 @@
 
 namespace Riimu\Kit\PHPEncoder;
 
+use PHPUnit\Framework\TestCase;
+use Riimu\Kit\PHPEncoder\Test\ExtendsTestMockObject;
+use Riimu\Kit\PHPEncoder\Test\StringObject;
+use Riimu\Kit\PHPEncoder\Test\TestMockObject;
+
 /**
  * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>
- * @copyright Copyright (c) 2013, Riikka Kalliomäki
+ * @copyright Copyright (c) 2014-2017 Riikka Kalliomäki
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
-class ObjectEncodingTest extends \PHPUnit_Framework_TestCase
+class ObjectEncodingTest extends TestCase
 {
     public function testSerialize()
     {
@@ -34,24 +39,32 @@ class ObjectEncodingTest extends \PHPUnit_Framework_TestCase
             'object.method' => false,
         ]);
 
-        $mock = $this->getMock('Test\StringObject', ['toPHP']);
-        $mock->expects($this->exactly(0))->method('toPHP');
+        $mock = $this->getMockBuilder(StringObject::class)
+            ->setMethods(['toPHP'])
+            ->getMock();
 
+        $mock->expects($this->exactly(0))->method('toPHP');
         $this->assertSame('Stringed', eval('return ' . $encoder->encode($mock) . ';'));
     }
 
     public function testPHPValue()
     {
+        $mock = $this->getMockBuilder('FakeTestMockObjectWithPHPValue')
+            ->setMethods(['toPHPValue'])
+            ->getMock();
+
         $encoder = new PHPEncoder();
-        $mock = $this->getMock('TestMockObjectWithPHPValue', ['toPHPValue']);
         $mock->expects($this->once())->method('toPHPValue')->will($this->returnValue([]));
         $this->assertSame([], eval('return ' . $encoder->encode($mock) . ';'));
     }
 
     public function testPHP()
     {
+        $mock = $this->getMockBuilder('FakeTestMockObjectWithPHP')
+            ->setMethods(['toPHP'])
+            ->getMock();
+
         $encoder = new PHPEncoder();
-        $mock = $this->getMock('TestMockObjectWithPHP', ['toPHP']);
         $mock->expects($this->once())->method('toPHP')->will($this->returnValue('"Mocked"'));
         $this->assertSame('"Mocked"', $encoder->encode($mock));
     }
@@ -82,10 +95,10 @@ class ObjectEncodingTest extends \PHPUnit_Framework_TestCase
             'whitespace'    => false,
         ]);
 
-        $obj = new \Test\ExtendsTestMockObject();
+        $obj = new ExtendsTestMockObject();
         $obj->var = true;
         $this->assertSame(
-            "\\Test\\ExtendsTestMockObject::__set_state(['bazC'=>'E','baz'=>'C'," .
+            sprintf("\%s::__set_state(['bazC'=>'E','baz'=>'C',", ExtendsTestMockObject::class) .
             "'var'=>true,'fooC'=>'D','bar'=>'B','foo'=>'A'])",
             $encoder->encode($obj)
         );
@@ -114,13 +127,16 @@ class ObjectEncodingTest extends \PHPUnit_Framework_TestCase
 
         $obj = new \stdClass();
         $this->assertSame('[]', $encoder->encode($obj));
-        $mock = new \Test\TestMockObject();
+        $mock = new TestMockObject();
         $this->assertSame(
-            '["\x00Test\\\\TestMockObject\x00foo"=>\'A\',"\x00*\x00bar"=>\'B\',\'baz\'=>\'C\']',
+            sprintf(
+                '["\x00%s\x00foo"=>\'A\',"\x00*\x00bar"=>\'B\',\'baz\'=>\'C\']',
+                addcslashes(TestMockObject::class, '\\')
+            ),
             $encoder->encode($mock)
         );
         $this->assertSame(
-            ["\0Test\\TestMockObject\0foo" => 'A', "\0*\0bar" => 'B', 'baz' => 'C'],
+            [sprintf("\0%s\0foo", TestMockObject::class) => 'A', "\0*\0bar" => 'B', 'baz' => 'C'],
             eval('return ' . $encoder->encode($mock) . ';')
         );
     }
@@ -128,14 +144,14 @@ class ObjectEncodingTest extends \PHPUnit_Framework_TestCase
     public function testInvalidFormat()
     {
         $encoder = new PHPEncoder(['object.format' => 'invalid']);
-        $this->setExpectedException('RuntimeException');
+        $this->expectException(\RuntimeException::class);
         $encoder->encode(new \stdClass());
     }
 
     public function testInvalidFormatValueType()
     {
         $encoder = new PHPEncoder(['object.format' => true]);
-        $this->setExpectedException('RuntimeException');
+        $this->expectException(\RuntimeException::class);
         $encoder->encode(new \stdClass());
     }
 }
