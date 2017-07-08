@@ -2,6 +2,7 @@
 
 namespace Riimu\Kit\PHPEncoder;
 
+use Riimu\Kit\PHPEncoder\Encoder\Encoder;
 use Riimu\Kit\PHPEncoder\Encoder\FloatEncoder;
 
 /**
@@ -13,7 +14,10 @@ class EncodingTest extends EncodingTestCase
 {
     public function testOptions()
     {
-        $mock = $this->getMock('Riimu\Kit\PHPEncoder\Encoder\Encoder', ['getDefaultOptions', 'supports', 'encode']);
+        $mock = $this->getMockBuilder(Encoder::class)
+            ->setMethods(['getDefaultOptions', 'supports', 'encode'])
+            ->getMock();
+
         $mock->expects($this->any())->method('getDefaultOptions')->will($this->returnValue(['test' => false]));
         $mock->expects($this->any())->method('supports')->will($this->returnValue(true));
         $mock->expects($this->any())->method('encode')->will($this->returnCallback(
@@ -120,7 +124,7 @@ class EncodingTest extends EncodingTestCase
 
         $value = eval("return $code;");
         $this->assertInternalType('float', $value);
-        $this->assertTrue(is_nan($value));
+        $this->assertNan($value);
     }
 
     public function testFloatIntegers()
@@ -212,19 +216,19 @@ class EncodingTest extends EncodingTestCase
 
     public function testInvalidOptionOnConstructor()
     {
-        $this->setExpectedException('Riimu\Kit\PHPEncoder\InvalidOptionException');
+        $this->expectException(InvalidOptionException::class);
         new PHPEncoder(['NoSuchOption' => true]);
     }
 
     public function testSettingAnInvalidOption()
     {
-        $this->setExpectedException('Riimu\Kit\PHPEncoder\InvalidOptionException');
+        $this->expectException(InvalidOptionException::class);
         (new PHPEncoder())->setOption('NoSuchOption', true);
     }
 
     public function testInvalidOptionOnEncode()
     {
-        $this->setExpectedException('Riimu\Kit\PHPEncoder\InvalidOptionException');
+        $this->expectException(InvalidOptionException::class);
         (new PHPEncoder())->encode([], ['NoSuchOption' => true]);
     }
 
@@ -235,45 +239,37 @@ class EncodingTest extends EncodingTestCase
         $this->assertNotEmpty($encoder->encode([1, [2, 3]]));
 
         $encoder->setOption('recursion.max', 1);
-        $this->setExpectedException('RuntimeException');
+        $this->expectException(\RuntimeException::class);
         $encoder->encode([1, [2, 3]]);
     }
 
     public function testMissingEncoder()
     {
         $encoder = new PHPEncoder([], []);
-        $this->setExpectedException('InvalidArgumentException');
+        $this->expectException(\InvalidArgumentException::class);
         $encoder->encode(null);
     }
 
     public function testUnknownType()
     {
-        $fp = fopen(__FILE__, 'r');
+        $fp = fopen(__FILE__, 'rb');
         fclose($fp);
 
-        $this->setExpectedException('InvalidArgumentException');
+        $this->expectException(\InvalidArgumentException::class);
         (new PHPEncoder())->encode($fp);
     }
 
     public function testArrayRecursion()
     {
-        if (version_compare(PHP_VERSION, '5.4.5', '<')) {
-            $this->markTestSkipped();
-        }
-
         $foo = [1];
         $foo[1] = & $foo;
 
-        $this->setExpectedException('RuntimeException');
+        $this->expectException(\RuntimeException::class);
         (new PHPEncoder())->encode($foo);
     }
 
     public function testIgnoredArrayRecursion()
     {
-        if (version_compare(PHP_VERSION, '5.4.5', '<')) {
-            $this->markTestSkipped();
-        }
-
         $foo = [1];
         $foo[1] = & $foo;
 
@@ -293,7 +289,7 @@ class EncodingTest extends EncodingTestCase
             'recursion.max'    => 5,
         ]);
 
-        $this->setExpectedException('RuntimeException');
+        $this->expectException(\RuntimeException::class);
         $encoder->encode($foo);
     }
 }

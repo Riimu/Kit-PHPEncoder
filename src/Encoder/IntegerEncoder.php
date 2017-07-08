@@ -17,7 +17,7 @@ class IntegerEncoder implements Encoder
 
     public function supports($value)
     {
-        return is_integer($value);
+        return is_int($value);
     }
 
     public function encode($value, $depth, array $options, callable $encode)

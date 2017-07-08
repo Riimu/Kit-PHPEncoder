@@ -21,17 +21,16 @@ fits in any of your dynamically generated PHP files.
 The API documentation, which can be generated using Apigen, can be read online
 at: http://kit.riimu.net/api/phpencoder/
 
-[![Build Status](https://img.shields.io/travis/Riimu/Kit-PHPEncoder.svg?style=flat)](https://travis-ci.org/Riimu/Kit-PHPEncoder)
-[![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/Riimu/Kit-PHPEncoder.svg?style=flat)](https://scrutinizer-ci.com/g/Riimu/Kit-PHPEncoder/)
-[![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/Riimu/Kit-PHPEncoder.svg?style=flat)](https://scrutinizer-ci.com/g/Riimu/Kit-PHPEncoder/)
-[![HHVM Status](https://img.shields.io/hhvm/riimu/Kit-PHPEncoder.svg)](http://hhvm.h4cc.de/package/riimu/Kit-PHPEncoder)
-[![PHP7 Status](https://img.shields.io/badge/PHP7-tested-brightgreen.svg)]()
+[![Travis](https://img.shields.io/travis/Riimu/Kit-PHPEncoder.svg?style=flat-square)](https://travis-ci.org/Riimu/Kit-PHPEncoder)
+[![Scrutinizer](https://img.shields.io/scrutinizer/g/Riimu/Kit-PHPEncoder.svg?style=flat-square)](https://scrutinizer-ci.com/g/Riimu/Kit-PHPEncoder/)
+[![Scrutinizer Coverage](https://img.shields.io/scrutinizer/coverage/g/Riimu/Kit-PHPEncoder.svg?style=flat-square)](https://scrutinizer-ci.com/g/Riimu/Kit-PHPEncoder/)
+[![Packagist](https://img.shields.io/packagist/v/riimu/kit-phpencoder.svg?style=flat-square)](https://packagist.org/packages/riimu/kit-phpencoder)
 
 ## Requirements ##
 
 In order to use this library, the following requirements must be met:
 
-  * PHP version 5.4
+  * PHP version 5.6
 
 ## Installation ##
 

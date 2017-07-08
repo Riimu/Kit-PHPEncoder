@@ -2,7 +2,9 @@
 
 namespace Riimu\Kit\PHPEncoder;
 
-class EncodingTestCase extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class EncodingTestCase extends TestCase
 {
     /**
      * Asserts that expected code is generated and it evaluates to the expected value.

@@ -1,6 +1,6 @@
 <?php
 
-namespace Test;
+namespace Riimu\Kit\PHPEncoder\Test;
 
 class StringObject
 {

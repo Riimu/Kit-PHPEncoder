@@ -96,8 +96,8 @@ class FloatEncoder implements Encoder
         }
 
         // Deal with overflow that results from rounding
-        $log += (int) (round(abs($float) / pow(10, $log), $precision - 1) / 10);
-        $string = $this->formatFloat($float / pow(10, $log), $precision - 1);
+        $log += (int) (round(abs($float) / 10 ** $log, $precision - 1) / 10);
+        $string = $this->formatFloat($float / 10 ** $log, $precision - 1);
 
         return sprintf('%sE%+d', $string, $log);
     }
