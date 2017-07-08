@@ -12,6 +12,10 @@ cache:
   directories:
   - vendor
 
+before_install:
+  - export XDEBUG="/home/travis/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini"
+  - if [[ -f "$XDEBUG" ]]; then mv "$XDEBUG" "$XDEBUG.disabled"; fi
+
 install:
   - travis_retry composer update -a --no-interaction
   - travis_retry wget https://scrutinizer-ci.com/ocular.phar
@@ -20,7 +24,10 @@ before_script:
   - if [[ $TRAVIS_PHP_VERSION =~ ^hhvm ]]; then echo 'xdebug.enable = On' >> /etc/hhvm/php.ini; fi
 
 script:
-  - vendor/bin/phpunit --coverage-clover=coverage.clover --coverage-text;
+  - >
+    if [[ -f "$XDEBUG.disabled" ]]; then mv "$XDEBUG.disabled" "$XDEBUG"; fi &&
+    vendor/bin/phpunit --coverage-clover=coverage.clover --coverage-text &&
+    if [[ -f "$XDEBUG" ]]; then mv "$XDEBUG" "$XDEBUG.disabled"; fi
   - vendor/bin/phpcs --standard=PSR2 src tests
   - vendor/bin/php-cs-fixer fix -v --dry-run --allow-risky=yes --using-cache=no
 
