@@ -4,6 +4,11 @@ namespace Riimu\Kit\PHPEncoder;
 
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>
+ * @copyright Copyright (c) 2015-2017 Riikka Kalliomäki
+ * @license http://opensource.org/licenses/mit-license.php MIT License
+ */
 class EncodingTestCase extends TestCase
 {
     /**

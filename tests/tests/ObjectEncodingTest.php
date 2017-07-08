@@ -9,7 +9,7 @@ use Riimu\Kit\PHPEncoder\Test\TestMockObject;
 
 /**
  * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>
- * @copyright Copyright (c) 2013, Riikka Kalliomäki
+ * @copyright Copyright (c) 2014-2017 Riikka Kalliomäki
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
 class ObjectEncodingTest extends TestCase

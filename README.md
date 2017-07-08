@@ -264,6 +264,6 @@ on HHVM.
 
 ## Credits ##
 
-This library is copyright 2013 - 2015 to Riikka Kalliomäki.
+This library is Copyright (c) 2013-2017 Riikka Kalliomäki.
 
 See LICENSE for license and copying information.
