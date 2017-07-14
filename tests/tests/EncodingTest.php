@@ -18,8 +18,8 @@ class EncodingTest extends EncodingTestCase
             ->setMethods(['getDefaultOptions', 'supports', 'encode'])
             ->getMock();
 
-        $mock->expects($this->any())->method('getDefaultOptions')->will($this->returnValue(['test' => false]));
-        $mock->expects($this->any())->method('supports')->will($this->returnValue(true));
+        $mock->expects($this->any())->method('getDefaultOptions')->willReturn(['test' => false]);
+        $mock->expects($this->any())->method('supports')->willReturn(true);
         $mock->expects($this->any())->method('encode')->will($this->returnCallback(
             function ($value, $depth, $options, $encoder) {
                 return !empty($options['test']) ? strtoupper($value) : $value;

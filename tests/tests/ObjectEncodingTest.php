@@ -54,7 +54,7 @@ class ObjectEncodingTest extends TestCase
             ->getMock();
 
         $encoder = new PHPEncoder();
-        $mock->expects($this->once())->method('toPHPValue')->will($this->returnValue([]));
+        $mock->expects($this->once())->method('toPHPValue')->willReturn([]);
         $this->assertSame([], eval('return ' . $encoder->encode($mock) . ';'));
     }
 
@@ -65,7 +65,7 @@ class ObjectEncodingTest extends TestCase
             ->getMock();
 
         $encoder = new PHPEncoder();
-        $mock->expects($this->once())->method('toPHP')->will($this->returnValue('"Mocked"'));
+        $mock->expects($this->once())->method('toPHP')->willReturn('"Mocked"');
         $this->assertSame('"Mocked"', $encoder->encode($mock));
     }
 
