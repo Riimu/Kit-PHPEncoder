@@ -4,7 +4,7 @@
    configuration options, such as a database configuration, and stores that into
    a PHP file, which can, for example, later be used in an application. */
 
-require __DIR__ . '/../src/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 $configFile = __DIR__ . '/dbconf.php';
 $config = [

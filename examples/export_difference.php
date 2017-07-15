@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 $precision = 17;
 $normalEncoder = new \Riimu\Kit\PHPEncoder\PHPEncoder(['float.precision' => $precision]);
