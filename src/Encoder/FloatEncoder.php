@@ -17,6 +17,7 @@ class FloatEncoder implements Encoder
     private static $defaultOptions = [
         'float.integers'  => false,
         'float.precision' => 17,
+        'float.export' => false,
     ];
 
     public function getDefaultOptions()
@@ -53,15 +54,11 @@ class FloatEncoder implements Encoder
             return $this->encodeInteger($float, $encode);
         } elseif ($float === 0.0) {
             return '0.0';
+        } elseif ($options['float.export']) {
+            return var_export($float, true);
         }
 
-        $precision = $options['float.precision'];
-
-        if ($precision === false) {
-            $precision = ini_get('serialize_precision');
-        }
-
-        return $this->encodeFloat($float, $precision);
+        return $this->encodeFloat($float, $this->determinePrecision($options));
     }
 
     /**
@@ -99,6 +96,22 @@ class FloatEncoder implements Encoder
     }
 
     /**
+     * Determines the float precision based on the options.
+     * @param array $options The float encoding options
+     * @return int The precision used to encode floats
+     */
+    private function determinePrecision($options)
+    {
+        $precision = $options['float.precision'];
+
+        if ($precision === false) {
+            $precision = defined('HHVM_VERSION') ? 17 : ini_get('serialize_precision');
+        }
+
+        return max(1, (int) $precision);
+    }
+
+    /**
      * Encodes the number using a floating point representation.
      * @param float $float The number to encode
      * @param int $precision The maximum precision of encoded floats
@@ -106,7 +119,6 @@ class FloatEncoder implements Encoder
      */
     private function encodeFloat($float, $precision)
     {
-        $precision = max(1, (int) $precision);
         $log = (int) floor(log(abs($float), 10));
 
         if (abs($float) < self::FLOAT_MAX && $log > -5 && abs($log) < $precision) {

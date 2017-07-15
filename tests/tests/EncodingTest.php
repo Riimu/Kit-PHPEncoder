@@ -156,6 +156,11 @@ class EncodingTest extends EncodingTestCase
         $this->assertEncode('100000000000000000000', 1.0E+20, ['float.integers' => 'all']);
     }
 
+    public function testFloatExport()
+    {
+        $this->assertEncode('1.123', 1.123, ['float.export' => true]);
+    }
+
     public function testFloatRounding()
     {
         $encoder = new PHPEncoder(['float.precision' => 14]);
