@@ -223,8 +223,35 @@ class EncodingTest extends EncodingTestCase
         $this->assertEncode('"\t\$foo"', "\t\$foo");
         $this->assertEncode('"\t{\$foo}"', "\t{\$foo}");
         $this->assertEncode('"\x00"', "\x00");
-
         $this->assertEncode("'\r'", "\r", ['string.escape' => false]);
+    }
+
+    public function testBinaryStrings()
+    {
+        $encoder = new PHPEncoder(['string.binary' => true, 'string.escape' => false]);
+
+        $this->assertEncode("base64_decode('AP8Q')", "\x00\xFF\x10", $encoder);
+        $this->assertEncode("'ABC'", 'ABC', $encoder);
+        $this->assertEncode("'åäöÅÄÖ'", 'åäöÅÄÖ', $encoder);
+    }
+
+    public function testUtf8String()
+    {
+        $encoder = new PHPEncoder(['string.utf8' => true]);
+
+        $this->assertEncode('"\nA"', "\nA", $encoder);
+
+        if (version_compare(PHP_VERSION, '7', '<')) {
+            $this->assertSame('"\u{a2}"', $encoder->encode("\xC2\xA2"));
+            $this->assertSame('"\u{20ac}"', $encoder->encode("\xE2\x82\xAC"));
+            $this->assertSame('"\u{10348}"', $encoder->encode("\xF0\x90\x8D\x88"));
+            $this->assertSame('"\u{e5}\u{e4}\u{f6}\u{c5}\u{c4}\u{d6}"', $encoder->encode('åäöÅÄÖ'));
+        } else {
+            $this->assertEncode('"\u{a2}"', "\u{a2}", $encoder);
+            $this->assertEncode('"\u{20ac}"', "\u{20ac}", $encoder);
+            $this->assertEncode('"\u{10348}"', "\u{10348}", $encoder);
+            $this->assertEncode('"\u{e5}\u{e4}\u{f6}\u{c5}\u{c4}\u{d6}"', 'åäöÅÄÖ', $encoder);
+        }
     }
 
     public function testGMPEncoding()
