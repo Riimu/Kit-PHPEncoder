@@ -111,15 +111,11 @@ class StringEncoder implements Encoder
             $string = $this->encodeUtf8($string, $options);
         }
 
-        $format = $options['hex.capitalize'] ? '\x%02X' : '\x%02x';
+        $hexFormat = function ($matches) use ($options) {
+            return sprintf($options['hex.capitalize'] ? '\x%02X' : '\x%02x', ord($matches[0]));
+        };
 
-        return sprintf('"%s"', preg_replace_callback(
-            '/[^\x20-\x7E]/',
-            function ($matches) use ($format) {
-                return sprintf($format, ord($matches[0]));
-            },
-            $string
-        ));
+        return sprintf('"%s"', preg_replace_callback('/[^\x20-\x7E]/', $hexFormat, $string));
     }
 
     /**
@@ -130,7 +126,6 @@ class StringEncoder implements Encoder
      */
     private function encodeUtf8($string, $options)
     {
-        $format = $options['hex.capitalize'] ? '\u{%X}' : '\u{%x}';
         $pattern =
             '/  [\xC2-\xDF][\x80-\xBF]
               |  \xE0[\xA0-\xBF][\x80-\xBF]
@@ -140,8 +135,8 @@ class StringEncoder implements Encoder
               | [\xF1-\xF3][\x80-\xBF]{3}
               |  \xF4[\x80-\x8F][\x80-\xBF]{2}/x';
 
-        return preg_replace_callback($pattern, function ($match) use ($format) {
-            return sprintf($format, $this->getCodePoint($match[0]));
+        return preg_replace_callback($pattern, function ($match) use ($options) {
+            return sprintf($options['hex.capitalize'] ? '\u{%X}' : '\u{%x}', $this->getCodePoint($match[0]));
         }, $string);
     }
 

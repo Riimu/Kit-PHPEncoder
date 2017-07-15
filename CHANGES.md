@@ -2,9 +2,18 @@
 
 ## v2.3.0 (2017-07-15) ##
 
-  * Add `float.export` option that forces float encoder to use `var_export` for
-    encoding floating point numbers
-  * Float encoder now delegates integer encoding to the integer encoder
+  * Added `string.utf8` option which causes the string encoder to escape all
+    valid multibyte UTF-8 characters using the PHP7 unicode code point syntax.
+  * Added `string.binary` option which causes the string encoder to encode all
+    non UTF-8 strings using a `base64_encode()`.
+  * Added `integer.type` option that accepts values `binary`, `octal`, `decimal`
+    or `hexadecimal` which can be used to change the output syntax of integers.
+  * Added `hex.capitalize` option that causes all hexadecimal character in
+    output to appear in upper case
+  * Added `float.export` option that forces float encoder to use `var_export`
+    for encoding floating point numbers
+  * Float encoder now delegates integer encoding to the integer encoder (to
+    allow different integer types).
 
 ## v2.2.0 (2017-07-08) ##
 
