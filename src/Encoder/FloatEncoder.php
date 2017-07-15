@@ -37,19 +37,20 @@ class FloatEncoder implements Encoder
             return $value < 0 ? '-INF' : 'INF';
         }
 
-        return $this->encodeNumber($value, $options);
+        return $this->encodeNumber($value, $options, $encode);
     }
 
     /**
      * Encodes the number as a PHP number representation.
      * @param float $float The number to encode
      * @param array $options The float encoding options
+     * @param callable $encode Callback used to encode values
      * @return string The PHP code representation for the number
      */
-    private function encodeNumber($float, array $options)
+    private function encodeNumber($float, array $options, callable $encode)
     {
         if ($this->isInteger($float, $options['float.integers'])) {
-            return number_format($float, 0, '.', '');
+            return $this->encodeInteger($float, $encode);
         } elseif ($float === 0.0) {
             return '0.0';
         }
@@ -78,6 +79,23 @@ class FloatEncoder implements Encoder
         }
 
         return $allowIntegers === 'all';
+    }
+
+    /**
+     * Encodes the given float as an integer.
+     * @param float $float The number to encode
+     * @param callable $encode Callback used to encode values
+     * @return string The PHP code representation for the number
+     */
+    private function encodeInteger($float, callable $encode)
+    {
+        $minimum = defined('PHP_INT_MIN') ? PHP_INT_MIN : ~PHP_INT_MAX;
+
+        if ($float >= $minimum && $float <= PHP_INT_MAX) {
+            return $encode((int) $float);
+        }
+
+        return number_format($float, 0, '.', '');
     }
 
     /**

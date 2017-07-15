@@ -135,6 +135,7 @@ class EncodingTest extends EncodingTestCase
         $this->assertEncode('-1', -1, $encoder, -1.0);
         $this->assertEncode('1337', 1337, $encoder, 1337.0);
         $this->assertEncode('-1337', -1337, $encoder, -1337.0);
+        $this->assertEncode('2000000000', 2000000000, $encoder, 2000000000.0);
     }
 
     public function testMaximumFloatIntegers()
