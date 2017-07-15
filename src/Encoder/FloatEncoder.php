@@ -55,7 +55,7 @@ class FloatEncoder implements Encoder
         } elseif ($float === 0.0) {
             return '0.0';
         } elseif ($options['float.export']) {
-            return var_export($float, true);
+            return var_export((float) $float, true);
         }
 
         return $this->encodeFloat($float, $this->determinePrecision($options));

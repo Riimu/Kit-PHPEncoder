@@ -10,9 +10,14 @@ namespace Riimu\Kit\PHPEncoder\Encoder;
  */
 class IntegerEncoder implements Encoder
 {
+    /** @var array Default values for options in the encoder */
+    private static $defaultOptions = [
+        'integer.type' => 'decimal',
+    ];
+
     public function getDefaultOptions()
     {
-        return [];
+        return self::$defaultOptions;
     }
 
     public function supports($value)
@@ -22,12 +27,60 @@ class IntegerEncoder implements Encoder
 
     public function encode($value, $depth, array $options, callable $encode)
     {
-        $string = (string) $value;
+        $encoders = [
+            'binary' => function ($value) {
+                return $this->encodeBinary($value);
+            },
+            'octal' => function ($value) {
+                return $this->encodeOctal($value);
+            },
+            'decimal' => function ($value, $options) {
+                return $this->encodeDecimal($value, $options);
+            },
+            'hexadecimal' => function ($value) {
+                return $this->encodeHexadecimal($value);
+            },
+        ];
 
-        if ($value === 1 << (PHP_INT_SIZE * 8 - 1)) {
-            $string = sprintf('(int)%s%s', $options['whitespace'] ? ' ' : '', $string);
+        if (!isset($encoders[$options['integer.type']])) {
+            throw new \InvalidArgumentException('Invalid integer encoding type');
         }
 
-        return $string;
+        $callback = $encoders[$options['integer.type']];
+
+        return $callback((int) $value, $options);
+    }
+
+    public function encodeBinary($integer)
+    {
+        return sprintf('%s0b%s', $this->sign($integer), decbin(abs($integer)));
+    }
+
+    public function encodeOctal($integer)
+    {
+        return sprintf('%s0%s', $this->sign($integer), decoct(abs($integer)));
+    }
+
+    public function encodeDecimal($integer, $options)
+    {
+        if ($integer === 1 << (PHP_INT_SIZE * 8 - 1)) {
+            return sprintf('(int)%s%s', $options['whitespace'] ? ' ' : '', $integer);
+        }
+
+        return var_export($integer, true);
+    }
+
+    public function encodeHexadecimal($integer)
+    {
+        return sprintf('%s0x%s', $this->sign($integer), dechex(abs($integer)));
+    }
+
+    private function sign($integer)
+    {
+        if ($integer < 0) {
+            return '-';
+        }
+
+        return '';
     }
 }

@@ -71,6 +71,26 @@ class EncodingTest extends EncodingTestCase
         $this->assertEncode('(int)' . (-PHP_INT_MAX - 1), -PHP_INT_MAX - 1, ['whitespace' => false]);
     }
 
+    public function testIntegerTypes()
+    {
+        $this->assertEncode('0b110011000000011111001001', 13371337, ['integer.type' => 'binary']);
+        $this->assertEncode('-0b110011000000011111001001', -13371337, ['integer.type' => 'binary']);
+        $this->assertEncode('063003711', 13371337, ['integer.type' => 'octal']);
+        $this->assertEncode('-063003711', -13371337, ['integer.type' => 'octal']);
+        $this->assertEncode('13371337', 13371337, ['integer.type' => 'decimal']);
+        $this->assertEncode('-13371337', -13371337, ['integer.type' => 'decimal']);
+        $this->assertEncode('0xcc07c9', 13371337, ['integer.type' => 'hexadecimal']);
+        $this->assertEncode('-0xcc07c9', -13371337, ['integer.type' => 'hexadecimal']);
+    }
+
+    public function testInvalidIntegerType()
+    {
+        $encoder = new PHPEncoder();
+
+        $this->expectException(\InvalidArgumentException::class);
+        $encoder->encode(1, ['integer.type' => 'invalid']);
+    }
+
     public function testFloatEncoding()
     {
         $this->assertEncode('0.0', 0.0);
