@@ -147,6 +147,10 @@ apply to following calls.
     When set to `false`, generation of all extra whitespace is disabled and all
     other settings that affect whitespace are ignored.
 
+  * **hex.capitalize** : &lt;boolean&gt; (false)<br>
+    When set to `true` all hexadecimal characters in the output are written
+    using upper case instead of lower case.
+
   * **null.capitalize** : &lt;boolean&gt; (false)<br>
     When set to `true`, all `null` values are written in upper case instead of
     lower case.
@@ -155,12 +159,22 @@ apply to following calls.
     When set to `true`, all `true` and `false` values are written in upper case
     instead of lower case.
 
+  * **integer.type** : &lt;"binary"|"octal"|"decimal"|"hexadecimal"&gt; ("decimal")<br>
+    Change the output syntax of integers. For example, using the type `"hexadecimal"`
+    would output the number `15` as `0xf`.
+
   * **float.integers** : &lt;boolean|"all"&gt; (false)<br>
     When set to `true`, any float that represents an integer and has a value
     that is accurately represented by the floating point number will be encoded
     as an integer instead of a float. (e.g. the value `2.0` will be encoded as
     `2`). To include the values that are not accurately represented, you may set
     option to `"all"`.
+
+  * **float.export** : &lt;boolean&gt; (false)<br>
+    When set to `true` floats are encoded using `var_export()`, which causes a
+    slightly different output on non integer floating point numbers compared to
+    the standard implemented method. In some cases, this may produce more
+    accurate numbers but with less cleaner representation.
 
   * **float.precision** : &lt;integer|false&gt; (17)<br>
     The maximum precision of encoded floating point values, which usually also
@@ -169,10 +183,20 @@ apply to following calls.
     Note that due to the way floating point values work, a value greater than 17
     does not provide any additional precision.
 
+  * **string.binary** : &lt;boolean&gt; (false)<br>
+    When set to `true` any string that is not valid UTF-8 will be encoded in
+    base 64 and wrapped with `base64_decode()` call.
+
   * **string.escape** : &lt;boolean&gt; (true)<br>
     When set to `true`, all strings containing bytes outside the 32-126 ASCII
     range will be written with double quotes and the characters outside the
     range will be escaped.
+
+  * **string.utf8** : &lt;boolean&gt; (false)<br>
+    When both this option and `string.escape` are set to `true`, all valid
+    multibyte UTF-8 characters in strings are encoded using the PHP7 unicode
+    code point syntax. Note that this syntax does not work in PHP versions
+    earlier than 7.0.
 
   * **array.short** : &lt;boolean&gt; (true)<br>
     When set to `true`, arrays are enclosed using square brackets `[]` instead

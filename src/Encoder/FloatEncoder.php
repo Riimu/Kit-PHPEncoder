@@ -17,6 +17,7 @@ class FloatEncoder implements Encoder
     private static $defaultOptions = [
         'float.integers'  => false,
         'float.precision' => 17,
+        'float.export' => false,
     ];
 
     public function getDefaultOptions()
@@ -37,30 +38,27 @@ class FloatEncoder implements Encoder
             return $value < 0 ? '-INF' : 'INF';
         }
 
-        return $this->encodeNumber($value, $options);
+        return $this->encodeNumber($value, $options, $encode);
     }
 
     /**
      * Encodes the number as a PHP number representation.
      * @param float $float The number to encode
      * @param array $options The float encoding options
+     * @param callable $encode Callback used to encode values
      * @return string The PHP code representation for the number
      */
-    private function encodeNumber($float, array $options)
+    private function encodeNumber($float, array $options, callable $encode)
     {
         if ($this->isInteger($float, $options['float.integers'])) {
-            return number_format($float, 0, '.', '');
+            return $this->encodeInteger($float, $encode);
         } elseif ($float === 0.0) {
             return '0.0';
+        } elseif ($options['float.export']) {
+            return var_export((float) $float, true);
         }
 
-        $precision = $options['float.precision'];
-
-        if ($precision === false) {
-            $precision = ini_get('serialize_precision');
-        }
-
-        return $this->encodeFloat($float, $precision);
+        return $this->encodeFloat($float, $this->determinePrecision($options));
     }
 
     /**
@@ -81,6 +79,39 @@ class FloatEncoder implements Encoder
     }
 
     /**
+     * Encodes the given float as an integer.
+     * @param float $float The number to encode
+     * @param callable $encode Callback used to encode values
+     * @return string The PHP code representation for the number
+     */
+    private function encodeInteger($float, callable $encode)
+    {
+        $minimum = defined('PHP_INT_MIN') ? PHP_INT_MIN : ~PHP_INT_MAX;
+
+        if ($float >= $minimum && $float <= PHP_INT_MAX) {
+            return $encode((int) $float);
+        }
+
+        return number_format($float, 0, '.', '');
+    }
+
+    /**
+     * Determines the float precision based on the options.
+     * @param array $options The float encoding options
+     * @return int The precision used to encode floats
+     */
+    private function determinePrecision($options)
+    {
+        $precision = $options['float.precision'];
+
+        if ($precision === false) {
+            $precision = defined('HHVM_VERSION') ? 17 : ini_get('serialize_precision');
+        }
+
+        return max(1, (int) $precision);
+    }
+
+    /**
      * Encodes the number using a floating point representation.
      * @param float $float The number to encode
      * @param int $precision The maximum precision of encoded floats
@@ -88,10 +119,9 @@ class FloatEncoder implements Encoder
      */
     private function encodeFloat($float, $precision)
     {
-        $precision = max(1, (int) $precision);
         $log = (int) floor(log(abs($float), 10));
 
-        if (abs($float) < self::FLOAT_MAX && $log > -5 && abs($log) < $precision) {
+        if ($log > -5 && abs($float) < self::FLOAT_MAX && abs($log) < $precision) {
             return $this->formatFloat($float, $precision - $log - 1);
         }
 
