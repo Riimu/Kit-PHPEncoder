@@ -93,7 +93,7 @@ class StringEncoder implements Encoder
     /**
      * Returns the string wrapped in double quotes and all but print characters escaped.
      * @param string $string String to wrap and escape
-     * @param array $options String encoding options
+     * @param array $options The string encoding options
      * @return string The string wrapped in double quotes and escape correctly
      */
     private function getDoubleQuotedString($string, $options)
@@ -108,13 +108,15 @@ class StringEncoder implements Encoder
         ]);
 
         if ($options['string.utf8']) {
-            $string = $this->encodeUtf8($string);
+            $string = $this->encodeUtf8($string, $options);
         }
+
+        $format = $options['hex.capitalize'] ? '\x%02X' : '\x%02x';
 
         return sprintf('"%s"', preg_replace_callback(
             '/[^\x20-\x7E]/',
-            function ($matches) {
-                return sprintf('\x%02x', ord($matches[0]));
+            function ($matches) use ($format) {
+                return sprintf($format, ord($matches[0]));
             },
             $string
         ));
@@ -123,10 +125,12 @@ class StringEncoder implements Encoder
     /**
      * Encodes all multibyte UTF-8 characters into PHP7 string encoding.
      * @param string $string The string to encoder
+     * @param array $options The string encoding options
      * @return string The string with all the multibyte characters encoded
      */
-    private function encodeUtf8($string)
+    private function encodeUtf8($string, $options)
     {
+        $format = $options['hex.capitalize'] ? '\u{%X}' : '\u{%x}';
         $pattern =
             '/  [\xC2-\xDF][\x80-\xBF]
               |  \xE0[\xA0-\xBF][\x80-\xBF]
@@ -136,8 +140,8 @@ class StringEncoder implements Encoder
               | [\xF1-\xF3][\x80-\xBF]{3}
               |  \xF4[\x80-\x8F][\x80-\xBF]{2}/x';
 
-        return preg_replace_callback($pattern, function ($match) {
-            return sprintf('\u{%s}', dechex($this->getCodePoint($match[0])));
+        return preg_replace_callback($pattern, function ($match) use ($format) {
+            return sprintf($format, $this->getCodePoint($match[0]));
         }, $string);
     }
 

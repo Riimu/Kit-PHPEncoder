@@ -81,6 +81,8 @@ class EncodingTest extends EncodingTestCase
         $this->assertEncode('-13371337', -13371337, ['integer.type' => 'decimal']);
         $this->assertEncode('0xcc07c9', 13371337, ['integer.type' => 'hexadecimal']);
         $this->assertEncode('-0xcc07c9', -13371337, ['integer.type' => 'hexadecimal']);
+        $this->assertEncode('0xCC07C9', 13371337, ['integer.type' => 'hexadecimal', 'hex.capitalize' => true]);
+        $this->assertEncode('-0xCC07C9', -13371337, ['integer.type' => 'hexadecimal', 'hex.capitalize' => true]);
     }
 
     public function testInvalidIntegerType()
@@ -156,6 +158,8 @@ class EncodingTest extends EncodingTestCase
         $this->assertEncode('1337', 1337, $encoder, 1337.0);
         $this->assertEncode('-1337', -1337, $encoder, -1337.0);
         $this->assertEncode('2000000000', 2000000000, $encoder, 2000000000.0);
+
+        $this->assertEncode('0xf', 15, ['float.integers' => true, 'integer.type' => 'hexadecimal'], 15.0);
     }
 
     public function testMaximumFloatIntegers()
@@ -223,6 +227,8 @@ class EncodingTest extends EncodingTestCase
         $this->assertEncode('"\t\$foo"', "\t\$foo");
         $this->assertEncode('"\t{\$foo}"', "\t{\$foo}");
         $this->assertEncode('"\x00"', "\x00");
+        $this->assertEncode('"\xff"', "\xFF");
+        $this->assertEncode('"\xFF"', "\xFF", ['hex.capitalize' => true]);
         $this->assertEncode("'\r'", "\r", ['string.escape' => false]);
     }
 
@@ -240,7 +246,7 @@ class EncodingTest extends EncodingTestCase
         $encoder = new PHPEncoder(['string.utf8' => true]);
 
         $this->assertEncode('"\nA"', "\nA", $encoder);
-        $this->assertEncode('"\nA\u{c4}\x00"', "\nAÄ\x00", $encoder);
+        $this->assertSame('"\nA\u{c4}\x00"', $encoder->encode("\nAÄ\x00"));
 
         if (version_compare(PHP_VERSION, '7', '<')) {
             $this->assertSame('"\u{a2}"', $encoder->encode("\xC2\xA2"));
@@ -253,6 +259,9 @@ class EncodingTest extends EncodingTestCase
             $this->assertEncode('"\u{10348}"', "\u{10348}", $encoder);
             $this->assertEncode('"\u{e5}\u{e4}\u{f6}\u{c5}\u{c4}\u{d6}"', 'åäöÅÄÖ', $encoder);
         }
+
+        $encoder->setOption('hex.capitalize', true);
+        $this->assertSame('"\nA\u{C4}\x00"', $encoder->encode("\nAÄ\x00"));
     }
 
     public function testGMPEncoding()

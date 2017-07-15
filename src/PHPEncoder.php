@@ -28,6 +28,7 @@ class PHPEncoder
         'recursion.detect' => true,
         'recursion.ignore' => false,
         'recursion.max'    => false,
+        'hex.capitalize'   => false,
     ];
 
     /**

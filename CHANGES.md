@@ -2,7 +2,9 @@
 
 ## v2.3.0 (2017-07-15) ##
 
-  * 
+  * Add `float.export` option that forces float encoder to use `var_export` for
+    encoding floating point numbers
+  * Float encoder now delegates integer encoding to the integer encoder
 
 ## v2.2.0 (2017-07-08) ##
 
