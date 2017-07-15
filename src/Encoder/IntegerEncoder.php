@@ -60,16 +60,32 @@ class IntegerEncoder implements Encoder
         return $callback((int) $value, $options);
     }
 
+    /**
+     * Encodes an integer into binary representation.
+     * @param int $integer The integer to encode
+     * @return string The PHP code representation for the integer
+     */
     public function encodeBinary($integer)
     {
         return sprintf('%s0b%s', $this->sign($integer), decbin(abs($integer)));
     }
 
+    /**
+     * Encodes an integer into octal representation.
+     * @param int $integer The integer to encode
+     * @return string The PHP code representation for the integer
+     */
     public function encodeOctal($integer)
     {
         return sprintf('%s0%s', $this->sign($integer), decoct(abs($integer)));
     }
 
+    /**
+     * Encodes an integer into decimal representation.
+     * @param int $integer The integer to encode
+     * @param array $options The integer encoding options
+     * @return string The PHP code representation for the integer
+     */
     public function encodeDecimal($integer, $options)
     {
         if ($integer === 1 << (PHP_INT_SIZE * 8 - 1)) {
@@ -79,11 +95,21 @@ class IntegerEncoder implements Encoder
         return var_export($integer, true);
     }
 
+    /**
+     * Encodes an integer into hexadecimal representation.
+     * @param int $integer The integer to encode
+     * @return string The PHP code representation for the integer
+     */
     public function encodeHexadecimal($integer)
     {
         return sprintf('%s0x%s', $this->sign($integer), dechex(abs($integer)));
     }
 
+    /**
+     * Returns the negative sign for negative numbers.
+     * @param int $integer The number to test for negativity
+     * @return string The minus sign for negative numbers and empty string for positive numbers
+     */
     private function sign($integer)
     {
         if ($integer < 0) {

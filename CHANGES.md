@@ -1,5 +1,9 @@
 # Changelog #
 
+## v2.3.0 (2017-07-15) ##
+
+  * 
+
 ## v2.2.0 (2017-07-08) ##
 
   * Increase the minimum PHP version requirement to 5.6

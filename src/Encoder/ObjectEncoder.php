@@ -66,6 +66,7 @@ class ObjectEncoder implements Encoder
      * @param array $options List of encoder options
      * @param callable $encode Callback used to encode values
      * @return string The object encoded as string
+     * @throws \RuntimeException If the object format is invalid
      */
     private function encodeObjectArray($object, array $options, callable $encode)
     {

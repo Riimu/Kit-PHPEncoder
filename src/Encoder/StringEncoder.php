@@ -42,6 +42,12 @@ class StringEncoder implements Encoder
         return $this->getSingleQuotedString($value);
     }
 
+    /**
+     * Tells if the string is not a valid UTF-8 string.
+     * @param string $string The string to test
+     * @param array $options The string encoding options
+     * @return bool True if the string is not valid UTF-8 and false if it is
+     */
     private function isBinaryString($string, $options)
     {
         if (!$options['string.binary']) {
@@ -64,6 +70,11 @@ class StringEncoder implements Encoder
         return !preg_match($pattern, $string);
     }
 
+    /**
+     * Encodes the given string into base 64 encoded format.
+     * @param string $string The string to encode
+     * @return string A base 64 PHP code representation for the string
+     */
     private function encodeBinaryString($string)
     {
         return sprintf("base64_decode('%s')", base64_encode($string));
@@ -110,7 +121,7 @@ class StringEncoder implements Encoder
     }
 
     /**
-     * Encodes all multibyte UTF-8 characters into PHP7 string encoding
+     * Encodes all multibyte UTF-8 characters into PHP7 string encoding.
      * @param string $string The string to encoder
      * @return string The string with all the multibyte characters encoded
      */
