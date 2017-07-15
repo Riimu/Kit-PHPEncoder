@@ -121,7 +121,7 @@ class FloatEncoder implements Encoder
     {
         $log = (int) floor(log(abs($float), 10));
 
-        if (abs($float) < self::FLOAT_MAX && $log > -5 && abs($log) < $precision) {
+        if ($log > -5 && abs($float) < self::FLOAT_MAX && abs($log) < $precision) {
             return $this->formatFloat($float, $precision - $log - 1);
         }
 

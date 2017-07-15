@@ -240,6 +240,7 @@ class EncodingTest extends EncodingTestCase
         $encoder = new PHPEncoder(['string.utf8' => true]);
 
         $this->assertEncode('"\nA"', "\nA", $encoder);
+        $this->assertEncode('"\nA\u{c4}\x00"', "\nAÄ\x00", $encoder);
 
         if (version_compare(PHP_VERSION, '7', '<')) {
             $this->assertSame('"\u{a2}"', $encoder->encode("\xC2\xA2"));

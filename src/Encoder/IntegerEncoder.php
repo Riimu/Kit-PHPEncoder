@@ -15,19 +15,15 @@ class IntegerEncoder implements Encoder
         'integer.type' => 'decimal',
     ];
 
-    public function getDefaultOptions()
-    {
-        return self::$defaultOptions;
-    }
+    /** @var \Closure[] Encoders for different types of integers */
+    private $encoders;
 
-    public function supports($value)
+    /**
+     * IntegerEncoder constructor.
+     */
+    public function __construct()
     {
-        return is_int($value);
-    }
-
-    public function encode($value, $depth, array $options, callable $encode)
-    {
-        $encoders = [
+        $this->encoders = [
             'binary' => function ($value) {
                 return $this->encodeBinary($value);
             },
@@ -41,12 +37,25 @@ class IntegerEncoder implements Encoder
                 return $this->encodeHexadecimal($value);
             },
         ];
+    }
 
-        if (!isset($encoders[$options['integer.type']])) {
+    public function getDefaultOptions()
+    {
+        return self::$defaultOptions;
+    }
+
+    public function supports($value)
+    {
+        return is_int($value);
+    }
+
+    public function encode($value, $depth, array $options, callable $encode)
+    {
+        if (!isset($this->encoders[$options['integer.type']])) {
             throw new \InvalidArgumentException('Invalid integer encoding type');
         }
 
-        $callback = $encoders[$options['integer.type']];
+        $callback = $this->encoders[$options['integer.type']];
 
         return $callback((int) $value, $options);
     }

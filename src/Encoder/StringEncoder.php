@@ -82,6 +82,7 @@ class StringEncoder implements Encoder
     /**
      * Returns the string wrapped in double quotes and all but print characters escaped.
      * @param string $string String to wrap and escape
+     * @param array $options String encoding options
      * @return string The string wrapped in double quotes and escape correctly
      */
     private function getDoubleQuotedString($string, $options)
@@ -108,6 +109,11 @@ class StringEncoder implements Encoder
         ));
     }
 
+    /**
+     * Encodes all multibyte UTF-8 characters into PHP7 string encoding
+     * @param string $string The string to encoder
+     * @return string The string with all the multibyte characters encoded
+     */
     private function encodeUtf8($string)
     {
         $pattern =
@@ -124,6 +130,11 @@ class StringEncoder implements Encoder
         }, $string);
     }
 
+    /**
+     * Returns the unicode code point for the given multibyte UTF-8 character.
+     * @param string $bytes The multibyte character
+     * @return int The code point for the multibyte character
+     */
     private function getCodePoint($bytes)
     {
         if (strlen($bytes) === 2) {
