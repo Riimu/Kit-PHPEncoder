@@ -44,6 +44,12 @@ class StringEncoder implements Encoder
         return $this->getSingleQuotedString($value);
     }
 
+    /**
+     * Tests if the given value is a string that could be encoded as a class name constant.
+     * @param string $value The string to test
+     * @param array $options The string encoding options
+     * @return bool True if string can be encoded as class constant, false if not
+     */
     private function isClassName($value, array $options)
     {
         if (preg_match('/^([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)(\\\\(?1))*$/', $value) !== 1) {
@@ -53,6 +59,12 @@ class StringEncoder implements Encoder
         return array_intersect(iterator_to_array($this->iterateNamespaces($value)), $options['string.classes']) !== [];
     }
 
+    /**
+     * Encodes the given string as a class name constant based on used imports.
+     * @param string $value The string to encode
+     * @param array $options The string encoding options
+     * @return string The class constant PHP code representation
+     */
     private function getClassName($value, array $options)
     {
         foreach ($this->iterateNamespaces($value) as $partial) {
@@ -65,6 +77,11 @@ class StringEncoder implements Encoder
         return sprintf('\\%s::class', $value);
     }
 
+    /**
+     * Iterates over the variations of the namespace for the given class name.
+     * @param string $value The class name to iterate over
+     * @return \Generator|string[] The namespace parts of the string
+     */
     private function iterateNamespaces($value)
     {
         yield $value;
@@ -77,6 +94,12 @@ class StringEncoder implements Encoder
         }
     }
 
+    /**
+     * Returns the PHP code representation for the string that is not just simple ascii characters.
+     * @param string $value The string to encode
+     * @param array $options The string encoding options
+     * @return string The PHP code representation for the complex string
+     */
     private function getComplexString($value, array $options)
     {
         if ($this->isBinaryString($value, $options)) {

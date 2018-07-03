@@ -201,6 +201,23 @@ apply to following calls.
     multibyte UTF-8 characters in strings are encoded using the PHP7 unicode
     code point syntax. Note that this syntax does not work in PHP versions
     earlier than 7.0.
+    
+  * **string.classes** : &lt;string[]&gt; ([])<br>
+    Defines a list of classes or class namespace prefixes for classes that
+    can be encoded using the class resolution operator `::class` when 
+    encountered in strings. e.g. providing the value `['Riimu\\']` would encode
+    all strings that look like class names in the `Riimu` namespace like
+    `Riimu\Kit\PHPEncoder::class`.
+    
+  * **string.imports** : &lt;string[]&gt; ([])<br>
+    List of imports used in the resulting code file, which allows class names
+    to be written using shorter format. The list should be an associative array
+    with the namespace or class as the key and the used name as the value. Use
+    empty string to indicate the current namespace.
+    
+    For example, if the resulting file would have `namespace Riimu\Kit\PHPEncoder;`
+    and `use PHPUnit\Framework\TestCase;`, you could set up the array as
+    `['Riimu\\Kit\\PHPEncoder\\' => '', 'PHPUnit\\Framework\\TestCase' => 'TestCase']`
 
   * **array.short** : &lt;boolean&gt; (true)<br>
     When set to `true`, arrays are enclosed using square brackets `[]` instead
