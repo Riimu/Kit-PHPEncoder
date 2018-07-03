@@ -286,14 +286,6 @@ apply to following calls.
     Maximum number of levels when encoding arrays and objects. Exception is
     thrown when the maximum is exceeded. Set to `false` to have no limit.
 
-## Known Issues ##
-
-### Float precision on HHVM ###
-
-Note that HHVM does not support the ini setting `serialize_precision`. Thus,
-the use of the value `false` for the option `float.precision` is not supported
-on HHVM.
-
 ## Credits ##
 
 This library is Copyright (c) 2013-2018 Riikka Kalliomäki.
