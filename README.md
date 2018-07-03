@@ -296,6 +296,6 @@ on HHVM.
 
 ## Credits ##
 
-This library is Copyright (c) 2013-2017 Riikka Kalliomäki.
+This library is Copyright (c) 2013-2018 Riikka Kalliomäki.
 
 See LICENSE for license and copying information.
