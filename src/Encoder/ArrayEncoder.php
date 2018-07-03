@@ -5,20 +5,20 @@ namespace Riimu\Kit\PHPEncoder\Encoder;
 /**
  * Encoder for array values.
  * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>
- * @copyright Copyright (c) 2014-2017 Riikka Kalliomäki
+ * @copyright Copyright (c) 2014-2018 Riikka Kalliomäki
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
 class ArrayEncoder implements Encoder
 {
     /** @var array Default values for options in the encoder */
     private static $defaultOptions = [
-        'array.short'  => true,
-        'array.base'   => 0,
+        'array.short' => true,
+        'array.base' => 0,
         'array.indent' => 4,
-        'array.align'  => false,
+        'array.align' => false,
         'array.inline' => 70,
-        'array.omit'   => true,
-        'array.eol'    => false,
+        'array.omit' => true,
+        'array.eol' => false,
     ];
 
     public function getDefaultOptions()
@@ -28,7 +28,7 @@ class ArrayEncoder implements Encoder
 
     public function supports($value)
     {
-        return is_array($value);
+        return \is_array($value);
     }
 
     public function encode($value, $depth, array $options, callable $encode)
@@ -107,7 +107,7 @@ class ArrayEncoder implements Encoder
 
         if (preg_match('/[\r\n\t]/', $output)) {
             return false;
-        } elseif ($options['array.inline'] === true || strlen($output) <= (int) $options['array.inline']) {
+        } elseif ($options['array.inline'] === true || \strlen($output) <= (int) $options['array.inline']) {
             return $output;
         }
 
@@ -125,7 +125,7 @@ class ArrayEncoder implements Encoder
     {
         $indent = $this->buildIndent($options['array.base'], $options['array.indent'], $depth + 1);
         $last = $this->buildIndent($options['array.base'], $options['array.indent'], $depth);
-        $eol = $options['array.eol'] === false ? PHP_EOL : (string) $options['array.eol'];
+        $eol = $options['array.eol'] === false ? \PHP_EOL : (string) $options['array.eol'];
 
         return $this->wrap(
             sprintf('%s%s%s,%1$s%s', $eol, $indent, implode(',' . $eol . $indent, $lines), $last),
@@ -153,10 +153,10 @@ class ArrayEncoder implements Encoder
      */
     private function buildIndent($base, $indent, $depth)
     {
-        $base = is_int($base) ? str_repeat(' ', $base) : (string) $base;
+        $base = \is_int($base) ? str_repeat(' ', $base) : (string) $base;
 
         return $depth === 0 ? $base : $base . str_repeat(
-            is_int($indent) ? str_repeat(' ', $indent) : (string) $indent,
+            \is_int($indent) ? str_repeat(' ', $indent) : (string) $indent,
             $depth
         );
     }
@@ -180,7 +180,7 @@ class ArrayEncoder implements Encoder
         $format = sprintf('%%-%ds => %%s', max(array_map('strlen', $keys)));
         $pairs = [];
 
-        for ($i = 0, $count = count($keys); $i < $count; $i++) {
+        for ($i = 0, $count = \count($keys); $i < $count; $i++) {
             $pairs[] = sprintf($format, $keys[$i], $values[$i]);
         }
 
@@ -225,7 +225,7 @@ class ArrayEncoder implements Encoder
     {
         $result = $key === $nextIndex;
 
-        if (is_int($key)) {
+        if (\is_int($key)) {
             $nextIndex = max($key + 1, $nextIndex);
         }
 

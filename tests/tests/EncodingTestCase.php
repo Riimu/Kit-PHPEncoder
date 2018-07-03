@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>
- * @copyright Copyright (c) 2015-2017 Riikka Kalliomäki
+ * @copyright Copyright (c) 2015-2018 Riikka Kalliomäki
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
 class EncodingTestCase extends TestCase
@@ -20,11 +20,11 @@ class EncodingTestCase extends TestCase
      */
     protected function assertEncode($code, $value, $encoder = [], $initial = null)
     {
-        if (is_array($encoder)) {
+        if (\is_array($encoder)) {
             $encoder = new PHPEncoder($encoder);
         }
 
-        $output = $encoder->encode(func_num_args() < 4 ? $value : $initial);
+        $output = $encoder->encode(\func_num_args() < 4 ? $value : $initial);
         $this->assertSame($code, $output);
         $this->assertSame($value, eval("return $output;"));
     }

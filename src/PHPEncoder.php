@@ -11,7 +11,7 @@ namespace Riimu\Kit\PHPEncoder;
  * in specific way.
  *
  * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>
- * @copyright Copyright (c) 2014-2017 Riikka Kalliomäki
+ * @copyright Copyright (c) 2014-2018 Riikka Kalliomäki
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
 class PHPEncoder
@@ -24,11 +24,11 @@ class PHPEncoder
 
     /** @var array Default values for options in the encoder */
     private static $defaultOptions = [
-        'whitespace'       => true,
+        'whitespace' => true,
         'recursion.detect' => true,
         'recursion.ignore' => false,
-        'recursion.max'    => false,
-        'hex.capitalize'   => false,
+        'recursion.max' => false,
+        'hex.capitalize' => false,
     ];
 
     /**
@@ -230,6 +230,6 @@ class PHPEncoder
             }
         }
 
-        throw new \InvalidArgumentException(sprintf("Unsupported value type '%s'", gettype($value)));
+        throw new \InvalidArgumentException(sprintf("Unsupported value type '%s'", \gettype($value)));
     }
 }

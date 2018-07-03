@@ -1,5 +1,15 @@
 # Changelog #
 
+## v2.4.0 (2018-07-03) ##
+
+  * Added `string.classes` option, which allows to define an array of classes or
+    namespaces to encode using the `::class` format, when encountered as strings
+  * Added `string.imports` options, which allows to define the used imports to write
+    the `::class` format strings using shorter imported notation
+  * Support for HHVM has been dropped, as HHVM no longer aims for PHP compatibility
+  * Added travis builds for PHP 7.2
+  * Change some rules in the used coding standard 
+
 ## v2.3.0 (2017-07-15) ##
 
   * Added `string.utf8` option which causes the string encoder to escape all

@@ -9,7 +9,7 @@ use Riimu\Kit\PHPEncoder\Test\TestMockObject;
 
 /**
  * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>
- * @copyright Copyright (c) 2014-2017 Riikka Kalliomäki
+ * @copyright Copyright (c) 2014-2018 Riikka Kalliomäki
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
 class ObjectEncodingTest extends TestCase
@@ -28,7 +28,7 @@ class ObjectEncodingTest extends TestCase
         );
 
         $evaluated = eval("return $code;");
-        $this->assertSame(get_class($obj), get_class($evaluated));
+        $this->assertSame(\get_class($obj), \get_class($evaluated));
         $this->assertSame((array) $obj, (array) $evaluated);
     }
 
@@ -72,18 +72,18 @@ class ObjectEncodingTest extends TestCase
     public function testObjectVarsArray()
     {
         $encoder = new PHPEncoder([
-            'whitespace'    => false,
+            'whitespace' => false,
             'object.format' => 'vars',
-            'object.cast'   => false,
+            'object.cast' => false,
         ]);
 
         $std = new \stdClass();
         $std->baz = 'C';
         $this->assertSame("['baz'=>'C']", $encoder->encode($std));
         $this->assertSame("(object) [\n 'baz' => 'C',\n]", $encoder->encode($std, [
-            'object.cast'  => true,
-            'whitespace'   => true,
-            'array.eol'    => "\n",
+            'object.cast' => true,
+            'whitespace' => true,
+            'array.eol' => "\n",
             'array.indent' => ' ',
         ]));
     }
@@ -92,7 +92,7 @@ class ObjectEncodingTest extends TestCase
     {
         $encoder = new PHPEncoder([
             'object.format' => 'export',
-            'whitespace'    => false,
+            'whitespace' => false,
         ]);
 
         $obj = new ExtendsTestMockObject();
@@ -107,9 +107,9 @@ class ObjectEncodingTest extends TestCase
     public function testIteratingArray()
     {
         $encoder = new PHPEncoder([
-            'whitespace'    => false,
+            'whitespace' => false,
             'object.format' => 'iterate',
-            'object.cast'   => false,
+            'object.cast' => false,
         ]);
 
         $array = ['foo' => 'bar', [1, 2], 3, 10 => 1337, 11 => 7, 6 => 6];
@@ -120,9 +120,9 @@ class ObjectEncodingTest extends TestCase
     public function testArrayCasting()
     {
         $encoder = new PHPEncoder([
-            'whitespace'    => false,
+            'whitespace' => false,
             'object.format' => 'array',
-            'object.cast'   => false,
+            'object.cast' => false,
         ]);
 
         $obj = new \stdClass();

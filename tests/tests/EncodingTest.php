@@ -7,7 +7,7 @@ use Riimu\Kit\PHPEncoder\Encoder\FloatEncoder;
 
 /**
  * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>
- * @copyright Copyright (c) 2014-2017 Riikka Kalliomäki
+ * @copyright Copyright (c) 2014-2018 Riikka Kalliomäki
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
 class EncodingTest extends EncodingTestCase
@@ -62,13 +62,13 @@ class EncodingTest extends EncodingTestCase
 
     public function testMaximumInteger()
     {
-        $this->assertEncode((string) PHP_INT_MAX, PHP_INT_MAX);
+        $this->assertEncode((string) \PHP_INT_MAX, \PHP_INT_MAX);
     }
 
     public function testMinimumInteger()
     {
-        $this->assertEncode('(int) ' . (-PHP_INT_MAX - 1), -PHP_INT_MAX - 1);
-        $this->assertEncode('(int)' . (-PHP_INT_MAX - 1), -PHP_INT_MAX - 1, ['whitespace' => false]);
+        $this->assertEncode('(int) ' . (-\PHP_INT_MAX - 1), -\PHP_INT_MAX - 1);
+        $this->assertEncode('(int)' . (-\PHP_INT_MAX - 1), -\PHP_INT_MAX - 1, ['whitespace' => false]);
     }
 
     public function testIntegerTypes()
@@ -121,10 +121,6 @@ class EncodingTest extends EncodingTestCase
 
     public function testUsingIniPrecision()
     {
-        if (defined('HHVM_VERSION')) {
-            $this->markTestSkipped();
-        }
-
         $float = 1.1234567890123456;
         $serialize = ini_set('serialize_precision', 13);
 
@@ -135,13 +131,13 @@ class EncodingTest extends EncodingTestCase
 
     public function testInfiniteFloat()
     {
-        $this->assertEncode('INF', INF);
-        $this->assertEncode('-INF', -INF);
+        $this->assertEncode('INF', \INF);
+        $this->assertEncode('-INF', -\INF);
     }
 
     public function testNanFloat()
     {
-        $code = (new PHPEncoder())->encode(NAN);
+        $code = (new PHPEncoder())->encode(\NAN);
         $this->assertSame('NAN', $code);
 
         $value = eval("return $code;");
@@ -248,7 +244,7 @@ class EncodingTest extends EncodingTestCase
         $this->assertEncode('"\nA"', "\nA", $encoder);
         $this->assertSame('"\nA\u{c4}\x00"', $encoder->encode("\nAÄ\x00"));
 
-        if (version_compare(PHP_VERSION, '7', '<')) {
+        if (version_compare(\PHP_VERSION, '7', '<')) {
             $this->assertSame('"\u{a2}"', $encoder->encode("\xC2\xA2"));
             $this->assertSame('"\u{20ac}"', $encoder->encode("\xE2\x82\xAC"));
             $this->assertSame('"\u{10348}"', $encoder->encode("\xF0\x90\x8D\x88"));
@@ -264,9 +260,38 @@ class EncodingTest extends EncodingTestCase
         $this->assertSame('"\nA\u{C4}\x00"', $encoder->encode("\nAÄ\x00"));
     }
 
+    public function testClassStrings()
+    {
+        $encoder = new PHPEncoder(['string.classes' => [self::class]]);
+        $this->assertEncode('\\' . self::class . '::class', self::class, $encoder);
+    }
+
+    public function testImportedClassString()
+    {
+        $encoder = new PHPEncoder([
+            'string.classes' => [\DateTime::class, PHPEncoder::class, FloatEncoder::class, Encoder::class],
+            'string.imports' => ['\\' => '', __NAMESPACE__ . '\\' => 'Encoder', Encoder::class => 'EncoderInterface'],
+        ]);
+
+        $this->assertSame('DateTime::class', $encoder->encode(\DateTime::class));
+        $this->assertSame('Encoder\PHPEncoder::class', $encoder->encode(PHPEncoder::class));
+        $this->assertSame('Encoder\Encoder\FloatEncoder::class', $encoder->encode(FloatEncoder::class));
+        $this->assertSame('EncoderInterface::class', $encoder->encode(Encoder::class));
+        $this->assertSame("'DateTimeInterface'", $encoder->encode(\DateTimeInterface::class));
+
+        $encoder = new PHPEncoder([
+            'string.classes' => [self::class],
+            'string.imports' => [__NAMESPACE__ . '\\' => ''],
+        ]);
+
+        $code = sprintf('namespace ' . __NAMESPACE__ . '; return %s;', $encoder->encode(self::class));
+        $this->assertSame('namespace Riimu\Kit\PHPEncoder; return EncodingTest::class;', $code);
+        $this->assertSame(self::class, eval($code));
+    }
+
     public function testGMPEncoding()
     {
-        if (!function_exists('gmp_init')) {
+        if (!\function_exists('gmp_init')) {
             $this->markTestSkipped('Missing GMP library');
         }
 
@@ -349,7 +374,7 @@ class EncodingTest extends EncodingTestCase
 
         $encoder = new PHPEncoder([
             'recursion.detect' => false,
-            'recursion.max'    => 5,
+            'recursion.max' => 5,
         ]);
 
         $this->expectException(\RuntimeException::class);
