@@ -1,6 +1,6 @@
 # Changelog #
 
-## v2.4.0 (2018-07-??) ##
+## v2.4.0 (2018-07-03) ##
 
   * Added `string.classes` option, which allows to define an array of classes or
     namespaces to encode using the `::class` format, when encountered as strings
