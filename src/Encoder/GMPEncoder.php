@@ -17,7 +17,7 @@ class GMPEncoder implements Encoder
 
     public function supports($value)
     {
-        return is_object($value) && get_class($value) === \GMP::class;
+        return \is_object($value) && \get_class($value) === \GMP::class;
     }
 
     public function encode($value, $depth, array $options, callable $encode)

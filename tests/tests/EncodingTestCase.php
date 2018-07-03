@@ -20,11 +20,11 @@ class EncodingTestCase extends TestCase
      */
     protected function assertEncode($code, $value, $encoder = [], $initial = null)
     {
-        if (is_array($encoder)) {
+        if (\is_array($encoder)) {
             $encoder = new PHPEncoder($encoder);
         }
 
-        $output = $encoder->encode(func_num_args() < 4 ? $value : $initial);
+        $output = $encoder->encode(\func_num_args() < 4 ? $value : $initial);
         $this->assertSame($code, $output);
         $this->assertSame($value, eval("return $output;"));
     }

@@ -53,7 +53,7 @@ bar',
 ]
 RESULT
             ),
-            ['foo' . PHP_EOL . 'bar'],
+            ['foo' . \PHP_EOL . 'bar'],
             ['string.escape' => false]
         );
     }
@@ -147,7 +147,7 @@ RESULT
             "[\n1 => 1,\n0 => 0,\n]",
             [1 => 1, 0 => 0],
             [
-                'array.eol'    => "\n",
+                'array.eol' => "\n",
                 'array.indent' => 0,
             ]
         );
@@ -156,7 +156,7 @@ RESULT
             "[\r1 => 1,\r0 => 0,\r]",
             [1 => 1, 0 => 0],
             [
-                'array.eol'    => "\r",
+                'array.eol' => "\r",
                 'array.indent' => 0,
             ]
         );
@@ -172,7 +172,7 @@ RESULT
             ),
             ['foo' => 'bar', 1 => true],
             [
-                'array.base'   => 1,
+                'array.base' => 1,
                 'array.indent' => 2,
             ]
         );
@@ -188,7 +188,7 @@ RESULT
             ),
             ['foo' => 'bar', 1 => true],
             [
-                'array.base'   => "\t",
+                'array.base' => "\t",
                 'array.indent' => "\t",
             ]
         );
@@ -351,7 +351,7 @@ RESULT
     private function format($string, $eol = false)
     {
         if ($eol === false) {
-            $eol = PHP_EOL;
+            $eol = \PHP_EOL;
         }
 
         return preg_replace('/\r\n|\r|\n/', $eol, $string);

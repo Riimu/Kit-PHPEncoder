@@ -14,7 +14,7 @@ class ObjectEncoder implements Encoder
     private static $defaultOptions = [
         'object.method' => true,
         'object.format' => 'vars',
-        'object.cast'   => true,
+        'object.cast' => true,
     ];
 
     public function getDefaultOptions()
@@ -24,7 +24,7 @@ class ObjectEncoder implements Encoder
 
     public function supports($value)
     {
-        return is_object($value);
+        return \is_object($value);
     }
 
     public function encode($value, $depth, array $options, callable $encode)
@@ -54,7 +54,7 @@ class ObjectEncoder implements Encoder
         } elseif ($options['object.format'] === 'serialize') {
             return sprintf('unserialize(%s)', $encode(serialize($object)));
         } elseif ($options['object.format'] === 'export') {
-            return sprintf('\\%s::__set_state(%s)', get_class($object), $encode($this->getObjectState($object)));
+            return sprintf('\\%s::__set_state(%s)', \get_class($object), $encode($this->getObjectState($object)));
         }
 
         return $this->encodeObjectArray($object, $options, $encode);
@@ -70,7 +70,7 @@ class ObjectEncoder implements Encoder
      */
     private function encodeObjectArray($object, array $options, callable $encode)
     {
-        if (!in_array((string) $options['object.format'], ['array', 'vars', 'iterate'], true)) {
+        if (!\in_array((string) $options['object.format'], ['array', 'vars', 'iterate'], true)) {
             throw new \RuntimeException('Invalid object encoding format: ' . $options['object.format']);
         }
 

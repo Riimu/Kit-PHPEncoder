@@ -22,7 +22,7 @@ class BooleanEncoder implements Encoder
 
     public function supports($value)
     {
-        return is_bool($value);
+        return \is_bool($value);
     }
 
     public function encode($value, $depth, array $options, callable $encode)

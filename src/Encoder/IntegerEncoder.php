@@ -46,7 +46,7 @@ class IntegerEncoder implements Encoder
 
     public function supports($value)
     {
-        return is_int($value);
+        return \is_int($value);
     }
 
     public function encode($value, $depth, array $options, callable $encode)
@@ -88,7 +88,7 @@ class IntegerEncoder implements Encoder
      */
     public function encodeDecimal($integer, $options)
     {
-        if ($integer === 1 << (PHP_INT_SIZE * 8 - 1)) {
+        if ($integer === 1 << (\PHP_INT_SIZE * 8 - 1)) {
             return sprintf('(int)%s%d', $options['whitespace'] ? ' ' : '', $integer);
         }
 

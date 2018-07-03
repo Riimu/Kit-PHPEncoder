@@ -15,6 +15,8 @@ class StringEncoder implements Encoder
         'string.escape' => true,
         'string.binary' => false,
         'string.utf8' => false,
+        'string.classes' => [],
+        'string.imports' => [],
     ];
 
     public function getDefaultOptions()
@@ -24,19 +26,65 @@ class StringEncoder implements Encoder
 
     public function supports($value)
     {
-        return is_string($value);
+        return \is_string($value);
     }
 
     public function encode($value, $depth, array $options, callable $encode)
     {
         $value = (string) $value;
 
+        if ($this->isClassName($value, $options)) {
+            return $this->getClassName($value, $options);
+        }
+
         if (preg_match('/[^\x20-\x7E]/', $value)) {
-            if ($this->isBinaryString($value, $options)) {
-                return $this->encodeBinaryString($value);
-            } elseif ($options['string.escape']) {
-                return $this->getDoubleQuotedString($value, $options);
+            return $this->getComplexString($value, $options);
+        }
+
+        return $this->getSingleQuotedString($value);
+    }
+
+    private function isClassName($value, array $options)
+    {
+        if (preg_match('/^([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)(\\\\(?1))*$/', $value) !== 1) {
+            return false;
+        }
+
+        return array_intersect(iterator_to_array($this->iterateNamespaces($value)), $options['string.classes']) !== [];
+    }
+
+    private function getClassName($value, array $options)
+    {
+        foreach ($this->iterateNamespaces($value) as $partial) {
+            if (isset($options['string.imports'][$partial])) {
+                $trimmed = substr($value, \strlen(rtrim($partial, '\\')));
+                return ltrim(sprintf('%s%s::class', rtrim($options['string.imports'][$partial], '\\'), $trimmed), '\\');
             }
+        }
+
+        return sprintf('\\%s::class', $value);
+    }
+
+    private function iterateNamespaces($value)
+    {
+        yield $value;
+
+        $parts = explode('\\', '\\' . $value);
+        $count = \count($parts);
+
+        for ($i = 1; $i < $count; $i++) {
+            yield ltrim(implode('\\', \array_slice($parts, 0, -$i)), '\\') . '\\';
+        }
+    }
+
+    private function getComplexString($value, array $options)
+    {
+        if ($this->isBinaryString($value, $options)) {
+            return $this->encodeBinaryString($value);
+        }
+
+        if ($options['string.escape']) {
+            return $this->getDoubleQuotedString($value, $options);
         }
 
         return $this->getSingleQuotedString($value);
@@ -102,8 +150,8 @@ class StringEncoder implements Encoder
             "\n" => '\n',
             "\r" => '\r',
             "\t" => '\t',
-            '$'  => '\$',
-            '"'  => '\"',
+            '$' => '\$',
+            '"' => '\"',
             '\\' => '\\\\',
         ]);
 
@@ -112,7 +160,7 @@ class StringEncoder implements Encoder
         }
 
         $hexFormat = function ($matches) use ($options) {
-            return sprintf($options['hex.capitalize'] ? '\x%02X' : '\x%02x', ord($matches[0]));
+            return sprintf($options['hex.capitalize'] ? '\x%02X' : '\x%02x', \ord($matches[0]));
         };
 
         return sprintf('"%s"', preg_replace_callback('/[^\x20-\x7E]/', $hexFormat, $string));
@@ -147,20 +195,20 @@ class StringEncoder implements Encoder
      */
     private function getCodePoint($bytes)
     {
-        if (strlen($bytes) === 2) {
-            return ((ord($bytes[0]) & 0b11111) << 6)
-                | (ord($bytes[1]) & 0b111111);
+        if (\strlen($bytes) === 2) {
+            return ((\ord($bytes[0]) & 0b11111) << 6)
+                | (\ord($bytes[1]) & 0b111111);
         }
 
-        if (strlen($bytes) === 3) {
-            return ((ord($bytes[0]) & 0b1111) << 12)
-                | ((ord($bytes[1]) & 0b111111) << 6)
-                | (ord($bytes[2]) & 0b111111);
+        if (\strlen($bytes) === 3) {
+            return ((\ord($bytes[0]) & 0b1111) << 12)
+                | ((\ord($bytes[1]) & 0b111111) << 6)
+                | (\ord($bytes[2]) & 0b111111);
         }
 
-        return ((ord($bytes[0]) & 0b111) << 18)
-            | ((ord($bytes[1]) & 0b111111) << 12)
-            | ((ord($bytes[2]) & 0b111111) << 6)
-            | (ord($bytes[3]) & 0b111111);
+        return ((\ord($bytes[0]) & 0b111) << 18)
+            | ((\ord($bytes[1]) & 0b111111) << 12)
+            | ((\ord($bytes[2]) & 0b111111) << 6)
+            | (\ord($bytes[3]) & 0b111111);
     }
 }

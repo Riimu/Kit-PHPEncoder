@@ -15,7 +15,7 @@ class FloatEncoder implements Encoder
 
     /** @var array Default values for options in the encoder */
     private static $defaultOptions = [
-        'float.integers'  => false,
+        'float.integers' => false,
         'float.precision' => 17,
         'float.export' => false,
     ];
@@ -27,7 +27,7 @@ class FloatEncoder implements Encoder
 
     public function supports($value)
     {
-        return is_float($value);
+        return \is_float($value);
     }
 
     public function encode($value, $depth, array $options, callable $encode)
@@ -86,9 +86,9 @@ class FloatEncoder implements Encoder
      */
     private function encodeInteger($float, callable $encode)
     {
-        $minimum = defined('PHP_INT_MIN') ? PHP_INT_MIN : ~PHP_INT_MAX;
+        $minimum = \defined('PHP_INT_MIN') ? \PHP_INT_MIN : ~\PHP_INT_MAX;
 
-        if ($float >= $minimum && $float <= PHP_INT_MAX) {
+        if ($float >= $minimum && $float <= \PHP_INT_MAX) {
             return $encode((int) $float);
         }
 
@@ -105,7 +105,7 @@ class FloatEncoder implements Encoder
         $precision = $options['float.precision'];
 
         if ($precision === false) {
-            $precision = defined('HHVM_VERSION') ? 17 : ini_get('serialize_precision');
+            $precision = ini_get('serialize_precision');
         }
 
         return max(1, (int) $precision);
