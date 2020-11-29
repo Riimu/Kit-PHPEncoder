@@ -108,12 +108,12 @@ class PHPEncoder
      */
     private function isValidOption($option)
     {
-        if (array_key_exists($option, $this->options)) {
+        if (\array_key_exists($option, $this->options)) {
             return true;
         }
 
         foreach ($this->encoders as $encoder) {
-            if (array_key_exists($option, $encoder->getDefaultOptions())) {
+            if (\array_key_exists($option, $encoder->getDefaultOptions())) {
                 return true;
             }
         }
@@ -150,7 +150,7 @@ class PHPEncoder
         }
 
         foreach ($overrides as $name => $value) {
-            if (!array_key_exists($name, $options)) {
+            if (!\array_key_exists($name, $options)) {
                 throw new InvalidOptionException(sprintf("Invalid encoder option '%s'", $name));
             }
 
