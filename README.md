@@ -20,10 +20,10 @@ fits in any of your dynamically generated PHP files.
 
 The API documentation is available at: http://kit.riimu.net/api/phpencoder/
 
-[![CI](https://img.shields.io/github/workflow/status/Riimu/Kit-PHPEncoder/CI/master?style=flat-square)](https://github.com/violet-php/streaming-json-encoder/actions)
-[![Scrutinizer](https://img.shields.io/scrutinizer/quality/g/Riimu/Kit-PHPEncoder/master?style=flat-square)](https://scrutinizer-ci.com/g/violet-php/streaming-json-encoder/)
-[![codecov](https://img.shields.io/codecov/c/github/Riimu/Kit-PHPEncoder/master?style=flat-square)](https://codecov.io/gh/violet-php/streaming-json-encoder)
-[![Packagist](https://img.shields.io/packagist/v/riimu/kit-phpencoder.svg?style=flat-square)](https://packagist.org/packages/violet/streaming-json-encoder)
+[![CI](https://img.shields.io/github/workflow/status/Riimu/Kit-PHPEncoder/CI/master?style=flat-square)](https://github.com/Riimu/Kit-PHPEncoder/actions)
+[![Scrutinizer](https://img.shields.io/scrutinizer/quality/g/Riimu/Kit-PHPEncoder/master?style=flat-square)](https://scrutinizer-ci.com/g/Riimu/Kit-PHPEncoder/)
+[![codecov](https://img.shields.io/codecov/c/github/Riimu/Kit-PHPEncoder/master?style=flat-square)](https://codecov.io/gh/Riimu/Kit-PHPEncoder)
+[![Packagist](https://img.shields.io/packagist/v/riimu/kit-phpencoder.svg?style=flat-square)](https://packagist.org/packages/riimu/kit-phpencoder)
 
 ## Requirements ##
 
