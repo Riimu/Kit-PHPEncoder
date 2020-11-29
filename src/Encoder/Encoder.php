@@ -5,7 +5,7 @@ namespace Riimu\Kit\PHPEncoder\Encoder;
 /**
  * Interface for different types of value encoders.
  * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>
- * @copyright Copyright (c) 2014-2018 Riikka Kalliomäki
+ * @copyright Copyright (c) 2014-2020 Riikka Kalliomäki
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
 interface Encoder
