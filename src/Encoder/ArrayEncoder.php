@@ -196,7 +196,7 @@ class ArrayEncoder implements Encoder
      * @param bool $omitted Set to true, if all the keys were omitted, false otherwise
      * @return string[] Each of key and value pair encoded as php
      */
-    private function getPairs(array $array, $space, $omit, callable $encode, & $omitted = true)
+    private function getPairs(array $array, $space, $omit, callable $encode, &$omitted = true)
     {
         $pairs = [];
         $nextIndex = 0;
@@ -221,7 +221,7 @@ class ArrayEncoder implements Encoder
      * @param int $nextIndex Next expected key that can be omitted
      * @return bool True if the key can be omitted, false if not
      */
-    private function canOmitKey($key, & $nextIndex)
+    private function canOmitKey($key, &$nextIndex)
     {
         $result = $key === $nextIndex;
 

@@ -141,7 +141,7 @@ class EncodingTest extends EncodingTestCase
         $this->assertSame('NAN', $code);
 
         $value = eval("return $code;");
-        $this->assertInternalType('float', $value);
+        $this->assertTypeIsFloat($value);
         $this->assertNan($value);
     }
 
@@ -190,7 +190,7 @@ class EncodingTest extends EncodingTestCase
         $this->assertSame('1.0E+15', $float);
 
         $evaluated = eval("return $float;");
-        $this->assertInternalType('float', $evaluated);
+        $this->assertTypeIsFloat($evaluated);
         $this->assertNotSame($value, $evaluated);
     }
 
@@ -379,5 +379,14 @@ class EncodingTest extends EncodingTestCase
 
         $this->expectException(\RuntimeException::class);
         $encoder->encode($foo);
+    }
+
+    private function assertTypeIsFloat($value)
+    {
+        if (method_exists($this, 'assertIsFloat')) {
+            $this->assertIsFloat($value);
+        } else {
+            $this->assertInternalType('float', $value);
+        }
     }
 }

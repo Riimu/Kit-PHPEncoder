@@ -1,4 +1,5 @@
 build/
 vendor/
+.phpunit.result.cache
 examples/dbconf.php
 composer.lock

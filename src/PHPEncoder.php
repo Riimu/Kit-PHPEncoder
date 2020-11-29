@@ -196,7 +196,7 @@ class PHPEncoder
      * @return bool True if values should be recorded, false if not
      * @throws \RuntimeException If a recursive value is detected
      */
-    private function detectRecursion(& $value, array $options, array $recursion)
+    private function detectRecursion(&$value, array $options, array $recursion)
     {
         if ($options['recursion.detect']) {
             if (array_search($value, $recursion, true) !== false) {
