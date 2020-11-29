@@ -1,5 +1,10 @@
 # Changelog #
 
+## v2.4.1 (2020-11-29) ##
+
+  * Migrated to Github actions for CI
+  * Added automated builds to test for PHP versions from 5.6 to 8.0
+
 ## v2.4.0 (2018-07-03) ##
 
   * Added `string.classes` option, which allows to define an array of classes or
