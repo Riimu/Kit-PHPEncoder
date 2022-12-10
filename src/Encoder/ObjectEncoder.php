@@ -115,7 +115,9 @@ class ObjectEncoder implements Encoder
     private function getObjectState($object)
     {
         $class = new \ReflectionClass($object);
-        $visibility = \ReflectionProperty::IS_PRIVATE | \ReflectionProperty::IS_PROTECTED;
+        $visibility = \ReflectionProperty::IS_PRIVATE
+            | \ReflectionProperty::IS_PROTECTED
+            | \ReflectionProperty::IS_PUBLIC;
         $values = [];
 
         do {
@@ -126,8 +128,9 @@ class ObjectEncoder implements Encoder
 
             $class = $class->getParentClass();
             $visibility = \ReflectionProperty::IS_PRIVATE;
-        } while ($class);
+        } while ($class !== false);
 
-        return get_object_vars($object) + $values;
+        // Use get_object_vars to include dynamic properties
+        return $values + get_object_vars($object);
     }
 }

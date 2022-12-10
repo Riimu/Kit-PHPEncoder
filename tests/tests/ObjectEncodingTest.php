@@ -98,8 +98,10 @@ class ObjectEncodingTest extends TestCase
         $obj = new ExtendsTestMockObject();
         $obj->var = true;
         $this->assertSame(
-            sprintf("\%s::__set_state(['bazC'=>'E','baz'=>'C',", ExtendsTestMockObject::class) .
-            "'var'=>true,'fooC'=>'D','bar'=>'B','foo'=>'A'])",
+            sprintf(
+                "\%s::__set_state(['fooC'=>'D','bazC'=>'E','bar'=>'B','baz'=>'C','foo'=>'A','var'=>true])",
+                ExtendsTestMockObject::class
+            ),
             $encoder->encode($obj)
         );
     }

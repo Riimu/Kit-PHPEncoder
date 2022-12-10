@@ -121,10 +121,14 @@ class EncodingTest extends EncodingTestCase
 
     public function testUsingIniPrecision()
     {
-        $float = 1.1234567890123456;
         $serialize = ini_set('serialize_precision', 13);
 
-        $this->assertEncode('1.123456789012', $float, ['float.precision' => false]);
+        $this->assertEncode(
+            '1.123456789012',
+            1.123456789012,
+            ['float.precision' => false],
+            1.1234567890123456
+        );
 
         ini_set('serialize_precision', $serialize);
     }
