@@ -1,5 +1,10 @@
 # Changelog #
 
+## v2.4.2 (2022-12-10) ##
+
+  * Added tests to ensure PHP 8.2 compatibility
+  * Changed `export` type object conversion have more consistent index order
+
 ## v2.4.1 (2020-11-29) ##
 
   * Migrated to Github actions for CI
