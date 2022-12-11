@@ -61,6 +61,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           package: ergebnis/composer-normalize
+          allow-plugins: 1
       - name: Run composer-normalize
         run: composer normalize --dry-run
   coverage:
