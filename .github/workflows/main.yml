@@ -63,7 +63,7 @@ jobs:
           package: ergebnis/composer-normalize
           allow-plugins: 1
       - name: Run composer-normalize
-        run: composer normalize --dry-run
+        run: composer normalize --working-dir=vendor-tool --dry-run ../composer.json
   coverage:
     runs-on: ubuntu-latest
     steps:
