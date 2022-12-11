@@ -44,7 +44,7 @@ runs:
         restore-keys: Composer-${{ steps.setup-php.outputs.php-version }}-
     - run: composer install --no-progress --classmap-authoritative
       shell: bash
-    - run: composer install --work-dir=vendor-tool --no-progress --classmap-authoritative
+    - run: composer install --working-dir=vendor-tool --no-progress --classmap-authoritative
       shell: bash
     - run: echo "./vendor-tool/vendor/bin" >> $GITHUB_PATH
       shell: bash
