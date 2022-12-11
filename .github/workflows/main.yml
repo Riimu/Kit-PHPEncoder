@@ -20,6 +20,7 @@ jobs:
       - name: Prepare Composer
         uses: ./.github/actions/prepare-composer
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           php-version: ${{ matrix.php-version }}
           package: phpunit/phpunit
       - name: Run PHPUnit
@@ -32,6 +33,7 @@ jobs:
       - name: Prepare Composer
         uses: ./.github/actions/prepare-composer
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           package: squizlabs/php_codesniffer
       - name: Run PHP_CodeSniffer
         run: composer phpcs -- --no-cache
@@ -45,6 +47,7 @@ jobs:
       - name: Prepare Composer
         uses: ./.github/actions/prepare-composer
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           package: friendsofphp/php-cs-fixer
       - name: Run PHP Coding Standards Fixer
         run: composer php-cs-fixer -- --dry-run --diff --using-cache=no
@@ -56,6 +59,7 @@ jobs:
       - name: Prepare Composer
         uses: ./.github/actions/prepare-composer
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           package: ergebnis/composer-normalize
       - name: Run composer-normalize
         run: composer normalize --dry-run
@@ -67,6 +71,7 @@ jobs:
       - name: Prepare Composer
         uses: ./.github/actions/prepare-composer
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           package: phpunit/phpunit
           coverage: xdebug
       - name: Run PHPUnit with coverage
