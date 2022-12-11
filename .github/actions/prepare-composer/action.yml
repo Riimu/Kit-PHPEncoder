@@ -20,7 +20,6 @@ runs:
   using: "composite"
   steps:
     - uses: shivammathur/setup-php@v2
-      id: setup-php
       with:
         php-version: ${{ inputs.php-version }}
         coverage: ${{ inputs.coverage }}
@@ -29,10 +28,10 @@ runs:
         GITHUB_TOKEN: ${{ inputs.token }}
     - run: mkdir vendor-tool
       shell: bash
+    - run: composer require --working-dir=vendor-tool --no-install "${{ inputs.package }}:*"
+      shell: bash
     - run: composer config --working-dir=vendor-tool "allow-plugins.${{ inputs.package }}" true
       if: ${{ inputs.allow-plugins == 1 }}
-      shell: bash
-    - run: composer require --working-dir=vendor-tool --no-install "${{ inputs.package }}:*"
       shell: bash
     - run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
       id: composer-cache
@@ -40,8 +39,8 @@ runs:
     - uses: actions/cache@v3
       with:
         path: ${{ steps.composer-cache.outputs.dir }}
-        key: Composer-${{ steps.setup-php.outputs.php-version }}-${{ hashFiles('**/composer.lock') }}
-        restore-keys: Composer-${{ steps.setup-php.outputs.php-version }}-
+        key: Composer-${{ inputs.php-version }}-${{ hashFiles('**/composer.lock') }}
+        restore-keys: Composer-${{ inputs.php-version }}-
     - run: composer install --no-progress --classmap-authoritative
       shell: bash
     - run: composer install --working-dir=vendor-tool --no-progress --classmap-authoritative
