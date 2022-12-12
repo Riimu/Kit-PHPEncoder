@@ -26,12 +26,12 @@ runs:
         ini-values: error_reporting=E_ALL
       env:
         GITHUB_TOKEN: ${{ inputs.token }}
-    - run: mkdir vendor-tool
+    - run: composer global require --no-install "${{ inputs.package }}:*"
       shell: bash
-    - run: composer require --working-dir=vendor-tool --no-install "${{ inputs.package }}:*"
-      shell: bash
-    - run: composer config --working-dir=vendor-tool "allow-plugins.${{ inputs.package }}" true
+    - run: composer global config "allow-plugins.${{ inputs.package }}" true
       if: ${{ inputs.allow-plugins == 1 }}
+      shell: bash
+    - run: cp "$(composer config home)/composer.lock" ./composer.global.lock
       shell: bash
     - run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
       id: composer-cache
@@ -39,11 +39,9 @@ runs:
     - uses: actions/cache@v3
       with:
         path: ${{ steps.composer-cache.outputs.dir }}
-        key: Composer-${{ inputs.php-version }}-${{ hashFiles('**/composer.lock') }}
+        key: Composer-${{ inputs.php-version }}-${{ hashFiles('./composer.lock', './composer.global.lock') }}
         restore-keys: Composer-${{ inputs.php-version }}-
     - run: composer install --no-progress --classmap-authoritative
       shell: bash
-    - run: composer install --working-dir=vendor-tool --no-progress --classmap-authoritative
-      shell: bash
-    - run: echo "./vendor-tool/vendor/bin" >> $GITHUB_PATH
+    - run: composer global install --no-progress --classmap-authoritative
       shell: bash
