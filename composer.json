@@ -34,10 +34,10 @@
   },
   "scripts": {
     "ci-all": [
-      "composer test -- --do-not-cache-result",
-      "composer phpcs -- --no-cache",
-      "composer php-cs-fixer -- --dry-run --diff --using-cache=no",
-      "composer normalize --dry-run"
+      "@test --do-not-cache-result",
+      "@phpcs --no-cache",
+      "@php-cs-fixer --dry-run --diff --using-cache=no",
+      "@composer normalize --dry-run"
     ],
     "php-cs-fixer": "php-cs-fixer fix -v",
     "phpcs": "phpcs -p",
