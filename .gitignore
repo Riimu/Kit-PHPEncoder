@@ -1,6 +1,7 @@
 build/
 vendor/
+
+examples/dbconf.php
+
 .phpunit.cache
 .php-cs-fixer.cache
-examples/dbconf.php
-composer.lock
